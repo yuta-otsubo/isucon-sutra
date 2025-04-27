@@ -5,9 +5,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import "./tailwind.css";
+import { FooterNavigation } from "./components/FooterNavigation";
+import { CircleIcon } from "./components/icon/circle";
 import type { LinksFunction } from "@remix-run/node";
 
-import "./tailwind.css";
+
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -35,6 +38,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <FooterNavigation navigationMenus={
+          [{icon: CircleIcon, link: "/ride", label: "ride"}, {icon: CircleIcon, link: "/history", label: "history"}]
+        }/>
       </body>
     </html>
   );

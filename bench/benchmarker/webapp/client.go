@@ -12,7 +12,7 @@ import (
 )
 
 type Client struct {
-	agent *agent.agent
+	agent *agent.Agent
 
 	contestantLogger *zap.Logger
 }
@@ -29,7 +29,7 @@ func NewClient(config ClientConfig) (*Client, error) {
 	ag, err := agent.NewAgent(
 		agent.WithBaseURL(config.TargetBaseURL),
 		agent.WithTimeout(config.DefaultClientTimeout),
-		agent.WithCache(),
+		agent.WithNoCache(),
 		agent.WithCloneTransport(&http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: config.InsecureSkipVerify,
