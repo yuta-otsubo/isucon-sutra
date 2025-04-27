@@ -4,8 +4,8 @@ tasks:
     cmds:
       - go run . run --target http://localhost:8080 -t 10
   build:
-      cmds:
-        - go build  -ldflags "-s -w"
-    image-build:
-      cmds:
-        - ko build -L .
+    cmds:
+      - go build  -ldflags "-s -w"
+  image-build:
+    cmds:
+      - ko build -L .
