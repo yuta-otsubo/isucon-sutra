@@ -44,9 +44,6 @@ module.exports = {
           { name: "Link", linkAttribute: "to" },
           { name: "NavLink", linkAttribute: "to" },
         ],
-        "import/resolver": {
-          typescript: {},
-        },
       },
     },
 
@@ -63,6 +60,7 @@ module.exports = {
           },
           typescript: {
             alwaysTryTypes: true,
+            project: "./tsconfig.json" // tsconfig.jsonのパスを明示的に指定
           },
         },
       },

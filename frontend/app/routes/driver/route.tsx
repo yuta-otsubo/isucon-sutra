@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { FooterNavigation } from "../../components/FooterNavigation";
-import { CircleIcon } from "../../components/icon/circle";
+import { FooterNavigation } from "~/components/FooterNavigation";
+import { CircleIcon } from "~/components/icon/circle";
 
 export const meta: MetaFunction = () => {
   return [{ title: "ISUCON14" }, { name: "description", content: "isucon14" }];
