@@ -72,7 +72,7 @@ module.exports = {
         "plugin:import/typescript",
       ],
       parserOptions: {
-          project: "./frontend/tsconfig.json",
+          project: "./tsconfig.json", // パスを修正
       },
     },
 
