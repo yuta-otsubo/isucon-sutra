@@ -9,7 +9,7 @@ import {
         relativePath: "../openapi/openapi.yaml",
         source: "file",
       },
-      outputDir: "./api-fetcher",
+      outputDir: "./app/api-fetcher",
       to: async (context) => {
         const filenamePrefix = "isucon";
         const { schemasFiles } = await generateSchemaTypes(context, {
