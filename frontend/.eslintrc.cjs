@@ -19,7 +19,7 @@ module.exports = {
     commonjs: true,
     es6: true,
   },
-  ignorePatterns: ["!**/.server", "!**/.client", "app/api-fetcher/*"],
+  ignorePatterns: ["!**/.server", "!**/.client", "app/apiClient/*"],
 
   // Base config
   extends: ["eslint:recommended"],
@@ -72,7 +72,7 @@ module.exports = {
         "plugin:import/typescript",
       ],
       parserOptions: {
-          project: "./tsconfig.json", // パスを修正
+          project: true,  
       },
     },
 
