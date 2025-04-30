@@ -1,4 +1,4 @@
-import { IsuconContext } from "./isuconContext";
+import { IsuconContext } from "./apiContext";
 
 const baseUrl = "http://localhost:8080/";
 
