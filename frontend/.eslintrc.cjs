@@ -72,7 +72,7 @@ module.exports = {
         "plugin:import/typescript",
       ],
       parserOptions: {
-          project: true,
+          project: "./frontend/tsconfig.json",
       },
     },
 
