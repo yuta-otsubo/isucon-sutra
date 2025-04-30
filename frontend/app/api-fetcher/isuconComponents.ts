@@ -234,7 +234,7 @@ export const fetchGetAppRequest = (
     GetAppRequestPathParams
   >({ url: "/app/requests/{requestId}", method: "get", ...variables, signal });
 
-export const useGetAppRequest = <TData = GetAppRequestResponse,>(
+export const useGetAppRequest = <TData = GetAppRequestResponse>(
   variables: GetAppRequestVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<
@@ -387,7 +387,7 @@ export const fetchGetAppNotification = (
 /**
  * ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定
  */
-export const useGetAppNotification = <TData = undefined,>(
+export const useGetAppNotification = <TData = undefined>(
   variables: GetAppNotificationVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<undefined, GetAppNotificationError, TData>,
@@ -654,7 +654,7 @@ export const fetchGetRequest = (
 /**
  * ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定
  */
-export const useGetRequest = <TData = GetRequestResponse,>(
+export const useGetRequest = <TData = GetRequestResponse>(
   variables: GetRequestVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<GetRequestResponse, GetRequestError, TData>,
@@ -838,7 +838,7 @@ export const fetchGetDriverNotification = (
 /**
  * ドライバーに配車要求を通知するなどで使う想定
  */
-export const useGetDriverNotification = <TData = undefined,>(
+export const useGetDriverNotification = <TData = undefined>(
   variables: GetDriverNotificationVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<undefined, GetDriverNotificationError, TData>,
@@ -907,7 +907,7 @@ export const fetchGetInquiries = (
     {}
   >({ url: "/admin/inquiries", method: "get", ...variables, signal });
 
-export const useGetInquiries = <TData = GetInquiriesResponse,>(
+export const useGetInquiries = <TData = GetInquiriesResponse>(
   variables: GetInquiriesVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<GetInquiriesResponse, GetInquiriesError, TData>,
@@ -960,7 +960,7 @@ export const fetchGetInquiry = (
     signal,
   });
 
-export const useGetInquiry = <TData = Schemas.InquiryContent,>(
+export const useGetInquiry = <TData = Schemas.InquiryContent>(
   variables: GetInquiryVariables,
   options?: Omit<
     reactQuery.UseQueryOptions<Schemas.InquiryContent, GetInquiryError, TData>,
