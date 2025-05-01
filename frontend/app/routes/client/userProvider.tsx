@@ -5,19 +5,19 @@ export type AccessToken = string;
 /**
  * フロント側で利用するクライアント情報
  */
-type ClientInfo = {
+type UserInfo = {
   id: string;
   name: string;
   accessToken: string;
 };
 
-const clientContext = createContext<ClientInfo>({
+const userContext = createContext<UserInfo>({
   id: "",
   name: "",
   accessToken: "",
 });
 
-export const ClientProvider = ({
+export const UserProvider = ({
   children,
   accessToken,
 }: {
@@ -30,10 +30,10 @@ export const ClientProvider = ({
   const fetchedValue = { id: "fetched-id", name: "fetched-name", accessToken };
 
   return (
-    <clientContext.Provider value={fetchedValue}>
+    <userContext.Provider value={fetchedValue}>
       {children}
-    </clientContext.Provider>
+    </userContext.Provider>
   );
 };
 
-export const useClient = () => useContext(clientContext);
+export const useClient = () => useContext(userContext);
