@@ -30,9 +30,7 @@ export const UserProvider = ({
   const fetchedValue = { id: "fetched-id", name: "fetched-name", accessToken };
 
   return (
-    <userContext.Provider value={fetchedValue}>
-      {children}
-    </userContext.Provider>
+    <userContext.Provider value={fetchedValue}>{children}</userContext.Provider>
   );
 };
 
