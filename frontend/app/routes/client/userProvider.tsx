@@ -30,4 +30,4 @@ export const UserProvider = ({
   );
 };
 
-export const useClient = () => useContext(userContext);
+export const useUser = () => useContext(userContext);
