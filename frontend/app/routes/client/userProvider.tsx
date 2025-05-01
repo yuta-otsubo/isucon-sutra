@@ -5,13 +5,16 @@ export type AccessToken = string;
 /**
  * フロント側で利用するクライアント情報
  */
-type User = {
-  id: string;
-  name: string;
-  accessToken: string;
-};
+type User =
+  /**
+   * API依存のためoptional
+   */
+  Partial<{
+    id: string;
+    name: string;
+  }> & { accessToken: AccessToken };
 
-const userContext = createContext<Partial<User>>({});
+const userContext = createContext<User | undefined>(undefined);
 
 export const UserProvider = ({
   children,
