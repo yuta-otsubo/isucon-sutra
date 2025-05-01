@@ -22,6 +22,7 @@ export const UserProvider = ({
 }) => {
   /**
    * openapi上にfetchするものがないので一旦仮置き
+   * TODO: 通信を行い、APIのデータを取得する
    */
   const fetchedValue = { id: "fetched-id", name: "fetched-name", accessToken };
 
