@@ -36,6 +36,8 @@ const (
 	ErrorCodeFailedToGetRequestDetail
 	// ErrorCodeFailedToRegisterUser ユーザーの登録に失敗した
 	ErrorCodeFailedToRegisterUser
+	// ErrorCodeFailedToRegisterChair 椅子の登録に失敗した
+	ErrorCodeFailedToRegisterChair
 )
 
 type codeError struct {
