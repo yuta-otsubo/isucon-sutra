@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/isucon/isucon14/bench/internal/random"
 	"github.com/oklog/ulid/v2"
+	"github.com/yuta-otsubo/isucon-sutra/bench/internal/random"
 )
 
 type FastServerStub struct {
