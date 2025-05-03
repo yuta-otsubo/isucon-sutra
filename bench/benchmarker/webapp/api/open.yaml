@@ -1,0 +1,7 @@
+#  OpneAPI のためのジェネレーター設定ファイル
+generator:
+   features:
+     disable_all: true
+     enable:
+       # APIクライアントのパス部分を生成
+       - paths/client

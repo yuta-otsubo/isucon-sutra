@@ -25,7 +25,6 @@ type postDriverRegisterResponse struct {
 	ID          string `json:"id"`
 }
 
-// 配車サービスのドライバー登録処理
 func postDriverRegister(w http.ResponseWriter, r *http.Request) {
 	req := &postDriverRegisterRequest{}
 	if err := bindJSON(r, req); err != nil {
@@ -42,8 +41,7 @@ func postDriverRegister(w http.ResponseWriter, r *http.Request) {
 
 	accessToken := secureRandomStr(32)
 	_, err := db.Exec(
-		// FIX:
-		"INSERT INTO drivers (id, username, firstname, lastname, date_of_birth, car_model, car_no, is_active, accesstoken) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+		"INSERT INTO drivers (id, username, firstname, lastname, date_of_birth, car_model, car_no, is_active, access_token) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
 		driverID, req.Username, req.Firstname, req.Lastname, req.DateOfBirth, req.CarModel, req.CarNo, false, accessToken,
 	)
 	if err != nil {
@@ -57,9 +55,8 @@ func postDriverRegister(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// API認証を処理するミドルウェア
-func driverAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func driverAuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accessToken := strings.TrimSpace(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
 		if accessToken == "" {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -67,19 +64,17 @@ func driverAuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		driver := &Driver{}
-		// FIX:
-		err := db.Get(driver, "SELECT * FROM drivers WHERE access_token", accessToken)
+		err := db.Get(driver, "SELECT * FROM drivers WHERE access_token = ?", accessToken)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
 		ctx := context.WithValue(r.Context(), "driver", driver)
-		next(w, r.WithContext(ctx))
-	}
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
-// ドライバーが自分の状態をアクティブに設定する
 func postDriverActivate(w http.ResponseWriter, r *http.Request) {
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -96,7 +91,6 @@ func postDriverActivate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ドライバーが自分の状態を非アクティブに設定する
 func postDriverDeactivate(w http.ResponseWriter, r *http.Request) {
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -113,7 +107,6 @@ func postDriverDeactivate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ドライバーが自分の現在位置を更新する
 func postDriverCoordinate(w http.ResponseWriter, r *http.Request) {
 	req := &Coordinate{}
 	if err := bindJSON(r, req); err != nil {
@@ -139,7 +132,6 @@ func postDriverCoordinate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ドライバー向けのリアルタイム通知機能
 func getDriverNotification(w http.ResponseWriter, r *http.Request) {
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -151,7 +143,6 @@ func getDriverNotification(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 
-	// 接続が切れるまで無限ループ
 	for {
 		select {
 		case <-r.Context().Done():
@@ -160,7 +151,6 @@ func getDriverNotification(w http.ResponseWriter, r *http.Request) {
 
 		default:
 			rideRequest := &RideRequest{}
-			// FIX: SELECT *
 			err := db.Get(rideRequest, "SELECT * FROM ride_requests WHERE driver_id = ? AND status = ?", driver.ID, "DISPATCHING")
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
@@ -170,7 +160,25 @@ func getDriverNotification(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
 
-			if err := writeSSE(w, "matched", rideRequest); err != nil {
+			user := &User{}
+			err = db.Get(user, "SELECT * FROM users WHERE id = ?", rideRequest.UserID)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			if err := writeSSE(w, "matched", &getDriverRequestResponse{
+				RequestID: rideRequest.ID,
+				User: simpleUser{
+					ID:   user.ID,
+					Name: user.Firstname + " " + user.Lastname,
+				},
+				DestinationCoordinate: Coordinate{
+					Latitude:  rideRequest.DestinationLatitude,
+					Longitude: rideRequest.DestinationLongitude,
+				},
+				Status: rideRequest.Status,
+			}); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
@@ -190,12 +198,10 @@ type getDriverRequestResponse struct {
 	Status                string     `json:"status"`
 }
 
-// ドライバーが特定の配車リクエストの詳細情報を取得
 func getDriverRequest(w http.ResponseWriter, r *http.Request) {
 	requestID := r.URL.Query().Get("request_id")
 
 	rideRequest := &RideRequest{}
-	// FIX:
 	err := db.Get(rideRequest, "SELECT * FROM ride_requests WHERE id = ?", requestID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -203,7 +209,6 @@ func getDriverRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &User{}
-	// FIX:
 	err = db.Get(user, "SELECT * FROM users WHERE id = ?", rideRequest.UserID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -224,9 +229,8 @@ func getDriverRequest(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// ドライバーが配車リクエストを受け入れる
 func postDriverAccept(w http.ResponseWriter, r *http.Request) {
-	requestID := r.URL.Query().Get("request_id")
+	requestID := r.PathValue("request_id")
 
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -236,7 +240,6 @@ func postDriverAccept(w http.ResponseWriter, r *http.Request) {
 
 	// TODO: トランザクションを使って排他制御を行う
 	rideRequest := &RideRequest{}
-	// FIX:
 	err := db.Get(rideRequest, "SELECT * FROM ride_requests WHERE id = ?", requestID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -257,9 +260,8 @@ func postDriverAccept(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ドライバーが配車リクエストを拒否する
 func postDriverDeny(w http.ResponseWriter, r *http.Request) {
-	requestID := r.URL.Query().Get("request_id")
+	requestID := r.PathValue("request_id")
 
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -268,7 +270,6 @@ func postDriverDeny(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rideRequest := &RideRequest{}
-	// FIX:
 	err := db.Get(rideRequest, "SELECT * FROM ride_requests WHERE id = ?", requestID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -289,9 +290,8 @@ func postDriverDeny(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// ドライバーが乗客を乗せて出発したことを報告する
 func postDriverDepart(w http.ResponseWriter, r *http.Request) {
-	requestID := r.URL.Query().Get("request_id")
+	requestID := r.PathValue("request_id")
 
 	driver, ok := r.Context().Value("driver").(*Driver)
 	if !ok {
@@ -300,7 +300,6 @@ func postDriverDepart(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rideRequest := &RideRequest{}
-	// FIX:
 	err := db.Get(rideRequest, "SELECT * FROM ride_requests WHERE id = ?", requestID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)

@@ -15,6 +15,8 @@ type Client struct {
 	agent *agent.Agent
 
 	contestantLogger *zap.Logger
+
+	requestModifier []func(*http.Request)
 }
 
 type ClientConfig struct {
@@ -46,4 +48,8 @@ func NewClient(config ClientConfig) (*Client, error) {
 		agent:            ag,
 		contestantLogger: config.ContestantLogger,
 	}, nil
+}
+
+func (c *Client) AddRequestModifier(modifier func(*http.Request)) {
+	c.requestModifier = append(c.requestModifier, modifier)
 }

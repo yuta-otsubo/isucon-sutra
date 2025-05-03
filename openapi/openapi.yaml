@@ -59,8 +59,6 @@ paths:
                 date_of_birth:
                   type: string
                   description: 生年月日
-                '':
-                  type: string
               required:
                 - username
                 - firstname
@@ -184,7 +182,7 @@ paths:
               type: object
               properties:
                 evaluation:
-                  type: number
+                  type: integer 
                   description: ドライバーの評価
                   minimum: 1
                   maximum: 5
@@ -346,6 +344,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  request_id:
+                    type: string
+                    description: 配車要求ID
                   user:
                     $ref: '#/components/schemas/User'
                     description: ユーザー情報
@@ -355,6 +356,7 @@ paths:
                   status:
                     $ref: '#/components/schemas/RequestStatus'
                 required:
+                  - request_id
                   - user
                   - destination_coordinate
         '404':
