@@ -22,6 +22,7 @@ type postDriverRegisterRequest struct {
 
 type postDriverRegisterResponse struct {
 	AccessToken string `json:"access_token"`
+	ID          string `json:"id"`
 }
 
 // 配車サービスのドライバー登録処理
@@ -52,6 +53,7 @@ func postDriverRegister(w http.ResponseWriter, r *http.Request) {
 
 	respondJSON(w, http.StatusCreated, &postDriverRegisterResponse{
 		AccessToken: accessToken,
+		ID:          driverID,
 	})
 }
 
