@@ -1,5 +1,4 @@
 import {
-  FC,
   PropsWithChildren,
   forwardRef,
   useRef,
@@ -76,3 +75,6 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
     );
   },
 );
+
+// display nameを追加
+Modal.displayName = "Modal";
