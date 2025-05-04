@@ -202,6 +202,8 @@ func chairGetRequest(w http.ResponseWriter, r *http.Request) {
 	requestID := r.PathValue("request_id")
 
 	rideRequest := &RideRequest{}
+	// db.Beginx でトランザクションを開始する
+	// tx.Commit でコミットしてすべての操作が成功した場合にのみデータを保存する(アトミック性)
 	tx, err := db.Beginx()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
