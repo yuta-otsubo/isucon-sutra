@@ -1,6 +1,9 @@
 package world
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 type UserState int
 
@@ -29,6 +32,15 @@ type User struct {
 	AccessToken string
 	// RequestHistory リクエスト履歴
 	RequestHistory []*Request
+	// 通知ストリームコネクション
+	NotificationConn NotificationStream
+}
+
+type RegisteredUserData struct {
+	UserName    string
+	FirstName   string
+	LastName    string
+	DateOfBirth string
 }
 
 func (u *User) String() string {
@@ -89,6 +101,15 @@ func (u *User) Tick(ctx *Context) error {
 
 	// 進行中のリクエストは存在しないが、ユーザーがアクティブ状態
 	case u.Request == nil && u.State == UserStateActive:
+		if u.NotificationConn == nil {
+			// 通知コネクションが無い場合は繋いでおく
+			conn, err := ctx.client.ConnectUserNotificationStream(ctx, u, u.HandleNotification)
+			if err != nil {
+				return WrapCodeError(ErrorCodeFailedToConnectNotificationStream, err)
+			}
+			u.NotificationConn = conn
+		}
+
 		// リクエストを作成する
 		// TODO 作成する条件・頻度
 		err := u.CreateRequest(ctx)
@@ -134,15 +155,41 @@ func (u *User) ChangeRequestStatus(status RequestStatus) error {
 		return CodeError(ErrorCodeUserNotRequestingButStatusChanged)
 	}
 	if request.DesiredStatus != status {
-		return WrapCodeError(ErrorCodeUnexpectedStatusTransitionOccurred, fmt.Errorf("request server id: %v, request status: %v, status: %v", request.ServerID, request.DesiredStatus, status))
+		return WrapCodeError(ErrorCodeUnexpectedStatusTransitionOccurred, fmt.Errorf("request server id: %v, request request status: %v, status: %v", request.ServerID, request.DesiredStatus, status))
 	}
 	request.UserStatus = status
 	return nil
 }
 
-type RegisteredUserData struct {
-	UserName    string
-	FirstName   string
-	LastName    string
-	DateOfBirth string
+func (u *User) HandleNotification(eventType, eventData string) {
+	switch eventType {
+	case UserNotificationEventDispatching:
+		err := u.ChangeRequestStatus(RequestStatusDispatching)
+		if err != nil {
+			log.Println(err)
+			// TODO エラーハンドリング
+			return
+		}
+	case UserNotificationEventDispatched:
+		err := u.ChangeRequestStatus(RequestStatusDispatched)
+		if err != nil {
+			log.Println(err)
+			// TODO エラーハンドリング
+			return
+		}
+	case UserNotificationEventCarrying:
+		err := u.ChangeRequestStatus(RequestStatusCarrying)
+		if err != nil {
+			log.Println(err)
+			// TODO エラーハンドリング
+			return
+		}
+	case UserNotificationEventArrived:
+		err := u.ChangeRequestStatus(RequestStatusArrived)
+		if err != nil {
+			log.Println(err)
+			// TODO エラーハンドリング
+			return
+		}
+	}
 }

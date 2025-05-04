@@ -6,6 +6,7 @@ import (
 	"sync"
 )
 
+// SimpleMap 読み書き時に単純なRWLockを取るマップ
 type SimpleMap[K comparable, V any] struct {
 	m    map[K]V
 	lock sync.RWMutex
