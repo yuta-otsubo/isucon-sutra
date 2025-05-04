@@ -50,7 +50,7 @@ func (s *FastServerStub) SendDenyRequest(ctx *Context, serverRequestID string) e
 	return nil
 }
 
-func (s *FastServerStub) SendDepart(ctx *Context, req *Request) error {
+func (s *FastServerStub) SendDepart(ctx *Context, chair *Chair, req *Request) error {
 	time.Sleep(s.latency)
 	go func() {
 		err := s.world.UpdateRequestUserStatus(req.User.ID, RequestStatusCarrying)
