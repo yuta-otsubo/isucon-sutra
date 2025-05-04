@@ -26,12 +26,16 @@ func NewLockedSource(src rand.Source) rand.Source {
 	}
 }
 
+func NewLockedRand(src rand.Source) *rand.Rand {
+	return rand.New(NewLockedSource(src))
+}
+
 func CreateChildSource(parent rand.Source) rand.Source {
 	return rand.NewPCG(parent.Uint64(), parent.Uint64())
 }
 
 func CreateChildRand(parent rand.Source) *rand.Rand {
-	return rand.New(NewLockedSource(CreateChildSource(parent)))
+	return NewLockedRand(CreateChildSource(parent))
 }
 
 // GenerateUserName generates a random user name.
