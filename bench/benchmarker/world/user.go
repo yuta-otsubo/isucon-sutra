@@ -175,27 +175,27 @@ func (u *User) ChangeRequestStatus(status RequestStatus) error {
 	return nil
 }
 
-func (u *User) HandleNotification(eventType, eventData string) {
-	switch eventType {
-	case UserNotificationEventDispatching:
+func (u *User) HandleNotification(event NotificationEvent) {
+	switch event.(type) {
+	case *UserNotificationEventDispatching:
 		err := u.ChangeRequestStatus(RequestStatusDispatching)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
 			return
 		}
-	case UserNotificationEventDispatched:
+	case *UserNotificationEventDispatched:
 		err := u.ChangeRequestStatus(RequestStatusDispatched)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
 			return
 		}
-	case UserNotificationEventCarrying:
+	case *UserNotificationEventCarrying:
 		err := u.ChangeRequestStatus(RequestStatusCarrying)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
 			return
 		}
-	case UserNotificationEventArrived:
+	case *UserNotificationEventArrived:
 		err := u.ChangeRequestStatus(RequestStatusArrived)
 		if err != nil {
 			log.Println(err)
