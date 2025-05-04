@@ -10,73 +10,7 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func (s *Coordinate) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := (validate.Float{}).Validate(float64(s.Latitude)); err != nil {
-			return errors.Wrap(err, "float")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "latitude",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := (validate.Float{}).Validate(float64(s.Longitude)); err != nil {
-			return errors.Wrap(err, "float")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "longitude",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *EvaluateReq) Validate() error {
-	if s == nil {
-		return validate.ErrNilPointer
-	}
-
-	var failures []validate.FieldError
-	if err := func() error {
-		if err := (validate.Int{
-			MinSet:        true,
-			Min:           1,
-			MaxSet:        true,
-			Max:           5,
-			MinExclusive:  false,
-			MaxExclusive:  false,
-			MultipleOfSet: false,
-			MultipleOf:    0,
-		}).Validate(int64(s.Evaluation)); err != nil {
-			return errors.Wrap(err, "int")
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "evaluation",
-			Error: err,
-		})
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s *GetAppRequestOK) Validate() error {
+func (s *AppGetRequestOK) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -143,7 +77,73 @@ func (s *GetAppRequestOK) Validate() error {
 	return nil
 }
 
-func (s *GetInquiriesOK) Validate() error {
+func (s *AppPostRequestEvaluateReq) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := (validate.Int{
+			MinSet:        true,
+			Min:           1,
+			MaxSet:        true,
+			Max:           5,
+			MinExclusive:  false,
+			MaxExclusive:  false,
+			MultipleOfSet: false,
+			MultipleOf:    0,
+		}).Validate(int64(s.Evaluation)); err != nil {
+			return errors.Wrap(err, "int")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "evaluation",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *AppPostRequestReq) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.PickupCoordinate.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "pickup_coordinate",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := s.DestinationCoordinate.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "destination_coordinate",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *ChairGetInquiriesOK) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -183,7 +183,7 @@ func (s *GetInquiriesOK) Validate() error {
 	return nil
 }
 
-func (s *GetInquiriesOKInquiriesItem) Validate() error {
+func (s *ChairGetInquiriesOKInquiriesItem) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -206,7 +206,7 @@ func (s *GetInquiriesOKInquiriesItem) Validate() error {
 	return nil
 }
 
-func (s *GetRequestOK) Validate() error {
+func (s *ChairGetRequestOK) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -247,20 +247,31 @@ func (s *GetRequestOK) Validate() error {
 	return nil
 }
 
-func (s *InitializeOK) Validate() error {
+func (s *Coordinate) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
 
 	var failures []validate.FieldError
 	if err := func() error {
-		if err := s.Language.Validate(); err != nil {
-			return err
+		if err := (validate.Float{}).Validate(float64(s.Latitude)); err != nil {
+			return errors.Wrap(err, "float")
 		}
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "language",
+			Name:  "latitude",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if err := (validate.Float{}).Validate(float64(s.Longitude)); err != nil {
+			return errors.Wrap(err, "float")
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "longitude",
 			Error: err,
 		})
 	}
@@ -268,27 +279,6 @@ func (s *InitializeOK) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s InitializeOKLanguage) Validate() error {
-	switch s {
-	case "go":
-		return nil
-	case "perl":
-		return nil
-	case "php":
-		return nil
-	case "python":
-		return nil
-	case "ruby":
-		return nil
-	case "rust":
-		return nil
-	case "node":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
 }
 
 func (s *InquiryContent) Validate() error {
@@ -314,31 +304,20 @@ func (s *InquiryContent) Validate() error {
 	return nil
 }
 
-func (s *PostRequestReq) Validate() error {
+func (s *PostInitializeOK) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
 
 	var failures []validate.FieldError
 	if err := func() error {
-		if err := s.PickupCoordinate.Validate(); err != nil {
+		if err := s.Language.Validate(); err != nil {
 			return err
 		}
 		return nil
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
-			Name:  "pickup_coordinate",
-			Error: err,
-		})
-	}
-	if err := func() error {
-		if err := s.DestinationCoordinate.Validate(); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		failures = append(failures, validate.FieldError{
-			Name:  "destination_coordinate",
+			Name:  "language",
 			Error: err,
 		})
 	}
@@ -346,6 +325,27 @@ func (s *PostRequestReq) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
+}
+
+func (s PostInitializeOKLanguage) Validate() error {
+	switch s {
+	case "go":
+		return nil
+	case "perl":
+		return nil
+	case "php":
+		return nil
+	case "python":
+		return nil
+	case "ruby":
+		return nil
+	case "rust":
+		return nil
+	case "node":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
 }
 
 func (s RequestStatus) Validate() error {

@@ -14,8 +14,8 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func (s *Server) decodeActivateDriverRequest(r *http.Request) (
-	req *ActivateDriverReq,
+func (s *Server) decodeAppPostInquiryRequest(r *http.Request) (
+	req OptAppPostInquiryReq,
 	close func() error,
 	rerr error,
 ) {
@@ -57,14 +57,12 @@ func (s *Server) decodeActivateDriverRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request *ActivateDriverReq
+		var request OptAppPostInquiryReq
 		if err := func() error {
-			request = nil
-			var elem ActivateDriverReq
-			if err := elem.Decode(d); err != nil {
+			request.Reset()
+			if err := request.Decode(d); err != nil {
 				return err
 			}
-			request = &elem
 			if err := d.Skip(); err != io.EOF {
 				return errors.New("unexpected trailing data")
 			}
@@ -83,8 +81,8 @@ func (s *Server) decodeActivateDriverRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodeDeactivateDriverRequest(r *http.Request) (
-	req *DeactivateDriverReq,
+func (s *Server) decodeAppPostRegisterRequest(r *http.Request) (
+	req OptAppPostRegisterReq,
 	close func() error,
 	rerr error,
 ) {
@@ -126,14 +124,12 @@ func (s *Server) decodeDeactivateDriverRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request *DeactivateDriverReq
+		var request OptAppPostRegisterReq
 		if err := func() error {
-			request = nil
-			var elem DeactivateDriverReq
-			if err := elem.Decode(d); err != nil {
+			request.Reset()
+			if err := request.Decode(d); err != nil {
 				return err
 			}
-			request = &elem
 			if err := d.Skip(); err != io.EOF {
 				return errors.New("unexpected trailing data")
 			}
@@ -152,8 +148,8 @@ func (s *Server) decodeDeactivateDriverRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodeEvaluateRequest(r *http.Request) (
-	req OptEvaluateReq,
+func (s *Server) decodeAppPostRequestRequest(r *http.Request) (
+	req OptAppPostRequestReq,
 	close func() error,
 	rerr error,
 ) {
@@ -195,7 +191,7 @@ func (s *Server) decodeEvaluateRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request OptEvaluateReq
+		var request OptAppPostRequestReq
 		if err := func() error {
 			request.Reset()
 			if err := request.Decode(d); err != nil {
@@ -234,7 +230,158 @@ func (s *Server) decodeEvaluateRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodePostDriverCoordinateRequest(r *http.Request) (
+func (s *Server) decodeAppPostRequestEvaluateRequest(r *http.Request) (
+	req OptAppPostRequestEvaluateReq,
+	close func() error,
+	rerr error,
+) {
+	var closers []func() error
+	close = func() error {
+		var merr error
+		// Close in reverse order, to match defer behavior.
+		for i := len(closers) - 1; i >= 0; i-- {
+			c := closers[i]
+			merr = errors.Join(merr, c())
+		}
+		return merr
+	}
+	defer func() {
+		if rerr != nil {
+			rerr = errors.Join(rerr, close())
+		}
+	}()
+	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
+		return req, close, nil
+	}
+	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil {
+		return req, close, errors.Wrap(err, "parse media type")
+	}
+	switch {
+	case ct == "application/json":
+		if r.ContentLength == 0 {
+			return req, close, nil
+		}
+		buf, err := io.ReadAll(r.Body)
+		if err != nil {
+			return req, close, err
+		}
+
+		if len(buf) == 0 {
+			return req, close, nil
+		}
+
+		d := jx.DecodeBytes(buf)
+
+		var request OptAppPostRequestEvaluateReq
+		if err := func() error {
+			request.Reset()
+			if err := request.Decode(d); err != nil {
+				return err
+			}
+			if err := d.Skip(); err != io.EOF {
+				return errors.New("unexpected trailing data")
+			}
+			return nil
+		}(); err != nil {
+			err = &ogenerrors.DecodeBodyError{
+				ContentType: ct,
+				Body:        buf,
+				Err:         err,
+			}
+			return req, close, err
+		}
+		if err := func() error {
+			if value, ok := request.Get(); ok {
+				if err := func() error {
+					if err := value.Validate(); err != nil {
+						return err
+					}
+					return nil
+				}(); err != nil {
+					return err
+				}
+			}
+			return nil
+		}(); err != nil {
+			return req, close, errors.Wrap(err, "validate")
+		}
+		return request, close, nil
+	default:
+		return req, close, validate.InvalidContentType(ct)
+	}
+}
+
+func (s *Server) decodeChairPostActivateRequest(r *http.Request) (
+	req *ChairPostActivateReq,
+	close func() error,
+	rerr error,
+) {
+	var closers []func() error
+	close = func() error {
+		var merr error
+		// Close in reverse order, to match defer behavior.
+		for i := len(closers) - 1; i >= 0; i-- {
+			c := closers[i]
+			merr = errors.Join(merr, c())
+		}
+		return merr
+	}
+	defer func() {
+		if rerr != nil {
+			rerr = errors.Join(rerr, close())
+		}
+	}()
+	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
+		return req, close, nil
+	}
+	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
+	if err != nil {
+		return req, close, errors.Wrap(err, "parse media type")
+	}
+	switch {
+	case ct == "application/json":
+		if r.ContentLength == 0 {
+			return req, close, nil
+		}
+		buf, err := io.ReadAll(r.Body)
+		if err != nil {
+			return req, close, err
+		}
+
+		if len(buf) == 0 {
+			return req, close, nil
+		}
+
+		d := jx.DecodeBytes(buf)
+
+		var request *ChairPostActivateReq
+		if err := func() error {
+			request = nil
+			var elem ChairPostActivateReq
+			if err := elem.Decode(d); err != nil {
+				return err
+			}
+			request = &elem
+			if err := d.Skip(); err != io.EOF {
+				return errors.New("unexpected trailing data")
+			}
+			return nil
+		}(); err != nil {
+			err = &ogenerrors.DecodeBodyError{
+				ContentType: ct,
+				Body:        buf,
+				Err:         err,
+			}
+			return req, close, err
+		}
+		return request, close, nil
+	default:
+		return req, close, validate.InvalidContentType(ct)
+	}
+}
+
+func (s *Server) decodeChairPostCoordinateRequest(r *http.Request) (
 	req OptCoordinate,
 	close func() error,
 	rerr error,
@@ -316,8 +463,8 @@ func (s *Server) decodePostDriverCoordinateRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodePostInquiryRequest(r *http.Request) (
-	req OptPostInquiryReq,
+func (s *Server) decodeChairPostDeactivateRequest(r *http.Request) (
+	req *ChairPostDeactivateReq,
 	close func() error,
 	rerr error,
 ) {
@@ -359,12 +506,14 @@ func (s *Server) decodePostInquiryRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request OptPostInquiryReq
+		var request *ChairPostDeactivateReq
 		if err := func() error {
-			request.Reset()
-			if err := request.Decode(d); err != nil {
+			request = nil
+			var elem ChairPostDeactivateReq
+			if err := elem.Decode(d); err != nil {
 				return err
 			}
+			request = &elem
 			if err := d.Skip(); err != io.EOF {
 				return errors.New("unexpected trailing data")
 			}
@@ -383,8 +532,8 @@ func (s *Server) decodePostInquiryRequest(r *http.Request) (
 	}
 }
 
-func (s *Server) decodePostRequestRequest(r *http.Request) (
-	req OptPostRequestReq,
+func (s *Server) decodeChairPostRegisterRequest(r *http.Request) (
+	req OptChairPostRegisterReq,
 	close func() error,
 	rerr error,
 ) {
@@ -426,156 +575,7 @@ func (s *Server) decodePostRequestRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request OptPostRequestReq
-		if err := func() error {
-			request.Reset()
-			if err := request.Decode(d); err != nil {
-				return err
-			}
-			if err := d.Skip(); err != io.EOF {
-				return errors.New("unexpected trailing data")
-			}
-			return nil
-		}(); err != nil {
-			err = &ogenerrors.DecodeBodyError{
-				ContentType: ct,
-				Body:        buf,
-				Err:         err,
-			}
-			return req, close, err
-		}
-		if err := func() error {
-			if value, ok := request.Get(); ok {
-				if err := func() error {
-					if err := value.Validate(); err != nil {
-						return err
-					}
-					return nil
-				}(); err != nil {
-					return err
-				}
-			}
-			return nil
-		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
-		}
-		return request, close, nil
-	default:
-		return req, close, validate.InvalidContentType(ct)
-	}
-}
-
-func (s *Server) decodeRegisterDriverRequest(r *http.Request) (
-	req OptRegisterDriverReq,
-	close func() error,
-	rerr error,
-) {
-	var closers []func() error
-	close = func() error {
-		var merr error
-		// Close in reverse order, to match defer behavior.
-		for i := len(closers) - 1; i >= 0; i-- {
-			c := closers[i]
-			merr = errors.Join(merr, c())
-		}
-		return merr
-	}
-	defer func() {
-		if rerr != nil {
-			rerr = errors.Join(rerr, close())
-		}
-	}()
-	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
-		return req, close, nil
-	}
-	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
-	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
-	}
-	switch {
-	case ct == "application/json":
-		if r.ContentLength == 0 {
-			return req, close, nil
-		}
-		buf, err := io.ReadAll(r.Body)
-		if err != nil {
-			return req, close, err
-		}
-
-		if len(buf) == 0 {
-			return req, close, nil
-		}
-
-		d := jx.DecodeBytes(buf)
-
-		var request OptRegisterDriverReq
-		if err := func() error {
-			request.Reset()
-			if err := request.Decode(d); err != nil {
-				return err
-			}
-			if err := d.Skip(); err != io.EOF {
-				return errors.New("unexpected trailing data")
-			}
-			return nil
-		}(); err != nil {
-			err = &ogenerrors.DecodeBodyError{
-				ContentType: ct,
-				Body:        buf,
-				Err:         err,
-			}
-			return req, close, err
-		}
-		return request, close, nil
-	default:
-		return req, close, validate.InvalidContentType(ct)
-	}
-}
-
-func (s *Server) decodeRegisterUserRequest(r *http.Request) (
-	req OptRegisterUserReq,
-	close func() error,
-	rerr error,
-) {
-	var closers []func() error
-	close = func() error {
-		var merr error
-		// Close in reverse order, to match defer behavior.
-		for i := len(closers) - 1; i >= 0; i-- {
-			c := closers[i]
-			merr = errors.Join(merr, c())
-		}
-		return merr
-	}
-	defer func() {
-		if rerr != nil {
-			rerr = errors.Join(rerr, close())
-		}
-	}()
-	if _, ok := r.Header["Content-Type"]; !ok && r.ContentLength == 0 {
-		return req, close, nil
-	}
-	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
-	if err != nil {
-		return req, close, errors.Wrap(err, "parse media type")
-	}
-	switch {
-	case ct == "application/json":
-		if r.ContentLength == 0 {
-			return req, close, nil
-		}
-		buf, err := io.ReadAll(r.Body)
-		if err != nil {
-			return req, close, err
-		}
-
-		if len(buf) == 0 {
-			return req, close, nil
-		}
-
-		d := jx.DecodeBytes(buf)
-
-		var request OptRegisterUserReq
+		var request OptChairPostRegisterReq
 		if err := func() error {
 			request.Reset()
 			if err := request.Decode(d); err != nil {

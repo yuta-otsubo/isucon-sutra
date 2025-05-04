@@ -23,8 +23,7 @@ type postAppRegisterResponse struct {
 	ID          string `json:"id"`
 }
 
-// 配車アプリのユーザー登録処理
-func postAppRegister(w http.ResponseWriter, r *http.Request) {
+func appPostRegister(w http.ResponseWriter, r *http.Request) {
 	req := &postAppRegisterRequest{}
 	if err := bindJSON(r, req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -53,7 +52,6 @@ func postAppRegister(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// API認証を処理するミドルウェア
 func appAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		accessToken := strings.TrimSpace(strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer "))
@@ -83,8 +81,7 @@ type postAppRequestsResponse struct {
 	RequestID string `json:"request_id"`
 }
 
-// ユーザーの歯医者リクエストを処理する
-func postAppRequests(w http.ResponseWriter, r *http.Request) {
+func appPostRequests(w http.ResponseWriter, r *http.Request) {
 	req := &postAppRequestsRequest{}
 	if err := bindJSON(r, req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -109,14 +106,12 @@ func postAppRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// FIX: アクティブなドライバーを見つけるまで無限ループするみたい
 	for {
 		// TODO: トランザクションを利用する
-		driver := &Driver{}
+		chair := &Chair{}
 		err := db.Get(
-			driver,
-			// SELECT * をやめる
-			`SELECT * FROM drivers WHERE is_active = 1 ORDER BY RAND() LIMIT 1`,
+			chair,
+			`SELECT * FROM chairs WHERE is_active = 1 ORDER BY RAND() LIMIT 1`,
 		)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
@@ -128,8 +123,8 @@ func postAppRequests(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_, err = db.Exec(
-			`UPDATE ride_requests SET driver_id = ?, status = ? WHERE id = ?`,
-			driver.ID, "DISPATCHING", requestID,
+			`UPDATE ride_requests SET chair_id = ?, status = ? WHERE id = ?`,
+			chair.ID, "DISPATCHING", requestID,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -143,25 +138,24 @@ func postAppRequests(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type simpleDriver struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	CarModel string `json:"car_model"`
-	CarNo    string `json:"car_no"`
+type simpleChair struct {
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	ChairModel string `json:"chair_model"`
+	ChairNo    string `json:"chair_no"`
 }
 
 type getAppRequestResponse struct {
-	RequestID             string       `json:"request_id"`
-	PickupCoordinate      Coordinate   `json:"pickup_coordinate"`
-	DestinationCoordinate Coordinate   `json:"destination_coordinate"`
-	Status                string       `json:"status"`
-	Driver                simpleDriver `json:"driver"`
-	CreatedAt             int64        `json:"created_at"`
-	UpdateAt              int64        `json:"updated_at"`
+	RequestID             string      `json:"request_id"`
+	PickupCoordinate      Coordinate  `json:"pickup_coordinate"`
+	DestinationCoordinate Coordinate  `json:"destination_coordinate"`
+	Status                string      `json:"status"`
+	Chair                 simpleChair `json:"chair"`
+	CreatedAt             int64       `json:"created_at"`
+	UpdateAt              int64       `json:"updated_at"`
 }
 
-// 特定の配車リクエストの詳細情報を取得する
-func getAppRequest(w http.ResponseWriter, r *http.Request) {
+func appGetRequest(w http.ResponseWriter, r *http.Request) {
 	requestID := r.PathValue("request_id")
 
 	rideRequest := &RideRequest{}
@@ -189,22 +183,22 @@ func getAppRequest(w http.ResponseWriter, r *http.Request) {
 		UpdateAt:  rideRequest.UpdatedAt.Unix(),
 	}
 
-	driver := &Driver{}
-	if rideRequest.DriverID != "" {
+	chair := &Chair{}
+	if rideRequest.ChairID != "" {
 		err := db.Get(
-			driver,
-			`SELECT * FROM drivers WHERE id = ?`,
-			rideRequest.DriverID,
+			chair,
+			`SELECT * FROM chairs WHERE id = ?`,
+			rideRequest.ChairID,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		response.Driver = simpleDriver{
-			ID:       driver.ID,
-			Name:     driver.Firstname + " " + driver.Lastname,
-			CarModel: driver.CarModel,
-			CarNo:    driver.CarNo,
+		response.Chair = simpleChair{
+			ID:         chair.ID,
+			Name:       chair.Firstname + " " + chair.Lastname,
+			ChairModel: chair.CarModel,
+			ChairNo:    chair.CarNo,
 		}
 	}
 
@@ -215,8 +209,7 @@ type postAppEvaluateRequest struct {
 	Evaluation int `json:"evaluation"`
 }
 
-// サービス利用後の評価して送信することをユーザーが行う
-func postAppEvaluate(w http.ResponseWriter, r *http.Request) {
+func appPostRequestEvaluate(w http.ResponseWriter, r *http.Request) {
 	requestID := r.PathValue("request_id")
 	postAppEvaluateRequest := &postAppEvaluateRequest{}
 	if err := bindJSON(r, postAppEvaluateRequest); err != nil {
@@ -242,7 +235,7 @@ func postAppEvaluate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func getAppNotification(w http.ResponseWriter, r *http.Request) {
+func appGetNotification(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -251,8 +244,7 @@ type postAppInquiryRequest struct {
 	Body    string `json:"body"`
 }
 
-// ユーザーが問い合わせを送信する
-func postAppInquiry(w http.ResponseWriter, r *http.Request) {
+func appPostInquiry(w http.ResponseWriter, r *http.Request) {
 	user, ok := r.Context().Value("user").(*User)
 	if !ok {
 		w.WriteHeader(http.StatusUnauthorized)

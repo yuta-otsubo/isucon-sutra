@@ -28,114 +28,114 @@ func trimTrailingSlashes(u *url.URL) {
 
 // Invoker invokes operations described by OpenAPI v3 specification.
 type Invoker interface {
-	// AcceptRequest invokes accept-request operation.
-	//
-	// ドライバーが配車要求を受理する.
-	//
-	// POST /driver/requests/{request_id}/accept
-	AcceptRequest(ctx context.Context, params AcceptRequestParams) (AcceptRequestRes, error)
-	// ActivateDriver invokes activate-driver operation.
-	//
-	// ドライバーが配車受付を開始する.
-	//
-	// POST /driver/activate
-	ActivateDriver(ctx context.Context, request *ActivateDriverReq) error
-	// DeactivateDriver invokes deactivate-driver operation.
-	//
-	// ドライバーが配車受付を停止する.
-	//
-	// POST /driver/deactivate
-	DeactivateDriver(ctx context.Context, request *DeactivateDriverReq) error
-	// DenyRequest invokes deny-request operation.
-	//
-	// ドライバーが配車要求を拒否する.
-	//
-	// POST /driver/requests/{request_id}/deny
-	DenyRequest(ctx context.Context, params DenyRequestParams) (DenyRequestRes, error)
-	// Depart invokes depart operation.
-	//
-	// ドライバーが配車位置から出発する(ユーザーが乗車完了した).
-	//
-	// POST /driver/requests/{request_id}/depart
-	Depart(ctx context.Context, params DepartParams) (DepartRes, error)
-	// Evaluate invokes evaluate operation.
-	//
-	// ユーザーがドライバーを評価する.
-	//
-	// POST /app/requests/{request_id}/evaluate
-	Evaluate(ctx context.Context, request OptEvaluateReq, params EvaluateParams) (EvaluateRes, error)
-	// GetAppNotification invokes get-app-notification operation.
+	// AppGetNotification invokes app-get-notification operation.
 	//
 	// ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
 	//
 	// GET /app/notification
-	GetAppNotification(ctx context.Context) error
-	// GetAppRequest invokes get-app-request operation.
+	AppGetNotification(ctx context.Context) error
+	// AppGetRequest invokes app-get-request operation.
 	//
 	// ユーザーが配車要求の状態を確認する.
 	//
 	// GET /app/requests/{request_id}
-	GetAppRequest(ctx context.Context, params GetAppRequestParams) (GetAppRequestRes, error)
-	// GetDriverNotification invokes get-driver-notification operation.
-	//
-	// ドライバーに配車要求を通知するなどで使う想定.
-	//
-	// GET /driver/notification
-	GetDriverNotification(ctx context.Context) error
-	// GetInquiries invokes get-inquiries operation.
-	//
-	// 問い合わせの一覧を取得する.
-	//
-	// GET /admin/inquiries
-	GetInquiries(ctx context.Context, params GetInquiriesParams) (*GetInquiriesOK, error)
-	// GetInquiry invokes get-inquiry operation.
-	//
-	// 指定したIDの問い合わせ内容を取得.
-	//
-	// GET /admin/inquiries/{inquiry_id}
-	GetInquiry(ctx context.Context, params GetInquiryParams) (GetInquiryRes, error)
-	// GetRequest invokes get-request operation.
-	//
-	// ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定.
-	//
-	// GET /driver/requests/{request_id}
-	GetRequest(ctx context.Context, params GetRequestParams) (GetRequestRes, error)
-	// Initialize invokes initialize operation.
-	//
-	// サービスを初期化する.
-	//
-	// POST /initialize
-	Initialize(ctx context.Context) (*InitializeOK, error)
-	// PostDriverCoordinate invokes post-driver-coordinate operation.
-	//
-	// ドライバーが位置情報を送信する.
-	//
-	// POST /driver/coordinate
-	PostDriverCoordinate(ctx context.Context, request OptCoordinate) error
-	// PostInquiry invokes post-inquiry operation.
+	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
+	// AppPostInquiry invokes app-post-inquiry operation.
 	//
 	// ユーザーが問い合わせを送信する.
 	//
 	// POST /app/inquiry
-	PostInquiry(ctx context.Context, request OptPostInquiryReq) error
-	// PostRequest invokes post-request operation.
-	//
-	// ユーザーが配車要求を行う.
-	//
-	// POST /app/requests
-	PostRequest(ctx context.Context, request OptPostRequestReq) (*PostRequestAccepted, error)
-	// RegisterDriver invokes register-driver operation.
-	//
-	// ドライバー登録を行う.
-	//
-	// POST /driver/register
-	RegisterDriver(ctx context.Context, request OptRegisterDriverReq) (*RegisterDriverCreated, error)
-	// RegisterUser invokes register-user operation.
+	AppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) error
+	// AppPostRegister invokes app-post-register operation.
 	//
 	// ユーザーが会員登録を行う.
 	//
 	// POST /app/register
-	RegisterUser(ctx context.Context, request OptRegisterUserReq) (RegisterUserRes, error)
+	AppPostRegister(ctx context.Context, request OptAppPostRegisterReq) (AppPostRegisterRes, error)
+	// AppPostRequest invokes app-post-request operation.
+	//
+	// ユーザーが配車要求を行う.
+	//
+	// POST /app/requests
+	AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (*AppPostRequestAccepted, error)
+	// AppPostRequestEvaluate invokes app-post-request-evaluate operation.
+	//
+	// ユーザーが椅子を評価する.
+	//
+	// POST /app/requests/{request_id}/evaluate
+	AppPostRequestEvaluate(ctx context.Context, request OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error)
+	// ChairGetInquiries invokes chair-get-inquiries operation.
+	//
+	// 問い合わせの一覧を取得する.
+	//
+	// GET /admin/inquiries
+	ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error)
+	// ChairGetInquiry invokes chair-get-inquiry operation.
+	//
+	// 指定したIDの問い合わせ内容を取得.
+	//
+	// GET /admin/inquiries/{inquiry_id}
+	ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error)
+	// ChairGetNotification invokes chair-get-notification operation.
+	//
+	// 椅子に配車要求を通知するなどで使う想定.
+	//
+	// GET /chair/notification
+	ChairGetNotification(ctx context.Context) error
+	// ChairGetRequest invokes chair-get-request operation.
+	//
+	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
+	//
+	// GET /chair/requests/{request_id}
+	ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (ChairGetRequestRes, error)
+	// ChairPostActivate invokes chair-post-activate operation.
+	//
+	// 椅子が配車受付を開始する.
+	//
+	// POST /chair/activate
+	ChairPostActivate(ctx context.Context, request *ChairPostActivateReq) error
+	// ChairPostCoordinate invokes chair-post-coordinate operation.
+	//
+	// 椅子が位置情報を送信する.
+	//
+	// POST /chair/coordinate
+	ChairPostCoordinate(ctx context.Context, request OptCoordinate) error
+	// ChairPostDeactivate invokes chair-post-deactivate operation.
+	//
+	// 椅子が配車受付を停止する.
+	//
+	// POST /chair/deactivate
+	ChairPostDeactivate(ctx context.Context, request *ChairPostDeactivateReq) error
+	// ChairPostRegister invokes chair-post-register operation.
+	//
+	// 椅子登録を行う.
+	//
+	// POST /chair/register
+	ChairPostRegister(ctx context.Context, request OptChairPostRegisterReq) (*ChairPostRegisterCreated, error)
+	// ChairPostRequestAccept invokes chair-post-request-accept operation.
+	//
+	// 椅子が配車要求を受理する.
+	//
+	// POST /chair/requests/{request_id}/accept
+	ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (ChairPostRequestAcceptRes, error)
+	// ChairPostRequestDeny invokes chair-post-request-deny operation.
+	//
+	// 椅子が配車要求を拒否する.
+	//
+	// POST /chair/requests/{request_id}/deny
+	ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (ChairPostRequestDenyRes, error)
+	// ChairPostRequestDepart invokes chair-post-request-depart operation.
+	//
+	// 椅子が配車位置から出発する(ユーザーが乗車完了した).
+	//
+	// POST /chair/requests/{request_id}/depart
+	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
+	// PostInitialize invokes post-initialize operation.
+	//
+	// サービスを初期化する.
+	//
+	// POST /initialize
+	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
 }
 
 // Client implements OAS client.
@@ -181,536 +181,19 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 	return u
 }
 
-// AcceptRequest invokes accept-request operation.
-//
-// ドライバーが配車要求を受理する.
-//
-// POST /driver/requests/{request_id}/accept
-func (c *Client) AcceptRequest(ctx context.Context, params AcceptRequestParams) (AcceptRequestRes, error) {
-	res, err := c.sendAcceptRequest(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendAcceptRequest(ctx context.Context, params AcceptRequestParams) (res AcceptRequestRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("accept-request"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/accept"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, AcceptRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/driver/requests/"
-	{
-		// Encode "request_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "request_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.RequestID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/accept"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeAcceptRequestResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ActivateDriver invokes activate-driver operation.
-//
-// ドライバーが配車受付を開始する.
-//
-// POST /driver/activate
-func (c *Client) ActivateDriver(ctx context.Context, request *ActivateDriverReq) error {
-	_, err := c.sendActivateDriver(ctx, request)
-	return err
-}
-
-func (c *Client) sendActivateDriver(ctx context.Context, request *ActivateDriverReq) (res *ActivateDriverNoContent, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("activate-driver"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/activate"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ActivateDriverOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/driver/activate"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeActivateDriverRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeActivateDriverResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// DeactivateDriver invokes deactivate-driver operation.
-//
-// ドライバーが配車受付を停止する.
-//
-// POST /driver/deactivate
-func (c *Client) DeactivateDriver(ctx context.Context, request *DeactivateDriverReq) error {
-	_, err := c.sendDeactivateDriver(ctx, request)
-	return err
-}
-
-func (c *Client) sendDeactivateDriver(ctx context.Context, request *DeactivateDriverReq) (res *DeactivateDriverNoContent, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deactivate-driver"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/deactivate"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DeactivateDriverOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/driver/deactivate"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeDeactivateDriverRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeDeactivateDriverResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// DenyRequest invokes deny-request operation.
-//
-// ドライバーが配車要求を拒否する.
-//
-// POST /driver/requests/{request_id}/deny
-func (c *Client) DenyRequest(ctx context.Context, params DenyRequestParams) (DenyRequestRes, error) {
-	res, err := c.sendDenyRequest(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendDenyRequest(ctx context.Context, params DenyRequestParams) (res DenyRequestRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deny-request"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/deny"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DenyRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/driver/requests/"
-	{
-		// Encode "request_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "request_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.RequestID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/deny"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeDenyRequestResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// Depart invokes depart operation.
-//
-// ドライバーが配車位置から出発する(ユーザーが乗車完了した).
-//
-// POST /driver/requests/{request_id}/depart
-func (c *Client) Depart(ctx context.Context, params DepartParams) (DepartRes, error) {
-	res, err := c.sendDepart(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendDepart(ctx context.Context, params DepartParams) (res DepartRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("depart"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/depart"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, DepartOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/driver/requests/"
-	{
-		// Encode "request_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "request_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.RequestID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/depart"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeDepartResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// Evaluate invokes evaluate operation.
-//
-// ユーザーがドライバーを評価する.
-//
-// POST /app/requests/{request_id}/evaluate
-func (c *Client) Evaluate(ctx context.Context, request OptEvaluateReq, params EvaluateParams) (EvaluateRes, error) {
-	res, err := c.sendEvaluate(ctx, request, params)
-	return res, err
-}
-
-func (c *Client) sendEvaluate(ctx context.Context, request OptEvaluateReq, params EvaluateParams) (res EvaluateRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("evaluate"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/requests/{request_id}/evaluate"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, EvaluateOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [3]string
-	pathParts[0] = "/app/requests/"
-	{
-		// Encode "request_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "request_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.RequestID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	pathParts[2] = "/evaluate"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeEvaluateRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeEvaluateResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// GetAppNotification invokes get-app-notification operation.
+// AppGetNotification invokes app-get-notification operation.
 //
 // ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
 //
 // GET /app/notification
-func (c *Client) GetAppNotification(ctx context.Context) error {
-	_, err := c.sendGetAppNotification(ctx)
+func (c *Client) AppGetNotification(ctx context.Context) error {
+	_, err := c.sendAppGetNotification(ctx)
 	return err
 }
 
-func (c *Client) sendGetAppNotification(ctx context.Context) (res *GetAppNotificationOK, err error) {
+func (c *Client) sendAppGetNotification(ctx context.Context) (res *AppGetNotificationOK, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-app-notification"),
+		otelogen.OperationID("app-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app/notification"),
 	}
@@ -727,7 +210,7 @@ func (c *Client) sendGetAppNotification(ctx context.Context) (res *GetAppNotific
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetAppNotificationOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, AppGetNotificationOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -762,7 +245,7 @@ func (c *Client) sendGetAppNotification(ctx context.Context) (res *GetAppNotific
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetAppNotificationResponse(resp)
+	result, err := decodeAppGetNotificationResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -770,19 +253,19 @@ func (c *Client) sendGetAppNotification(ctx context.Context) (res *GetAppNotific
 	return result, nil
 }
 
-// GetAppRequest invokes get-app-request operation.
+// AppGetRequest invokes app-get-request operation.
 //
 // ユーザーが配車要求の状態を確認する.
 //
 // GET /app/requests/{request_id}
-func (c *Client) GetAppRequest(ctx context.Context, params GetAppRequestParams) (GetAppRequestRes, error) {
-	res, err := c.sendGetAppRequest(ctx, params)
+func (c *Client) AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error) {
+	res, err := c.sendAppGetRequest(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetAppRequest(ctx context.Context, params GetAppRequestParams) (res GetAppRequestRes, err error) {
+func (c *Client) sendAppGetRequest(ctx context.Context, params AppGetRequestParams) (res AppGetRequestRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-app-request"),
+		otelogen.OperationID("app-get-request"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app/requests/{request_id}"),
 	}
@@ -799,7 +282,7 @@ func (c *Client) sendGetAppRequest(ctx context.Context, params GetAppRequestPara
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetAppRequestOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, AppGetRequestOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -852,7 +335,7 @@ func (c *Client) sendGetAppRequest(ctx context.Context, params GetAppRequestPara
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetAppRequestResponse(resp)
+	result, err := decodeAppGetRequestResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -860,21 +343,21 @@ func (c *Client) sendGetAppRequest(ctx context.Context, params GetAppRequestPara
 	return result, nil
 }
 
-// GetDriverNotification invokes get-driver-notification operation.
+// AppPostInquiry invokes app-post-inquiry operation.
 //
-// ドライバーに配車要求を通知するなどで使う想定.
+// ユーザーが問い合わせを送信する.
 //
-// GET /driver/notification
-func (c *Client) GetDriverNotification(ctx context.Context) error {
-	_, err := c.sendGetDriverNotification(ctx)
+// POST /app/inquiry
+func (c *Client) AppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) error {
+	_, err := c.sendAppPostInquiry(ctx, request)
 	return err
 }
 
-func (c *Client) sendGetDriverNotification(ctx context.Context) (res *GetDriverNotificationOK, err error) {
+func (c *Client) sendAppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) (res *AppPostInquiryNoContent, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-driver-notification"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/driver/notification"),
+		otelogen.OperationID("app-post-inquiry"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/inquiry"),
 	}
 
 	// Run stopwatch.
@@ -889,7 +372,7 @@ func (c *Client) sendGetDriverNotification(ctx context.Context) (res *GetDriverN
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetDriverNotificationOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, AppPostInquiryOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -907,13 +390,16 @@ func (c *Client) sendGetDriverNotification(ctx context.Context) (res *GetDriverN
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [1]string
-	pathParts[0] = "/driver/notification"
+	pathParts[0] = "/app/inquiry"
 	uri.AddPathParts(u, pathParts[:]...)
 
 	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
+	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAppPostInquiryRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	stage = "SendRequest"
@@ -924,7 +410,7 @@ func (c *Client) sendGetDriverNotification(ctx context.Context) (res *GetDriverN
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetDriverNotificationResponse(resp)
+	result, err := decodeAppPostInquiryResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -932,19 +418,263 @@ func (c *Client) sendGetDriverNotification(ctx context.Context) (res *GetDriverN
 	return result, nil
 }
 
-// GetInquiries invokes get-inquiries operation.
+// AppPostRegister invokes app-post-register operation.
+//
+// ユーザーが会員登録を行う.
+//
+// POST /app/register
+func (c *Client) AppPostRegister(ctx context.Context, request OptAppPostRegisterReq) (AppPostRegisterRes, error) {
+	res, err := c.sendAppPostRegister(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendAppPostRegister(ctx context.Context, request OptAppPostRegisterReq) (res AppPostRegisterRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-register"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/register"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, AppPostRegisterOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/app/register"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAppPostRegisterRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeAppPostRegisterResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AppPostRequest invokes app-post-request operation.
+//
+// ユーザーが配車要求を行う.
+//
+// POST /app/requests
+func (c *Client) AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (*AppPostRequestAccepted, error) {
+	res, err := c.sendAppPostRequest(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendAppPostRequest(ctx context.Context, request OptAppPostRequestReq) (res *AppPostRequestAccepted, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-request"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/requests"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, AppPostRequestOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/app/requests"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAppPostRequestRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeAppPostRequestResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// AppPostRequestEvaluate invokes app-post-request-evaluate operation.
+//
+// ユーザーが椅子を評価する.
+//
+// POST /app/requests/{request_id}/evaluate
+func (c *Client) AppPostRequestEvaluate(ctx context.Context, request OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error) {
+	res, err := c.sendAppPostRequestEvaluate(ctx, request, params)
+	return res, err
+}
+
+func (c *Client) sendAppPostRequestEvaluate(ctx context.Context, request OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (res AppPostRequestEvaluateRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-request-evaluate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/requests/{request_id}/evaluate"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, AppPostRequestEvaluateOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/app/requests/"
+	{
+		// Encode "request_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "request_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.RequestID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/evaluate"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeAppPostRequestEvaluateRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeAppPostRequestEvaluateResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairGetInquiries invokes chair-get-inquiries operation.
 //
 // 問い合わせの一覧を取得する.
 //
 // GET /admin/inquiries
-func (c *Client) GetInquiries(ctx context.Context, params GetInquiriesParams) (*GetInquiriesOK, error) {
-	res, err := c.sendGetInquiries(ctx, params)
+func (c *Client) ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error) {
+	res, err := c.sendChairGetInquiries(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetInquiries(ctx context.Context, params GetInquiriesParams) (res *GetInquiriesOK, err error) {
+func (c *Client) sendChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (res *ChairGetInquiriesOK, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-inquiries"),
+		otelogen.OperationID("chair-get-inquiries"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/admin/inquiries"),
 	}
@@ -961,7 +691,7 @@ func (c *Client) sendGetInquiries(ctx context.Context, params GetInquiriesParams
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetInquiriesOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetInquiriesOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1034,7 +764,7 @@ func (c *Client) sendGetInquiries(ctx context.Context, params GetInquiriesParams
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetInquiriesResponse(resp)
+	result, err := decodeChairGetInquiriesResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1042,19 +772,19 @@ func (c *Client) sendGetInquiries(ctx context.Context, params GetInquiriesParams
 	return result, nil
 }
 
-// GetInquiry invokes get-inquiry operation.
+// ChairGetInquiry invokes chair-get-inquiry operation.
 //
 // 指定したIDの問い合わせ内容を取得.
 //
 // GET /admin/inquiries/{inquiry_id}
-func (c *Client) GetInquiry(ctx context.Context, params GetInquiryParams) (GetInquiryRes, error) {
-	res, err := c.sendGetInquiry(ctx, params)
+func (c *Client) ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error) {
+	res, err := c.sendChairGetInquiry(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendGetInquiry(ctx context.Context, params GetInquiryParams) (res GetInquiryRes, err error) {
+func (c *Client) sendChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (res ChairGetInquiryRes, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-inquiry"),
+		otelogen.OperationID("chair-get-inquiry"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/admin/inquiries/{inquiry_id}"),
 	}
@@ -1071,7 +801,7 @@ func (c *Client) sendGetInquiry(ctx context.Context, params GetInquiryParams) (r
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetInquiryOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetInquiryOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1124,7 +854,7 @@ func (c *Client) sendGetInquiry(ctx context.Context, params GetInquiryParams) (r
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetInquiryResponse(resp)
+	result, err := decodeChairGetInquiryResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1132,21 +862,21 @@ func (c *Client) sendGetInquiry(ctx context.Context, params GetInquiryParams) (r
 	return result, nil
 }
 
-// GetRequest invokes get-request operation.
+// ChairGetNotification invokes chair-get-notification operation.
 //
-// ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定.
+// 椅子に配車要求を通知するなどで使う想定.
 //
-// GET /driver/requests/{request_id}
-func (c *Client) GetRequest(ctx context.Context, params GetRequestParams) (GetRequestRes, error) {
-	res, err := c.sendGetRequest(ctx, params)
-	return res, err
+// GET /chair/notification
+func (c *Client) ChairGetNotification(ctx context.Context) error {
+	_, err := c.sendChairGetNotification(ctx)
+	return err
 }
 
-func (c *Client) sendGetRequest(ctx context.Context, params GetRequestParams) (res GetRequestRes, err error) {
+func (c *Client) sendChairGetNotification(ctx context.Context) (res *ChairGetNotificationOK, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-request"),
+		otelogen.OperationID("chair-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}"),
+		semconv.HTTPRouteKey.String("/chair/notification"),
 	}
 
 	// Run stopwatch.
@@ -1161,7 +891,79 @@ func (c *Client) sendGetRequest(ctx context.Context, params GetRequestParams) (r
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, GetRequestOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetNotificationOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/chair/notification"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairGetNotificationResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairGetRequest invokes chair-get-request operation.
+//
+// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
+//
+// GET /chair/requests/{request_id}
+func (c *Client) ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (ChairGetRequestRes, error) {
+	res, err := c.sendChairGetRequest(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendChairGetRequest(ctx context.Context, params ChairGetRequestParams) (res ChairGetRequestRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-get-request"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetRequestOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1179,7 +981,7 @@ func (c *Client) sendGetRequest(ctx context.Context, params GetRequestParams) (r
 	stage = "BuildURL"
 	u := uri.Clone(c.requestURL(ctx))
 	var pathParts [2]string
-	pathParts[0] = "/driver/requests/"
+	pathParts[0] = "/chair/requests/"
 	{
 		// Encode "request_id" parameter.
 		e := uri.NewPathEncoder(uri.PathEncoderConfig{
@@ -1214,7 +1016,7 @@ func (c *Client) sendGetRequest(ctx context.Context, params GetRequestParams) (r
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeGetRequestResponse(resp)
+	result, err := decodeChairGetRequestResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1222,19 +1024,592 @@ func (c *Client) sendGetRequest(ctx context.Context, params GetRequestParams) (r
 	return result, nil
 }
 
-// Initialize invokes initialize operation.
+// ChairPostActivate invokes chair-post-activate operation.
+//
+// 椅子が配車受付を開始する.
+//
+// POST /chair/activate
+func (c *Client) ChairPostActivate(ctx context.Context, request *ChairPostActivateReq) error {
+	_, err := c.sendChairPostActivate(ctx, request)
+	return err
+}
+
+func (c *Client) sendChairPostActivate(ctx context.Context, request *ChairPostActivateReq) (res *ChairPostActivateNoContent, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-activate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/activate"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostActivateOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/chair/activate"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeChairPostActivateRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostActivateResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostCoordinate invokes chair-post-coordinate operation.
+//
+// 椅子が位置情報を送信する.
+//
+// POST /chair/coordinate
+func (c *Client) ChairPostCoordinate(ctx context.Context, request OptCoordinate) error {
+	_, err := c.sendChairPostCoordinate(ctx, request)
+	return err
+}
+
+func (c *Client) sendChairPostCoordinate(ctx context.Context, request OptCoordinate) (res *ChairPostCoordinateNoContent, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-coordinate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/coordinate"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostCoordinateOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/chair/coordinate"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeChairPostCoordinateRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostCoordinateResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostDeactivate invokes chair-post-deactivate operation.
+//
+// 椅子が配車受付を停止する.
+//
+// POST /chair/deactivate
+func (c *Client) ChairPostDeactivate(ctx context.Context, request *ChairPostDeactivateReq) error {
+	_, err := c.sendChairPostDeactivate(ctx, request)
+	return err
+}
+
+func (c *Client) sendChairPostDeactivate(ctx context.Context, request *ChairPostDeactivateReq) (res *ChairPostDeactivateNoContent, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-deactivate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/deactivate"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostDeactivateOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/chair/deactivate"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeChairPostDeactivateRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostDeactivateResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostRegister invokes chair-post-register operation.
+//
+// 椅子登録を行う.
+//
+// POST /chair/register
+func (c *Client) ChairPostRegister(ctx context.Context, request OptChairPostRegisterReq) (*ChairPostRegisterCreated, error) {
+	res, err := c.sendChairPostRegister(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendChairPostRegister(ctx context.Context, request OptChairPostRegisterReq) (res *ChairPostRegisterCreated, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-register"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/register"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostRegisterOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/chair/register"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeChairPostRegisterRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostRegisterResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostRequestAccept invokes chair-post-request-accept operation.
+//
+// 椅子が配車要求を受理する.
+//
+// POST /chair/requests/{request_id}/accept
+func (c *Client) ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (ChairPostRequestAcceptRes, error) {
+	res, err := c.sendChairPostRequestAccept(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (res ChairPostRequestAcceptRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-request-accept"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/accept"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostRequestAcceptOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/chair/requests/"
+	{
+		// Encode "request_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "request_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.RequestID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/accept"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostRequestAcceptResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostRequestDeny invokes chair-post-request-deny operation.
+//
+// 椅子が配車要求を拒否する.
+//
+// POST /chair/requests/{request_id}/deny
+func (c *Client) ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (ChairPostRequestDenyRes, error) {
+	res, err := c.sendChairPostRequestDeny(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (res ChairPostRequestDenyRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-request-deny"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/deny"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostRequestDenyOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/chair/requests/"
+	{
+		// Encode "request_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "request_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.RequestID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/deny"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostRequestDenyResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ChairPostRequestDepart invokes chair-post-request-depart operation.
+//
+// 椅子が配車位置から出発する(ユーザーが乗車完了した).
+//
+// POST /chair/requests/{request_id}/depart
+func (c *Client) ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error) {
+	res, err := c.sendChairPostRequestDepart(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (res ChairPostRequestDepartRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-request-depart"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/depart"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ChairPostRequestDepartOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [3]string
+	pathParts[0] = "/chair/requests/"
+	{
+		// Encode "request_id" parameter.
+		e := uri.NewPathEncoder(uri.PathEncoderConfig{
+			Param:   "request_id",
+			Style:   uri.PathStyleSimple,
+			Explode: false,
+		})
+		if err := func() error {
+			return e.EncodeValue(conv.StringToString(params.RequestID))
+		}(); err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		encoded, err := e.Result()
+		if err != nil {
+			return res, errors.Wrap(err, "encode path")
+		}
+		pathParts[1] = encoded
+	}
+	pathParts[2] = "/depart"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeChairPostRequestDepartResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// PostInitialize invokes post-initialize operation.
 //
 // サービスを初期化する.
 //
 // POST /initialize
-func (c *Client) Initialize(ctx context.Context) (*InitializeOK, error) {
-	res, err := c.sendInitialize(ctx)
+func (c *Client) PostInitialize(ctx context.Context) (*PostInitializeOK, error) {
+	res, err := c.sendPostInitialize(ctx)
 	return res, err
 }
 
-func (c *Client) sendInitialize(ctx context.Context) (res *InitializeOK, err error) {
+func (c *Client) sendPostInitialize(ctx context.Context) (res *PostInitializeOK, err error) {
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("initialize"),
+		otelogen.OperationID("post-initialize"),
 		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/initialize"),
 	}
@@ -1251,7 +1626,7 @@ func (c *Client) sendInitialize(ctx context.Context) (res *InitializeOK, err err
 	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
 
 	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, InitializeOperation,
+	ctx, span := c.cfg.Tracer.Start(ctx, PostInitializeOperation,
 		trace.WithAttributes(otelAttrs...),
 		clientSpanKind,
 	)
@@ -1286,382 +1661,7 @@ func (c *Client) sendInitialize(ctx context.Context) (res *InitializeOK, err err
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodeInitializeResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// PostDriverCoordinate invokes post-driver-coordinate operation.
-//
-// ドライバーが位置情報を送信する.
-//
-// POST /driver/coordinate
-func (c *Client) PostDriverCoordinate(ctx context.Context, request OptCoordinate) error {
-	_, err := c.sendPostDriverCoordinate(ctx, request)
-	return err
-}
-
-func (c *Client) sendPostDriverCoordinate(ctx context.Context, request OptCoordinate) (res *PostDriverCoordinateNoContent, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-driver-coordinate"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/coordinate"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, PostDriverCoordinateOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/driver/coordinate"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodePostDriverCoordinateRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodePostDriverCoordinateResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// PostInquiry invokes post-inquiry operation.
-//
-// ユーザーが問い合わせを送信する.
-//
-// POST /app/inquiry
-func (c *Client) PostInquiry(ctx context.Context, request OptPostInquiryReq) error {
-	_, err := c.sendPostInquiry(ctx, request)
-	return err
-}
-
-func (c *Client) sendPostInquiry(ctx context.Context, request OptPostInquiryReq) (res *PostInquiryNoContent, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-inquiry"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/inquiry"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, PostInquiryOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/app/inquiry"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodePostInquiryRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodePostInquiryResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// PostRequest invokes post-request operation.
-//
-// ユーザーが配車要求を行う.
-//
-// POST /app/requests
-func (c *Client) PostRequest(ctx context.Context, request OptPostRequestReq) (*PostRequestAccepted, error) {
-	res, err := c.sendPostRequest(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendPostRequest(ctx context.Context, request OptPostRequestReq) (res *PostRequestAccepted, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-request"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/requests"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, PostRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/app/requests"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodePostRequestRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodePostRequestResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// RegisterDriver invokes register-driver operation.
-//
-// ドライバー登録を行う.
-//
-// POST /driver/register
-func (c *Client) RegisterDriver(ctx context.Context, request OptRegisterDriverReq) (*RegisterDriverCreated, error) {
-	res, err := c.sendRegisterDriver(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendRegisterDriver(ctx context.Context, request OptRegisterDriverReq) (res *RegisterDriverCreated, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("register-driver"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/register"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, RegisterDriverOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/driver/register"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeRegisterDriverRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeRegisterDriverResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// RegisterUser invokes register-user operation.
-//
-// ユーザーが会員登録を行う.
-//
-// POST /app/register
-func (c *Client) RegisterUser(ctx context.Context, request OptRegisterUserReq) (RegisterUserRes, error) {
-	res, err := c.sendRegisterUser(ctx, request)
-	return res, err
-}
-
-func (c *Client) sendRegisterUser(ctx context.Context, request OptRegisterUserReq) (res RegisterUserRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("register-user"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/register"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, RegisterUserOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/app/register"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeRegisterUserRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeRegisterUserResponse(resp)
+	result, err := decodePostInitializeResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

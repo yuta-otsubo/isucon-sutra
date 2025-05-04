@@ -15,7 +15,7 @@ type getAdminInquiriesResponse struct {
 }
 
 // 管理者向けの問い合わせ一覧を取得
-func getAdminInquiries(w http.ResponseWriter, r *http.Request) {
+func adminGetInquiries(w http.ResponseWriter, r *http.Request) {
 	limitStr := r.URL.Query().Get("limit")
 	if limitStr == "" {
 		limitStr = "20"
@@ -69,7 +69,7 @@ type getAdminInquiryResponse struct {
 }
 
 // 特定の1件の問い合わせ詳細情報を取得する
-func getAdminInquiry(w http.ResponseWriter, r *http.Request) {
+func adminGetInquiry(w http.ResponseWriter, r *http.Request) {
 	inquiryID := r.URL.Query().Get("inquiry_id")
 
 	inquiry := Inquiry{}

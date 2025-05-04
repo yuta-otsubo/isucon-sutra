@@ -11,118 +11,16 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func encodeAcceptRequestResponse(response AcceptRequestRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *AcceptRequestNoContent:
-		w.WriteHeader(204)
-		span.SetStatus(codes.Ok, http.StatusText(204))
-
-		return nil
-
-	case *AcceptRequestNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeActivateDriverResponse(response *ActivateDriverNoContent, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(204)
-	span.SetStatus(codes.Ok, http.StatusText(204))
-
-	return nil
-}
-
-func encodeDeactivateDriverResponse(response *DeactivateDriverNoContent, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(204)
-	span.SetStatus(codes.Ok, http.StatusText(204))
-
-	return nil
-}
-
-func encodeDenyRequestResponse(response DenyRequestRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *DenyRequestNoContent:
-		w.WriteHeader(204)
-		span.SetStatus(codes.Ok, http.StatusText(204))
-
-		return nil
-
-	case *DenyRequestNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeDepartResponse(response DepartRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *DepartNoContent:
-		w.WriteHeader(204)
-		span.SetStatus(codes.Ok, http.StatusText(204))
-
-		return nil
-
-	case *DepartBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *DepartNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeEvaluateResponse(response EvaluateRes, w http.ResponseWriter, span trace.Span) error {
-	switch response := response.(type) {
-	case *EvaluateNoContent:
-		w.WriteHeader(204)
-		span.SetStatus(codes.Ok, http.StatusText(204))
-
-		return nil
-
-	case *EvaluateBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
-
-		return nil
-
-	case *EvaluateNotFound:
-		w.WriteHeader(404)
-		span.SetStatus(codes.Error, http.StatusText(404))
-
-		return nil
-
-	default:
-		return errors.Errorf("unexpected response type: %T", response)
-	}
-}
-
-func encodeGetAppNotificationResponse(response *GetAppNotificationOK, w http.ResponseWriter, span trace.Span) error {
+func encodeAppGetNotificationResponse(response *AppGetNotificationOK, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
 
 	return nil
 }
 
-func encodeGetAppRequestResponse(response GetAppRequestRes, w http.ResponseWriter, span trace.Span) error {
+func encodeAppGetRequestResponse(response AppGetRequestRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *GetAppRequestOK:
+	case *AppGetRequestOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -135,7 +33,7 @@ func encodeGetAppRequestResponse(response GetAppRequestRes, w http.ResponseWrite
 
 		return nil
 
-	case *GetAppRequestNotFound:
+	case *AppGetRequestNotFound:
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
@@ -146,14 +44,79 @@ func encodeGetAppRequestResponse(response GetAppRequestRes, w http.ResponseWrite
 	}
 }
 
-func encodeGetDriverNotificationResponse(response *GetDriverNotificationOK, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
+func encodeAppPostInquiryResponse(response *AppPostInquiryNoContent, w http.ResponseWriter, span trace.Span) error {
+	w.WriteHeader(204)
+	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodeGetInquiriesResponse(response *GetInquiriesOK, w http.ResponseWriter, span trace.Span) error {
+func encodeAppPostRegisterResponse(response AppPostRegisterRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *AppPostRegisterOK:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *AppPostRegisterBadRequest:
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeAppPostRequestResponse(response *AppPostRequestAccepted, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(202)
+	span.SetStatus(codes.Ok, http.StatusText(202))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
+}
+
+func encodeAppPostRequestEvaluateResponse(response AppPostRequestEvaluateRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *AppPostRequestEvaluateNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
+
+		return nil
+
+	case *AppPostRequestEvaluateBadRequest:
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		return nil
+
+	case *AppPostRequestEvaluateNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeChairGetInquiriesResponse(response *ChairGetInquiriesOK, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(200)
 	span.SetStatus(codes.Ok, http.StatusText(200))
@@ -167,7 +130,7 @@ func encodeGetInquiriesResponse(response *GetInquiriesOK, w http.ResponseWriter,
 	return nil
 }
 
-func encodeGetInquiryResponse(response GetInquiryRes, w http.ResponseWriter, span trace.Span) error {
+func encodeChairGetInquiryResponse(response ChairGetInquiryRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *InquiryContent:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
@@ -182,7 +145,7 @@ func encodeGetInquiryResponse(response GetInquiryRes, w http.ResponseWriter, spa
 
 		return nil
 
-	case *GetInquiryNotFound:
+	case *ChairGetInquiryNotFound:
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
@@ -193,9 +156,16 @@ func encodeGetInquiryResponse(response GetInquiryRes, w http.ResponseWriter, spa
 	}
 }
 
-func encodeGetRequestResponse(response GetRequestRes, w http.ResponseWriter, span trace.Span) error {
+func encodeChairGetNotificationResponse(response *ChairGetNotificationOK, w http.ResponseWriter, span trace.Span) error {
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	return nil
+}
+
+func encodeChairGetRequestResponse(response ChairGetRequestRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *GetRequestOK:
+	case *ChairGetRequestOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -208,7 +178,7 @@ func encodeGetRequestResponse(response GetRequestRes, w http.ResponseWriter, spa
 
 		return nil
 
-	case *GetRequestNotFound:
+	case *ChairGetRequestNotFound:
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
 
@@ -219,49 +189,28 @@ func encodeGetRequestResponse(response GetRequestRes, w http.ResponseWriter, spa
 	}
 }
 
-func encodeInitializeResponse(response *InitializeOK, w http.ResponseWriter, span trace.Span) error {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
-
-	e := new(jx.Encoder)
-	response.Encode(e)
-	if _, err := e.WriteTo(w); err != nil {
-		return errors.Wrap(err, "write")
-	}
-
-	return nil
-}
-
-func encodePostDriverCoordinateResponse(response *PostDriverCoordinateNoContent, w http.ResponseWriter, span trace.Span) error {
+func encodeChairPostActivateResponse(response *ChairPostActivateNoContent, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(204)
 	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodePostInquiryResponse(response *PostInquiryNoContent, w http.ResponseWriter, span trace.Span) error {
+func encodeChairPostCoordinateResponse(response *ChairPostCoordinateNoContent, w http.ResponseWriter, span trace.Span) error {
 	w.WriteHeader(204)
 	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodePostRequestResponse(response *PostRequestAccepted, w http.ResponseWriter, span trace.Span) error {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(202)
-	span.SetStatus(codes.Ok, http.StatusText(202))
-
-	e := new(jx.Encoder)
-	response.Encode(e)
-	if _, err := e.WriteTo(w); err != nil {
-		return errors.Wrap(err, "write")
-	}
+func encodeChairPostDeactivateResponse(response *ChairPostDeactivateNoContent, w http.ResponseWriter, span trace.Span) error {
+	w.WriteHeader(204)
+	span.SetStatus(codes.Ok, http.StatusText(204))
 
 	return nil
 }
 
-func encodeRegisterDriverResponse(response *RegisterDriverCreated, w http.ResponseWriter, span trace.Span) error {
+func encodeChairPostRegisterResponse(response *ChairPostRegisterCreated, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(201)
 	span.SetStatus(codes.Ok, http.StatusText(201))
@@ -275,28 +224,79 @@ func encodeRegisterDriverResponse(response *RegisterDriverCreated, w http.Respon
 	return nil
 }
 
-func encodeRegisterUserResponse(response RegisterUserRes, w http.ResponseWriter, span trace.Span) error {
+func encodeChairPostRequestAcceptResponse(response ChairPostRequestAcceptRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *RegisterUserOK:
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
-
-		e := new(jx.Encoder)
-		response.Encode(e)
-		if _, err := e.WriteTo(w); err != nil {
-			return errors.Wrap(err, "write")
-		}
+	case *ChairPostRequestAcceptNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
 
 		return nil
 
-	case *RegisterUserBadRequest:
-		w.WriteHeader(400)
-		span.SetStatus(codes.Error, http.StatusText(400))
+	case *ChairPostRequestAcceptNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
 
 		return nil
 
 	default:
 		return errors.Errorf("unexpected response type: %T", response)
 	}
+}
+
+func encodeChairPostRequestDenyResponse(response ChairPostRequestDenyRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *ChairPostRequestDenyNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
+
+		return nil
+
+	case *ChairPostRequestDenyNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeChairPostRequestDepartResponse(response ChairPostRequestDepartRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *ChairPostRequestDepartNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
+
+		return nil
+
+	case *ChairPostRequestDepartBadRequest:
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		return nil
+
+	case *ChairPostRequestDepartNotFound:
+		w.WriteHeader(404)
+		span.SetStatus(codes.Error, http.StatusText(404))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodePostInitializeResponse(response *PostInitializeOK, w http.ResponseWriter, span trace.Span) error {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(200)
+	span.SetStatus(codes.Ok, http.StatusText(200))
+
+	e := new(jx.Encoder)
+	response.Encode(e)
+	if _, err := e.WriteTo(w); err != nil {
+		return errors.Wrap(err, "write")
+	}
+
+	return nil
 }

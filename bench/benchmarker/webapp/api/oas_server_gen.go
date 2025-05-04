@@ -8,114 +8,114 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
-	// AcceptRequest implements accept-request operation.
-	//
-	// ドライバーが配車要求を受理する.
-	//
-	// POST /driver/requests/{request_id}/accept
-	AcceptRequest(ctx context.Context, params AcceptRequestParams) (AcceptRequestRes, error)
-	// ActivateDriver implements activate-driver operation.
-	//
-	// ドライバーが配車受付を開始する.
-	//
-	// POST /driver/activate
-	ActivateDriver(ctx context.Context, req *ActivateDriverReq) error
-	// DeactivateDriver implements deactivate-driver operation.
-	//
-	// ドライバーが配車受付を停止する.
-	//
-	// POST /driver/deactivate
-	DeactivateDriver(ctx context.Context, req *DeactivateDriverReq) error
-	// DenyRequest implements deny-request operation.
-	//
-	// ドライバーが配車要求を拒否する.
-	//
-	// POST /driver/requests/{request_id}/deny
-	DenyRequest(ctx context.Context, params DenyRequestParams) (DenyRequestRes, error)
-	// Depart implements depart operation.
-	//
-	// ドライバーが配車位置から出発する(ユーザーが乗車完了した).
-	//
-	// POST /driver/requests/{request_id}/depart
-	Depart(ctx context.Context, params DepartParams) (DepartRes, error)
-	// Evaluate implements evaluate operation.
-	//
-	// ユーザーがドライバーを評価する.
-	//
-	// POST /app/requests/{request_id}/evaluate
-	Evaluate(ctx context.Context, req OptEvaluateReq, params EvaluateParams) (EvaluateRes, error)
-	// GetAppNotification implements get-app-notification operation.
+	// AppGetNotification implements app-get-notification operation.
 	//
 	// ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
 	//
 	// GET /app/notification
-	GetAppNotification(ctx context.Context) error
-	// GetAppRequest implements get-app-request operation.
+	AppGetNotification(ctx context.Context) error
+	// AppGetRequest implements app-get-request operation.
 	//
 	// ユーザーが配車要求の状態を確認する.
 	//
 	// GET /app/requests/{request_id}
-	GetAppRequest(ctx context.Context, params GetAppRequestParams) (GetAppRequestRes, error)
-	// GetDriverNotification implements get-driver-notification operation.
-	//
-	// ドライバーに配車要求を通知するなどで使う想定.
-	//
-	// GET /driver/notification
-	GetDriverNotification(ctx context.Context) error
-	// GetInquiries implements get-inquiries operation.
-	//
-	// 問い合わせの一覧を取得する.
-	//
-	// GET /admin/inquiries
-	GetInquiries(ctx context.Context, params GetInquiriesParams) (*GetInquiriesOK, error)
-	// GetInquiry implements get-inquiry operation.
-	//
-	// 指定したIDの問い合わせ内容を取得.
-	//
-	// GET /admin/inquiries/{inquiry_id}
-	GetInquiry(ctx context.Context, params GetInquiryParams) (GetInquiryRes, error)
-	// GetRequest implements get-request operation.
-	//
-	// ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定.
-	//
-	// GET /driver/requests/{request_id}
-	GetRequest(ctx context.Context, params GetRequestParams) (GetRequestRes, error)
-	// Initialize implements initialize operation.
-	//
-	// サービスを初期化する.
-	//
-	// POST /initialize
-	Initialize(ctx context.Context) (*InitializeOK, error)
-	// PostDriverCoordinate implements post-driver-coordinate operation.
-	//
-	// ドライバーが位置情報を送信する.
-	//
-	// POST /driver/coordinate
-	PostDriverCoordinate(ctx context.Context, req OptCoordinate) error
-	// PostInquiry implements post-inquiry operation.
+	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
+	// AppPostInquiry implements app-post-inquiry operation.
 	//
 	// ユーザーが問い合わせを送信する.
 	//
 	// POST /app/inquiry
-	PostInquiry(ctx context.Context, req OptPostInquiryReq) error
-	// PostRequest implements post-request operation.
-	//
-	// ユーザーが配車要求を行う.
-	//
-	// POST /app/requests
-	PostRequest(ctx context.Context, req OptPostRequestReq) (*PostRequestAccepted, error)
-	// RegisterDriver implements register-driver operation.
-	//
-	// ドライバー登録を行う.
-	//
-	// POST /driver/register
-	RegisterDriver(ctx context.Context, req OptRegisterDriverReq) (*RegisterDriverCreated, error)
-	// RegisterUser implements register-user operation.
+	AppPostInquiry(ctx context.Context, req OptAppPostInquiryReq) error
+	// AppPostRegister implements app-post-register operation.
 	//
 	// ユーザーが会員登録を行う.
 	//
 	// POST /app/register
-	RegisterUser(ctx context.Context, req OptRegisterUserReq) (RegisterUserRes, error)
+	AppPostRegister(ctx context.Context, req OptAppPostRegisterReq) (AppPostRegisterRes, error)
+	// AppPostRequest implements app-post-request operation.
+	//
+	// ユーザーが配車要求を行う.
+	//
+	// POST /app/requests
+	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (*AppPostRequestAccepted, error)
+	// AppPostRequestEvaluate implements app-post-request-evaluate operation.
+	//
+	// ユーザーが椅子を評価する.
+	//
+	// POST /app/requests/{request_id}/evaluate
+	AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error)
+	// ChairGetInquiries implements chair-get-inquiries operation.
+	//
+	// 問い合わせの一覧を取得する.
+	//
+	// GET /admin/inquiries
+	ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error)
+	// ChairGetInquiry implements chair-get-inquiry operation.
+	//
+	// 指定したIDの問い合わせ内容を取得.
+	//
+	// GET /admin/inquiries/{inquiry_id}
+	ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error)
+	// ChairGetNotification implements chair-get-notification operation.
+	//
+	// 椅子に配車要求を通知するなどで使う想定.
+	//
+	// GET /chair/notification
+	ChairGetNotification(ctx context.Context) error
+	// ChairGetRequest implements chair-get-request operation.
+	//
+	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
+	//
+	// GET /chair/requests/{request_id}
+	ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (ChairGetRequestRes, error)
+	// ChairPostActivate implements chair-post-activate operation.
+	//
+	// 椅子が配車受付を開始する.
+	//
+	// POST /chair/activate
+	ChairPostActivate(ctx context.Context, req *ChairPostActivateReq) error
+	// ChairPostCoordinate implements chair-post-coordinate operation.
+	//
+	// 椅子が位置情報を送信する.
+	//
+	// POST /chair/coordinate
+	ChairPostCoordinate(ctx context.Context, req OptCoordinate) error
+	// ChairPostDeactivate implements chair-post-deactivate operation.
+	//
+	// 椅子が配車受付を停止する.
+	//
+	// POST /chair/deactivate
+	ChairPostDeactivate(ctx context.Context, req *ChairPostDeactivateReq) error
+	// ChairPostRegister implements chair-post-register operation.
+	//
+	// 椅子登録を行う.
+	//
+	// POST /chair/register
+	ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (*ChairPostRegisterCreated, error)
+	// ChairPostRequestAccept implements chair-post-request-accept operation.
+	//
+	// 椅子が配車要求を受理する.
+	//
+	// POST /chair/requests/{request_id}/accept
+	ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (ChairPostRequestAcceptRes, error)
+	// ChairPostRequestDeny implements chair-post-request-deny operation.
+	//
+	// 椅子が配車要求を拒否する.
+	//
+	// POST /chair/requests/{request_id}/deny
+	ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (ChairPostRequestDenyRes, error)
+	// ChairPostRequestDepart implements chair-post-request-depart operation.
+	//
+	// 椅子が配車位置から出発する(ユーザーが乗車完了した).
+	//
+	// POST /chair/requests/{request_id}/depart
+	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
+	// PostInitialize implements post-initialize operation.
+	//
+	// サービスを初期化する.
+	//
+	// POST /initialize
+	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

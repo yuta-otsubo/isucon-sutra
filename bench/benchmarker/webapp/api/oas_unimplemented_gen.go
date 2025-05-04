@@ -13,164 +13,164 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
-// AcceptRequest implements accept-request operation.
-//
-// ドライバーが配車要求を受理する.
-//
-// POST /driver/requests/{request_id}/accept
-func (UnimplementedHandler) AcceptRequest(ctx context.Context, params AcceptRequestParams) (r AcceptRequestRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ActivateDriver implements activate-driver operation.
-//
-// ドライバーが配車受付を開始する.
-//
-// POST /driver/activate
-func (UnimplementedHandler) ActivateDriver(ctx context.Context, req *ActivateDriverReq) error {
-	return ht.ErrNotImplemented
-}
-
-// DeactivateDriver implements deactivate-driver operation.
-//
-// ドライバーが配車受付を停止する.
-//
-// POST /driver/deactivate
-func (UnimplementedHandler) DeactivateDriver(ctx context.Context, req *DeactivateDriverReq) error {
-	return ht.ErrNotImplemented
-}
-
-// DenyRequest implements deny-request operation.
-//
-// ドライバーが配車要求を拒否する.
-//
-// POST /driver/requests/{request_id}/deny
-func (UnimplementedHandler) DenyRequest(ctx context.Context, params DenyRequestParams) (r DenyRequestRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// Depart implements depart operation.
-//
-// ドライバーが配車位置から出発する(ユーザーが乗車完了した).
-//
-// POST /driver/requests/{request_id}/depart
-func (UnimplementedHandler) Depart(ctx context.Context, params DepartParams) (r DepartRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// Evaluate implements evaluate operation.
-//
-// ユーザーがドライバーを評価する.
-//
-// POST /app/requests/{request_id}/evaluate
-func (UnimplementedHandler) Evaluate(ctx context.Context, req OptEvaluateReq, params EvaluateParams) (r EvaluateRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetAppNotification implements get-app-notification operation.
+// AppGetNotification implements app-get-notification operation.
 //
 // ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
 //
 // GET /app/notification
-func (UnimplementedHandler) GetAppNotification(ctx context.Context) error {
+func (UnimplementedHandler) AppGetNotification(ctx context.Context) error {
 	return ht.ErrNotImplemented
 }
 
-// GetAppRequest implements get-app-request operation.
+// AppGetRequest implements app-get-request operation.
 //
 // ユーザーが配車要求の状態を確認する.
 //
 // GET /app/requests/{request_id}
-func (UnimplementedHandler) GetAppRequest(ctx context.Context, params GetAppRequestParams) (r GetAppRequestRes, _ error) {
+func (UnimplementedHandler) AppGetRequest(ctx context.Context, params AppGetRequestParams) (r AppGetRequestRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// GetDriverNotification implements get-driver-notification operation.
-//
-// ドライバーに配車要求を通知するなどで使う想定.
-//
-// GET /driver/notification
-func (UnimplementedHandler) GetDriverNotification(ctx context.Context) error {
-	return ht.ErrNotImplemented
-}
-
-// GetInquiries implements get-inquiries operation.
-//
-// 問い合わせの一覧を取得する.
-//
-// GET /admin/inquiries
-func (UnimplementedHandler) GetInquiries(ctx context.Context, params GetInquiriesParams) (r *GetInquiriesOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetInquiry implements get-inquiry operation.
-//
-// 指定したIDの問い合わせ内容を取得.
-//
-// GET /admin/inquiries/{inquiry_id}
-func (UnimplementedHandler) GetInquiry(ctx context.Context, params GetInquiryParams) (r GetInquiryRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// GetRequest implements get-request operation.
-//
-// ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定.
-//
-// GET /driver/requests/{request_id}
-func (UnimplementedHandler) GetRequest(ctx context.Context, params GetRequestParams) (r GetRequestRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// Initialize implements initialize operation.
-//
-// サービスを初期化する.
-//
-// POST /initialize
-func (UnimplementedHandler) Initialize(ctx context.Context) (r *InitializeOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// PostDriverCoordinate implements post-driver-coordinate operation.
-//
-// ドライバーが位置情報を送信する.
-//
-// POST /driver/coordinate
-func (UnimplementedHandler) PostDriverCoordinate(ctx context.Context, req OptCoordinate) error {
-	return ht.ErrNotImplemented
-}
-
-// PostInquiry implements post-inquiry operation.
+// AppPostInquiry implements app-post-inquiry operation.
 //
 // ユーザーが問い合わせを送信する.
 //
 // POST /app/inquiry
-func (UnimplementedHandler) PostInquiry(ctx context.Context, req OptPostInquiryReq) error {
+func (UnimplementedHandler) AppPostInquiry(ctx context.Context, req OptAppPostInquiryReq) error {
 	return ht.ErrNotImplemented
 }
 
-// PostRequest implements post-request operation.
-//
-// ユーザーが配車要求を行う.
-//
-// POST /app/requests
-func (UnimplementedHandler) PostRequest(ctx context.Context, req OptPostRequestReq) (r *PostRequestAccepted, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// RegisterDriver implements register-driver operation.
-//
-// ドライバー登録を行う.
-//
-// POST /driver/register
-func (UnimplementedHandler) RegisterDriver(ctx context.Context, req OptRegisterDriverReq) (r *RegisterDriverCreated, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// RegisterUser implements register-user operation.
+// AppPostRegister implements app-post-register operation.
 //
 // ユーザーが会員登録を行う.
 //
 // POST /app/register
-func (UnimplementedHandler) RegisterUser(ctx context.Context, req OptRegisterUserReq) (r RegisterUserRes, _ error) {
+func (UnimplementedHandler) AppPostRegister(ctx context.Context, req OptAppPostRegisterReq) (r AppPostRegisterRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AppPostRequest implements app-post-request operation.
+//
+// ユーザーが配車要求を行う.
+//
+// POST /app/requests
+func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (r *AppPostRequestAccepted, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AppPostRequestEvaluate implements app-post-request-evaluate operation.
+//
+// ユーザーが椅子を評価する.
+//
+// POST /app/requests/{request_id}/evaluate
+func (UnimplementedHandler) AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (r AppPostRequestEvaluateRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairGetInquiries implements chair-get-inquiries operation.
+//
+// 問い合わせの一覧を取得する.
+//
+// GET /admin/inquiries
+func (UnimplementedHandler) ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (r *ChairGetInquiriesOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairGetInquiry implements chair-get-inquiry operation.
+//
+// 指定したIDの問い合わせ内容を取得.
+//
+// GET /admin/inquiries/{inquiry_id}
+func (UnimplementedHandler) ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (r ChairGetInquiryRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairGetNotification implements chair-get-notification operation.
+//
+// 椅子に配車要求を通知するなどで使う想定.
+//
+// GET /chair/notification
+func (UnimplementedHandler) ChairGetNotification(ctx context.Context) error {
+	return ht.ErrNotImplemented
+}
+
+// ChairGetRequest implements chair-get-request operation.
+//
+// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
+//
+// GET /chair/requests/{request_id}
+func (UnimplementedHandler) ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (r ChairGetRequestRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairPostActivate implements chair-post-activate operation.
+//
+// 椅子が配車受付を開始する.
+//
+// POST /chair/activate
+func (UnimplementedHandler) ChairPostActivate(ctx context.Context, req *ChairPostActivateReq) error {
+	return ht.ErrNotImplemented
+}
+
+// ChairPostCoordinate implements chair-post-coordinate operation.
+//
+// 椅子が位置情報を送信する.
+//
+// POST /chair/coordinate
+func (UnimplementedHandler) ChairPostCoordinate(ctx context.Context, req OptCoordinate) error {
+	return ht.ErrNotImplemented
+}
+
+// ChairPostDeactivate implements chair-post-deactivate operation.
+//
+// 椅子が配車受付を停止する.
+//
+// POST /chair/deactivate
+func (UnimplementedHandler) ChairPostDeactivate(ctx context.Context, req *ChairPostDeactivateReq) error {
+	return ht.ErrNotImplemented
+}
+
+// ChairPostRegister implements chair-post-register operation.
+//
+// 椅子登録を行う.
+//
+// POST /chair/register
+func (UnimplementedHandler) ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (r *ChairPostRegisterCreated, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairPostRequestAccept implements chair-post-request-accept operation.
+//
+// 椅子が配車要求を受理する.
+//
+// POST /chair/requests/{request_id}/accept
+func (UnimplementedHandler) ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (r ChairPostRequestAcceptRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairPostRequestDeny implements chair-post-request-deny operation.
+//
+// 椅子が配車要求を拒否する.
+//
+// POST /chair/requests/{request_id}/deny
+func (UnimplementedHandler) ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (r ChairPostRequestDenyRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairPostRequestDepart implements chair-post-request-depart operation.
+//
+// 椅子が配車位置から出発する(ユーザーが乗車完了した).
+//
+// POST /chair/requests/{request_id}/depart
+func (UnimplementedHandler) ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (r ChairPostRequestDepartRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// PostInitialize implements post-initialize operation.
+//
+// サービスを初期化する.
+//
+// POST /initialize
+func (UnimplementedHandler) PostInitialize(ctx context.Context) (r *PostInitializeOK, _ error) {
 	return r, ht.ErrNotImplemented
 }

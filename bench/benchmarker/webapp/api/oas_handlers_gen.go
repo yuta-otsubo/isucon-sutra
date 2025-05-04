@@ -30,865 +30,22 @@ func (c *codeRecorder) WriteHeader(status int) {
 	c.ResponseWriter.WriteHeader(status)
 }
 
-// handleAcceptRequestRequest handles accept-request operation.
-//
-// ドライバーが配車要求を受理する.
-//
-// POST /driver/requests/{request_id}/accept
-func (s *Server) handleAcceptRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("accept-request"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/accept"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), AcceptRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: AcceptRequestOperation,
-			ID:   "accept-request",
-		}
-	)
-	params, err := decodeAcceptRequestParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response AcceptRequestRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    AcceptRequestOperation,
-			OperationSummary: "ドライバーが配車要求を受理する",
-			OperationID:      "accept-request",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "request_id",
-					In:   "path",
-				}: params.RequestID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = AcceptRequestParams
-			Response = AcceptRequestRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackAcceptRequestParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.AcceptRequest(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.AcceptRequest(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeAcceptRequestResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleActivateDriverRequest handles activate-driver operation.
-//
-// ドライバーが配車受付を開始する.
-//
-// POST /driver/activate
-func (s *Server) handleActivateDriverRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("activate-driver"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/activate"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), ActivateDriverOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: ActivateDriverOperation,
-			ID:   "activate-driver",
-		}
-	)
-	request, close, err := s.decodeActivateDriverRequest(r)
-	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeRequest", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
-
-	var response *ActivateDriverNoContent
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    ActivateDriverOperation,
-			OperationSummary: "ドライバーが配車受付を開始する",
-			OperationID:      "activate-driver",
-			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
-		}
-
-		type (
-			Request  = *ActivateDriverReq
-			Params   = struct{}
-			Response = *ActivateDriverNoContent
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			nil,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.ActivateDriver(ctx, request)
-				return response, err
-			},
-		)
-	} else {
-		err = s.h.ActivateDriver(ctx, request)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeActivateDriverResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleDeactivateDriverRequest handles deactivate-driver operation.
-//
-// ドライバーが配車受付を停止する.
-//
-// POST /driver/deactivate
-func (s *Server) handleDeactivateDriverRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deactivate-driver"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/deactivate"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), DeactivateDriverOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: DeactivateDriverOperation,
-			ID:   "deactivate-driver",
-		}
-	)
-	request, close, err := s.decodeDeactivateDriverRequest(r)
-	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeRequest", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
-
-	var response *DeactivateDriverNoContent
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    DeactivateDriverOperation,
-			OperationSummary: "ドライバーが配車受付を停止する",
-			OperationID:      "deactivate-driver",
-			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
-		}
-
-		type (
-			Request  = *DeactivateDriverReq
-			Params   = struct{}
-			Response = *DeactivateDriverNoContent
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			nil,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.DeactivateDriver(ctx, request)
-				return response, err
-			},
-		)
-	} else {
-		err = s.h.DeactivateDriver(ctx, request)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeDeactivateDriverResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleDenyRequestRequest handles deny-request operation.
-//
-// ドライバーが配車要求を拒否する.
-//
-// POST /driver/requests/{request_id}/deny
-func (s *Server) handleDenyRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("deny-request"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/deny"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), DenyRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: DenyRequestOperation,
-			ID:   "deny-request",
-		}
-	)
-	params, err := decodeDenyRequestParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response DenyRequestRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    DenyRequestOperation,
-			OperationSummary: "ドライバーが配車要求を拒否する",
-			OperationID:      "deny-request",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "request_id",
-					In:   "path",
-				}: params.RequestID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = DenyRequestParams
-			Response = DenyRequestRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackDenyRequestParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.DenyRequest(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.DenyRequest(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeDenyRequestResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleDepartRequest handles depart operation.
-//
-// ドライバーが配車位置から出発する(ユーザーが乗車完了した).
-//
-// POST /driver/requests/{request_id}/depart
-func (s *Server) handleDepartRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("depart"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}/depart"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), DepartOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: DepartOperation,
-			ID:   "depart",
-		}
-	)
-	params, err := decodeDepartParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response DepartRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    DepartOperation,
-			OperationSummary: "ドライバーが配車位置から出発する(ユーザーが乗車完了した)",
-			OperationID:      "depart",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "request_id",
-					In:   "path",
-				}: params.RequestID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = DepartParams
-			Response = DepartRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackDepartParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.Depart(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.Depart(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeDepartResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleEvaluateRequest handles evaluate operation.
-//
-// ユーザーがドライバーを評価する.
-//
-// POST /app/requests/{request_id}/evaluate
-func (s *Server) handleEvaluateRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("evaluate"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/requests/{request_id}/evaluate"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), EvaluateOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: EvaluateOperation,
-			ID:   "evaluate",
-		}
-	)
-	params, err := decodeEvaluateParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	request, close, err := s.decodeEvaluateRequest(r)
-	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeRequest", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
-
-	var response EvaluateRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    EvaluateOperation,
-			OperationSummary: "ユーザーがドライバーを評価する",
-			OperationID:      "evaluate",
-			Body:             request,
-			Params: middleware.Parameters{
-				{
-					Name: "request_id",
-					In:   "path",
-				}: params.RequestID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = OptEvaluateReq
-			Params   = EvaluateParams
-			Response = EvaluateRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackEvaluateParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.Evaluate(ctx, request, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.Evaluate(ctx, request, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeEvaluateResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleGetAppNotificationRequest handles get-app-notification operation.
+// handleAppGetNotificationRequest handles app-get-notification operation.
 //
 // ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
 //
 // GET /app/notification
-func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-app-notification"),
+		otelogen.OperationID("app-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app/notification"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetAppNotificationOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppGetNotificationOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -944,13 +101,13 @@ func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped boo
 		err error
 	)
 
-	var response *GetAppNotificationOK
+	var response *AppGetNotificationOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetAppNotificationOperation,
+			OperationName:    AppGetNotificationOperation,
 			OperationSummary: "ユーザー向け通知エンドポイント",
-			OperationID:      "get-app-notification",
+			OperationID:      "app-get-notification",
 			Body:             nil,
 			Params:           middleware.Parameters{},
 			Raw:              r,
@@ -959,7 +116,7 @@ func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped boo
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = *GetAppNotificationOK
+			Response = *AppGetNotificationOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -970,12 +127,12 @@ func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped boo
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.GetAppNotification(ctx)
+				err = s.h.AppGetNotification(ctx)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.GetAppNotification(ctx)
+		err = s.h.AppGetNotification(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -983,7 +140,7 @@ func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped boo
 		return
 	}
 
-	if err := encodeGetAppNotificationResponse(response, w, span); err != nil {
+	if err := encodeAppGetNotificationResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -992,22 +149,22 @@ func (s *Server) handleGetAppNotificationRequest(args [0]string, argsEscaped boo
 	}
 }
 
-// handleGetAppRequestRequest handles get-app-request operation.
+// handleAppGetRequestRequest handles app-get-request operation.
 //
 // ユーザーが配車要求の状態を確認する.
 //
 // GET /app/requests/{request_id}
-func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleAppGetRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-app-request"),
+		otelogen.OperationID("app-get-request"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/app/requests/{request_id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetAppRequestOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppGetRequestOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1062,11 +219,11 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetAppRequestOperation,
-			ID:   "get-app-request",
+			Name: AppGetRequestOperation,
+			ID:   "app-get-request",
 		}
 	)
-	params, err := decodeGetAppRequestParams(args, argsEscaped, r)
+	params, err := decodeAppGetRequestParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -1077,13 +234,13 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 		return
 	}
 
-	var response GetAppRequestRes
+	var response AppGetRequestRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetAppRequestOperation,
+			OperationName:    AppGetRequestOperation,
 			OperationSummary: "ユーザーが配車要求の状態を確認する",
-			OperationID:      "get-app-request",
+			OperationID:      "app-get-request",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -1096,8 +253,8 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 
 		type (
 			Request  = struct{}
-			Params   = GetAppRequestParams
-			Response = GetAppRequestRes
+			Params   = AppGetRequestParams
+			Response = AppGetRequestRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1106,14 +263,14 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 		](
 			m,
 			mreq,
-			unpackGetAppRequestParams,
+			unpackAppGetRequestParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetAppRequest(ctx, params)
+				response, err = s.h.AppGetRequest(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetAppRequest(ctx, params)
+		response, err = s.h.AppGetRequest(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1121,7 +278,7 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 		return
 	}
 
-	if err := encodeGetAppRequestResponse(response, w, span); err != nil {
+	if err := encodeAppGetRequestResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1130,141 +287,22 @@ func (s *Server) handleGetAppRequestRequest(args [1]string, argsEscaped bool, w 
 	}
 }
 
-// handleGetDriverNotificationRequest handles get-driver-notification operation.
+// handleAppPostInquiryRequest handles app-post-inquiry operation.
 //
-// ドライバーに配車要求を通知するなどで使う想定.
+// ユーザーが問い合わせを送信する.
 //
-// GET /driver/notification
-func (s *Server) handleGetDriverNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /app/inquiry
+func (s *Server) handleAppPostInquiryRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-driver-notification"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/driver/notification"),
+		otelogen.OperationID("app-post-inquiry"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/inquiry"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetDriverNotificationOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err error
-	)
-
-	var response *GetDriverNotificationOK
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    GetDriverNotificationOperation,
-			OperationSummary: "ドライバー向け通知エンドポイント",
-			OperationID:      "get-driver-notification",
-			Body:             nil,
-			Params:           middleware.Parameters{},
-			Raw:              r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = struct{}
-			Response = *GetDriverNotificationOK
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			nil,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.GetDriverNotification(ctx)
-				return response, err
-			},
-		)
-	} else {
-		err = s.h.GetDriverNotification(ctx)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeGetDriverNotificationResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleGetInquiriesRequest handles get-inquiries operation.
-//
-// 問い合わせの一覧を取得する.
-//
-// GET /admin/inquiries
-func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-inquiries"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/admin/inquiries"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetInquiriesOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppPostInquiryOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1319,11 +357,578 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetInquiriesOperation,
-			ID:   "get-inquiries",
+			Name: AppPostInquiryOperation,
+			ID:   "app-post-inquiry",
 		}
 	)
-	params, err := decodeGetInquiriesParams(args, argsEscaped, r)
+	request, close, err := s.decodeAppPostInquiryRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response *AppPostInquiryNoContent
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    AppPostInquiryOperation,
+			OperationSummary: "ユーザーが問い合わせを送信する",
+			OperationID:      "app-post-inquiry",
+			Body:             request,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = OptAppPostInquiryReq
+			Params   = struct{}
+			Response = *AppPostInquiryNoContent
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				err = s.h.AppPostInquiry(ctx, request)
+				return response, err
+			},
+		)
+	} else {
+		err = s.h.AppPostInquiry(ctx, request)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeAppPostInquiryResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleAppPostRegisterRequest handles app-post-register operation.
+//
+// ユーザーが会員登録を行う.
+//
+// POST /app/register
+func (s *Server) handleAppPostRegisterRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-register"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/register"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppPostRegisterOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: AppPostRegisterOperation,
+			ID:   "app-post-register",
+		}
+	)
+	request, close, err := s.decodeAppPostRegisterRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response AppPostRegisterRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    AppPostRegisterOperation,
+			OperationSummary: "ユーザーが会員登録を行う",
+			OperationID:      "app-post-register",
+			Body:             request,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = OptAppPostRegisterReq
+			Params   = struct{}
+			Response = AppPostRegisterRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.AppPostRegister(ctx, request)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.AppPostRegister(ctx, request)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeAppPostRegisterResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleAppPostRequestRequest handles app-post-request operation.
+//
+// ユーザーが配車要求を行う.
+//
+// POST /app/requests
+func (s *Server) handleAppPostRequestRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-request"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/requests"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppPostRequestOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: AppPostRequestOperation,
+			ID:   "app-post-request",
+		}
+	)
+	request, close, err := s.decodeAppPostRequestRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response *AppPostRequestAccepted
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    AppPostRequestOperation,
+			OperationSummary: "ユーザーが配車要求を行う",
+			OperationID:      "app-post-request",
+			Body:             request,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = OptAppPostRequestReq
+			Params   = struct{}
+			Response = *AppPostRequestAccepted
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.AppPostRequest(ctx, request)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.AppPostRequest(ctx, request)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeAppPostRequestResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleAppPostRequestEvaluateRequest handles app-post-request-evaluate operation.
+//
+// ユーザーが椅子を評価する.
+//
+// POST /app/requests/{request_id}/evaluate
+func (s *Server) handleAppPostRequestEvaluateRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("app-post-request-evaluate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/app/requests/{request_id}/evaluate"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), AppPostRequestEvaluateOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: AppPostRequestEvaluateOperation,
+			ID:   "app-post-request-evaluate",
+		}
+	)
+	params, err := decodeAppPostRequestEvaluateParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	request, close, err := s.decodeAppPostRequestEvaluateRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response AppPostRequestEvaluateRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    AppPostRequestEvaluateOperation,
+			OperationSummary: "ユーザーが椅子を評価する",
+			OperationID:      "app-post-request-evaluate",
+			Body:             request,
+			Params: middleware.Parameters{
+				{
+					Name: "request_id",
+					In:   "path",
+				}: params.RequestID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = OptAppPostRequestEvaluateReq
+			Params   = AppPostRequestEvaluateParams
+			Response = AppPostRequestEvaluateRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackAppPostRequestEvaluateParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.AppPostRequestEvaluate(ctx, request, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.AppPostRequestEvaluate(ctx, request, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeAppPostRequestEvaluateResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleChairGetInquiriesRequest handles chair-get-inquiries operation.
+//
+// 問い合わせの一覧を取得する.
+//
+// GET /admin/inquiries
+func (s *Server) handleChairGetInquiriesRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-get-inquiries"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/admin/inquiries"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairGetInquiriesOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: ChairGetInquiriesOperation,
+			ID:   "chair-get-inquiries",
+		}
+	)
+	params, err := decodeChairGetInquiriesParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -1334,13 +939,13 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 		return
 	}
 
-	var response *GetInquiriesOK
+	var response *ChairGetInquiriesOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetInquiriesOperation,
+			OperationName:    ChairGetInquiriesOperation,
 			OperationSummary: "問い合わせの一覧を取得する",
-			OperationID:      "get-inquiries",
+			OperationID:      "chair-get-inquiries",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -1357,8 +962,8 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 
 		type (
 			Request  = struct{}
-			Params   = GetInquiriesParams
-			Response = *GetInquiriesOK
+			Params   = ChairGetInquiriesParams
+			Response = *ChairGetInquiriesOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1367,14 +972,14 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 		](
 			m,
 			mreq,
-			unpackGetInquiriesParams,
+			unpackChairGetInquiriesParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetInquiries(ctx, params)
+				response, err = s.h.ChairGetInquiries(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetInquiries(ctx, params)
+		response, err = s.h.ChairGetInquiries(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1382,7 +987,7 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 		return
 	}
 
-	if err := encodeGetInquiriesResponse(response, w, span); err != nil {
+	if err := encodeChairGetInquiriesResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1391,22 +996,22 @@ func (s *Server) handleGetInquiriesRequest(args [0]string, argsEscaped bool, w h
 	}
 }
 
-// handleGetInquiryRequest handles get-inquiry operation.
+// handleChairGetInquiryRequest handles chair-get-inquiry operation.
 //
 // 指定したIDの問い合わせ内容を取得.
 //
 // GET /admin/inquiries/{inquiry_id}
-func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleChairGetInquiryRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-inquiry"),
+		otelogen.OperationID("chair-get-inquiry"),
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/admin/inquiries/{inquiry_id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetInquiryOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairGetInquiryOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1461,11 +1066,11 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: GetInquiryOperation,
-			ID:   "get-inquiry",
+			Name: ChairGetInquiryOperation,
+			ID:   "chair-get-inquiry",
 		}
 	)
-	params, err := decodeGetInquiryParams(args, argsEscaped, r)
+	params, err := decodeChairGetInquiryParams(args, argsEscaped, r)
 	if err != nil {
 		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
@@ -1476,13 +1081,13 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 		return
 	}
 
-	var response GetInquiryRes
+	var response ChairGetInquiryRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    GetInquiryOperation,
+			OperationName:    ChairGetInquiryOperation,
 			OperationSummary: "指定したIDの問い合わせ内容を取得",
-			OperationID:      "get-inquiry",
+			OperationID:      "chair-get-inquiry",
 			Body:             nil,
 			Params: middleware.Parameters{
 				{
@@ -1495,8 +1100,8 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 
 		type (
 			Request  = struct{}
-			Params   = GetInquiryParams
-			Response = GetInquiryRes
+			Params   = ChairGetInquiryParams
+			Response = ChairGetInquiryRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1505,14 +1110,14 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 		](
 			m,
 			mreq,
-			unpackGetInquiryParams,
+			unpackChairGetInquiryParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetInquiry(ctx, params)
+				response, err = s.h.ChairGetInquiry(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.GetInquiry(ctx, params)
+		response, err = s.h.ChairGetInquiry(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1520,7 +1125,7 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeGetInquiryResponse(response, w, span); err != nil {
+	if err := encodeChairGetInquiryResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1529,160 +1134,22 @@ func (s *Server) handleGetInquiryRequest(args [1]string, argsEscaped bool, w htt
 	}
 }
 
-// handleGetRequestRequest handles get-request operation.
+// handleChairGetNotificationRequest handles chair-get-notification operation.
 //
-// ドライバー向け通知エンドポイントから通知されたidの情報を取得する想定.
+// 椅子に配車要求を通知するなどで使う想定.
 //
-// GET /driver/requests/{request_id}
-func (s *Server) handleGetRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /chair/notification
+func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("get-request"),
+		otelogen.OperationID("chair-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/driver/requests/{request_id}"),
+		semconv.HTTPRouteKey.String("/chair/notification"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), GetRequestOperation,
-		trace.WithAttributes(otelAttrs...),
-		serverSpanKind,
-	)
-	defer span.End()
-
-	// Add Labeler to context.
-	labeler := &Labeler{attrs: otelAttrs}
-	ctx = contextWithLabeler(ctx, labeler)
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		elapsedDuration := time.Since(startTime)
-
-		attrSet := labeler.AttributeSet()
-		attrs := attrSet.ToSlice()
-		code := statusWriter.status
-		if code != 0 {
-			codeAttr := semconv.HTTPResponseStatusCode(code)
-			attrs = append(attrs, codeAttr)
-			span.SetAttributes(codeAttr)
-		}
-		attrOpt := metric.WithAttributes(attrs...)
-
-		// Increment request counter.
-		s.requests.Add(ctx, 1, attrOpt)
-
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
-	}()
-
-	var (
-		recordError = func(stage string, err error) {
-			span.RecordError(err)
-
-			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
-			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
-			// max redirects exceeded), in which case status MUST be set to Error.
-			code := statusWriter.status
-			if code >= 100 && code < 500 {
-				span.SetStatus(codes.Error, stage)
-			}
-
-			attrSet := labeler.AttributeSet()
-			attrs := attrSet.ToSlice()
-			if code != 0 {
-				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
-			}
-
-			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
-		}
-		err          error
-		opErrContext = ogenerrors.OperationContext{
-			Name: GetRequestOperation,
-			ID:   "get-request",
-		}
-	)
-	params, err := decodeGetRequestParams(args, argsEscaped, r)
-	if err != nil {
-		err = &ogenerrors.DecodeParamsError{
-			OperationContext: opErrContext,
-			Err:              err,
-		}
-		defer recordError("DecodeParams", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	var response GetRequestRes
-	if m := s.cfg.Middleware; m != nil {
-		mreq := middleware.Request{
-			Context:          ctx,
-			OperationName:    GetRequestOperation,
-			OperationSummary: "ドライバーが配車要求情報を取得する",
-			OperationID:      "get-request",
-			Body:             nil,
-			Params: middleware.Parameters{
-				{
-					Name: "request_id",
-					In:   "path",
-				}: params.RequestID,
-			},
-			Raw: r,
-		}
-
-		type (
-			Request  = struct{}
-			Params   = GetRequestParams
-			Response = GetRequestRes
-		)
-		response, err = middleware.HookMiddleware[
-			Request,
-			Params,
-			Response,
-		](
-			m,
-			mreq,
-			unpackGetRequestParams,
-			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.GetRequest(ctx, params)
-				return response, err
-			},
-		)
-	} else {
-		response, err = s.h.GetRequest(ctx, params)
-	}
-	if err != nil {
-		defer recordError("Internal", err)
-		s.cfg.ErrorHandler(ctx, w, r, err)
-		return
-	}
-
-	if err := encodeGetRequestResponse(response, w, span); err != nil {
-		defer recordError("EncodeResponse", err)
-		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
-			s.cfg.ErrorHandler(ctx, w, r, err)
-		}
-		return
-	}
-}
-
-// handleInitializeRequest handles initialize operation.
-//
-// サービスを初期化する.
-//
-// POST /initialize
-func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
-	statusWriter := &codeRecorder{ResponseWriter: w}
-	w = statusWriter
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("initialize"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/initialize"),
-	}
-
-	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), InitializeOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairGetNotificationOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1738,13 +1205,13 @@ func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w htt
 		err error
 	)
 
-	var response *InitializeOK
+	var response *ChairGetNotificationOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    InitializeOperation,
-			OperationSummary: "サービスを初期化する",
-			OperationID:      "initialize",
+			OperationName:    ChairGetNotificationOperation,
+			OperationSummary: "椅子向け通知エンドポイント",
+			OperationID:      "chair-get-notification",
 			Body:             nil,
 			Params:           middleware.Parameters{},
 			Raw:              r,
@@ -1753,7 +1220,7 @@ func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w htt
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = *InitializeOK
+			Response = *ChairGetNotificationOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1764,12 +1231,12 @@ func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w htt
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.Initialize(ctx)
+				err = s.h.ChairGetNotification(ctx)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.Initialize(ctx)
+		err = s.h.ChairGetNotification(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1777,7 +1244,7 @@ func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w htt
 		return
 	}
 
-	if err := encodeInitializeResponse(response, w, span); err != nil {
+	if err := encodeChairGetNotificationResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1786,22 +1253,22 @@ func (s *Server) handleInitializeRequest(args [0]string, argsEscaped bool, w htt
 	}
 }
 
-// handlePostDriverCoordinateRequest handles post-driver-coordinate operation.
+// handleChairGetRequestRequest handles chair-get-request operation.
 //
-// ドライバーが位置情報を送信する.
+// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
 //
-// POST /driver/coordinate
-func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// GET /chair/requests/{request_id}
+func (s *Server) handleChairGetRequestRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-driver-coordinate"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/coordinate"),
+		otelogen.OperationID("chair-get-request"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), PostDriverCoordinateOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairGetRequestOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1856,11 +1323,149 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: PostDriverCoordinateOperation,
-			ID:   "post-driver-coordinate",
+			Name: ChairGetRequestOperation,
+			ID:   "chair-get-request",
 		}
 	)
-	request, close, err := s.decodePostDriverCoordinateRequest(r)
+	params, err := decodeChairGetRequestParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ChairGetRequestRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    ChairGetRequestOperation,
+			OperationSummary: "椅子が配車要求情報を取得する",
+			OperationID:      "chair-get-request",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "request_id",
+					In:   "path",
+				}: params.RequestID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ChairGetRequestParams
+			Response = ChairGetRequestRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackChairGetRequestParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ChairGetRequest(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ChairGetRequest(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeChairGetRequestResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleChairPostActivateRequest handles chair-post-activate operation.
+//
+// 椅子が配車受付を開始する.
+//
+// POST /chair/activate
+func (s *Server) handleChairPostActivateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-activate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/activate"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostActivateOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: ChairPostActivateOperation,
+			ID:   "chair-post-activate",
+		}
+	)
+	request, close, err := s.decodeChairPostActivateRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -1876,13 +1481,151 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 		}
 	}()
 
-	var response *PostDriverCoordinateNoContent
+	var response *ChairPostActivateNoContent
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    PostDriverCoordinateOperation,
-			OperationSummary: "ドライバーが位置情報を送信する",
-			OperationID:      "post-driver-coordinate",
+			OperationName:    ChairPostActivateOperation,
+			OperationSummary: "椅子が配車受付を開始する",
+			OperationID:      "chair-post-activate",
+			Body:             request,
+			Params:           middleware.Parameters{},
+			Raw:              r,
+		}
+
+		type (
+			Request  = *ChairPostActivateReq
+			Params   = struct{}
+			Response = *ChairPostActivateNoContent
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			nil,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				err = s.h.ChairPostActivate(ctx, request)
+				return response, err
+			},
+		)
+	} else {
+		err = s.h.ChairPostActivate(ctx, request)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeChairPostActivateResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleChairPostCoordinateRequest handles chair-post-coordinate operation.
+//
+// 椅子が位置情報を送信する.
+//
+// POST /chair/coordinate
+func (s *Server) handleChairPostCoordinateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-coordinate"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/coordinate"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostCoordinateOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: ChairPostCoordinateOperation,
+			ID:   "chair-post-coordinate",
+		}
+	)
+	request, close, err := s.decodeChairPostCoordinateRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
+
+	var response *ChairPostCoordinateNoContent
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    ChairPostCoordinateOperation,
+			OperationSummary: "椅子が位置情報を送信する",
+			OperationID:      "chair-post-coordinate",
 			Body:             request,
 			Params:           middleware.Parameters{},
 			Raw:              r,
@@ -1891,7 +1634,7 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 		type (
 			Request  = OptCoordinate
 			Params   = struct{}
-			Response = *PostDriverCoordinateNoContent
+			Response = *ChairPostCoordinateNoContent
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1902,12 +1645,12 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.PostDriverCoordinate(ctx, request)
+				err = s.h.ChairPostCoordinate(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.PostDriverCoordinate(ctx, request)
+		err = s.h.ChairPostCoordinate(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1915,7 +1658,7 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 		return
 	}
 
-	if err := encodePostDriverCoordinateResponse(response, w, span); err != nil {
+	if err := encodeChairPostCoordinateResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -1924,22 +1667,22 @@ func (s *Server) handlePostDriverCoordinateRequest(args [0]string, argsEscaped b
 	}
 }
 
-// handlePostInquiryRequest handles post-inquiry operation.
+// handleChairPostDeactivateRequest handles chair-post-deactivate operation.
 //
-// ユーザーが問い合わせを送信する.
+// 椅子が配車受付を停止する.
 //
-// POST /app/inquiry
-func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /chair/deactivate
+func (s *Server) handleChairPostDeactivateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-inquiry"),
+		otelogen.OperationID("chair-post-deactivate"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/inquiry"),
+		semconv.HTTPRouteKey.String("/chair/deactivate"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), PostInquiryOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostDeactivateOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -1994,11 +1737,11 @@ func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w ht
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: PostInquiryOperation,
-			ID:   "post-inquiry",
+			Name: ChairPostDeactivateOperation,
+			ID:   "chair-post-deactivate",
 		}
 	)
-	request, close, err := s.decodePostInquiryRequest(r)
+	request, close, err := s.decodeChairPostDeactivateRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -2014,22 +1757,22 @@ func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w ht
 		}
 	}()
 
-	var response *PostInquiryNoContent
+	var response *ChairPostDeactivateNoContent
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    PostInquiryOperation,
-			OperationSummary: "ユーザーが問い合わせを送信する",
-			OperationID:      "post-inquiry",
+			OperationName:    ChairPostDeactivateOperation,
+			OperationSummary: "椅子が配車受付を停止する",
+			OperationID:      "chair-post-deactivate",
 			Body:             request,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
 
 		type (
-			Request  = OptPostInquiryReq
+			Request  = *ChairPostDeactivateReq
 			Params   = struct{}
-			Response = *PostInquiryNoContent
+			Response = *ChairPostDeactivateNoContent
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2040,12 +1783,12 @@ func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w ht
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.PostInquiry(ctx, request)
+				err = s.h.ChairPostDeactivate(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.PostInquiry(ctx, request)
+		err = s.h.ChairPostDeactivate(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2053,7 +1796,7 @@ func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w ht
 		return
 	}
 
-	if err := encodePostInquiryResponse(response, w, span); err != nil {
+	if err := encodeChairPostDeactivateResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2062,22 +1805,22 @@ func (s *Server) handlePostInquiryRequest(args [0]string, argsEscaped bool, w ht
 	}
 }
 
-// handlePostRequestRequest handles post-request operation.
+// handleChairPostRegisterRequest handles chair-post-register operation.
 //
-// ユーザーが配車要求を行う.
+// 椅子登録を行う.
 //
-// POST /app/requests
-func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /chair/register
+func (s *Server) handleChairPostRegisterRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("post-request"),
+		otelogen.OperationID("chair-post-register"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/requests"),
+		semconv.HTTPRouteKey.String("/chair/register"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), PostRequestOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostRegisterOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2132,11 +1875,11 @@ func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w ht
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: PostRequestOperation,
-			ID:   "post-request",
+			Name: ChairPostRegisterOperation,
+			ID:   "chair-post-register",
 		}
 	)
-	request, close, err := s.decodePostRequestRequest(r)
+	request, close, err := s.decodeChairPostRegisterRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
 			OperationContext: opErrContext,
@@ -2152,22 +1895,22 @@ func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w ht
 		}
 	}()
 
-	var response *PostRequestAccepted
+	var response *ChairPostRegisterCreated
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    PostRequestOperation,
-			OperationSummary: "ユーザーが配車要求を行う",
-			OperationID:      "post-request",
+			OperationName:    ChairPostRegisterOperation,
+			OperationSummary: "椅子登録を行う",
+			OperationID:      "chair-post-register",
 			Body:             request,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
 
 		type (
-			Request  = OptPostRequestReq
+			Request  = OptChairPostRegisterReq
 			Params   = struct{}
-			Response = *PostRequestAccepted
+			Response = *ChairPostRegisterCreated
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2178,12 +1921,12 @@ func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w ht
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.PostRequest(ctx, request)
+				response, err = s.h.ChairPostRegister(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.PostRequest(ctx, request)
+		response, err = s.h.ChairPostRegister(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2191,7 +1934,7 @@ func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w ht
 		return
 	}
 
-	if err := encodePostRequestResponse(response, w, span); err != nil {
+	if err := encodeChairPostRegisterResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2200,22 +1943,22 @@ func (s *Server) handlePostRequestRequest(args [0]string, argsEscaped bool, w ht
 	}
 }
 
-// handleRegisterDriverRequest handles register-driver operation.
+// handleChairPostRequestAcceptRequest handles chair-post-request-accept operation.
 //
-// ドライバー登録を行う.
+// 椅子が配車要求を受理する.
 //
-// POST /driver/register
-func (s *Server) handleRegisterDriverRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /chair/requests/{request_id}/accept
+func (s *Server) handleChairPostRequestAcceptRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("register-driver"),
+		otelogen.OperationID("chair-post-request-accept"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/driver/register"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/accept"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), RegisterDriverOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostRequestAcceptOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2270,42 +2013,42 @@ func (s *Server) handleRegisterDriverRequest(args [0]string, argsEscaped bool, w
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: RegisterDriverOperation,
-			ID:   "register-driver",
+			Name: ChairPostRequestAcceptOperation,
+			ID:   "chair-post-request-accept",
 		}
 	)
-	request, close, err := s.decodeRegisterDriverRequest(r)
+	params, err := decodeChairPostRequestAcceptParams(args, argsEscaped, r)
 	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
+		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
 			Err:              err,
 		}
-		defer recordError("DecodeRequest", err)
+		defer recordError("DecodeParams", err)
 		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
 
-	var response *RegisterDriverCreated
+	var response ChairPostRequestAcceptRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    RegisterDriverOperation,
-			OperationSummary: "ドライバー登録を行う",
-			OperationID:      "register-driver",
-			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			OperationName:    ChairPostRequestAcceptOperation,
+			OperationSummary: "椅子が配車要求を受理する",
+			OperationID:      "chair-post-request-accept",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "request_id",
+					In:   "path",
+				}: params.RequestID,
+			},
+			Raw: r,
 		}
 
 		type (
-			Request  = OptRegisterDriverReq
-			Params   = struct{}
-			Response = *RegisterDriverCreated
+			Request  = struct{}
+			Params   = ChairPostRequestAcceptParams
+			Response = ChairPostRequestAcceptRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2314,14 +2057,14 @@ func (s *Server) handleRegisterDriverRequest(args [0]string, argsEscaped bool, w
 		](
 			m,
 			mreq,
-			nil,
+			unpackChairPostRequestAcceptParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.RegisterDriver(ctx, request)
+				response, err = s.h.ChairPostRequestAccept(ctx, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.RegisterDriver(ctx, request)
+		response, err = s.h.ChairPostRequestAccept(ctx, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2329,7 +2072,7 @@ func (s *Server) handleRegisterDriverRequest(args [0]string, argsEscaped bool, w
 		return
 	}
 
-	if err := encodeRegisterDriverResponse(response, w, span); err != nil {
+	if err := encodeChairPostRequestAcceptResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)
@@ -2338,22 +2081,22 @@ func (s *Server) handleRegisterDriverRequest(args [0]string, argsEscaped bool, w
 	}
 }
 
-// handleRegisterUserRequest handles register-user operation.
+// handleChairPostRequestDenyRequest handles chair-post-request-deny operation.
 //
-// ユーザーが会員登録を行う.
+// 椅子が配車要求を拒否する.
 //
-// POST /app/register
-func (s *Server) handleRegisterUserRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+// POST /chair/requests/{request_id}/deny
+func (s *Server) handleChairPostRequestDenyRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	statusWriter := &codeRecorder{ResponseWriter: w}
 	w = statusWriter
 	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("register-user"),
+		otelogen.OperationID("chair-post-request-deny"),
 		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/register"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/deny"),
 	}
 
 	// Start a span for this request.
-	ctx, span := s.cfg.Tracer.Start(r.Context(), RegisterUserOperation,
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostRequestDenyOperation,
 		trace.WithAttributes(otelAttrs...),
 		serverSpanKind,
 	)
@@ -2408,42 +2151,299 @@ func (s *Server) handleRegisterUserRequest(args [0]string, argsEscaped bool, w h
 		}
 		err          error
 		opErrContext = ogenerrors.OperationContext{
-			Name: RegisterUserOperation,
-			ID:   "register-user",
+			Name: ChairPostRequestDenyOperation,
+			ID:   "chair-post-request-deny",
 		}
 	)
-	request, close, err := s.decodeRegisterUserRequest(r)
+	params, err := decodeChairPostRequestDenyParams(args, argsEscaped, r)
 	if err != nil {
-		err = &ogenerrors.DecodeRequestError{
+		err = &ogenerrors.DecodeParamsError{
 			OperationContext: opErrContext,
 			Err:              err,
 		}
-		defer recordError("DecodeRequest", err)
+		defer recordError("DecodeParams", err)
 		s.cfg.ErrorHandler(ctx, w, r, err)
 		return
 	}
-	defer func() {
-		if err := close(); err != nil {
-			recordError("CloseRequest", err)
-		}
-	}()
 
-	var response RegisterUserRes
+	var response ChairPostRequestDenyRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
-			OperationName:    RegisterUserOperation,
-			OperationSummary: "ユーザーが会員登録を行う",
-			OperationID:      "register-user",
-			Body:             request,
+			OperationName:    ChairPostRequestDenyOperation,
+			OperationSummary: "椅子が配車要求を拒否する",
+			OperationID:      "chair-post-request-deny",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "request_id",
+					In:   "path",
+				}: params.RequestID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ChairPostRequestDenyParams
+			Response = ChairPostRequestDenyRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackChairPostRequestDenyParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ChairPostRequestDeny(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ChairPostRequestDeny(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeChairPostRequestDenyResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handleChairPostRequestDepartRequest handles chair-post-request-depart operation.
+//
+// 椅子が配車位置から出発する(ユーザーが乗車完了した).
+//
+// POST /chair/requests/{request_id}/depart
+func (s *Server) handleChairPostRequestDepartRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("chair-post-request-depart"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/chair/requests/{request_id}/depart"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), ChairPostRequestDepartOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: ChairPostRequestDepartOperation,
+			ID:   "chair-post-request-depart",
+		}
+	)
+	params, err := decodeChairPostRequestDepartParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	var response ChairPostRequestDepartRes
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    ChairPostRequestDepartOperation,
+			OperationSummary: "椅子が配車位置から出発する(ユーザーが乗車完了した)",
+			OperationID:      "chair-post-request-depart",
+			Body:             nil,
+			Params: middleware.Parameters{
+				{
+					Name: "request_id",
+					In:   "path",
+				}: params.RequestID,
+			},
+			Raw: r,
+		}
+
+		type (
+			Request  = struct{}
+			Params   = ChairPostRequestDepartParams
+			Response = ChairPostRequestDepartRes
+		)
+		response, err = middleware.HookMiddleware[
+			Request,
+			Params,
+			Response,
+		](
+			m,
+			mreq,
+			unpackChairPostRequestDepartParams,
+			func(ctx context.Context, request Request, params Params) (response Response, err error) {
+				response, err = s.h.ChairPostRequestDepart(ctx, params)
+				return response, err
+			},
+		)
+	} else {
+		response, err = s.h.ChairPostRequestDepart(ctx, params)
+	}
+	if err != nil {
+		defer recordError("Internal", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+
+	if err := encodeChairPostRequestDepartResponse(response, w, span); err != nil {
+		defer recordError("EncodeResponse", err)
+		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
+			s.cfg.ErrorHandler(ctx, w, r, err)
+		}
+		return
+	}
+}
+
+// handlePostInitializeRequest handles post-initialize operation.
+//
+// サービスを初期化する.
+//
+// POST /initialize
+func (s *Server) handlePostInitializeRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
+	statusWriter := &codeRecorder{ResponseWriter: w}
+	w = statusWriter
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("post-initialize"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/initialize"),
+	}
+
+	// Start a span for this request.
+	ctx, span := s.cfg.Tracer.Start(r.Context(), PostInitializeOperation,
+		trace.WithAttributes(otelAttrs...),
+		serverSpanKind,
+	)
+	defer span.End()
+
+	// Add Labeler to context.
+	labeler := &Labeler{attrs: otelAttrs}
+	ctx = contextWithLabeler(ctx, labeler)
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		elapsedDuration := time.Since(startTime)
+
+		attrSet := labeler.AttributeSet()
+		attrs := attrSet.ToSlice()
+		code := statusWriter.status
+		if code != 0 {
+			codeAttr := semconv.HTTPResponseStatusCode(code)
+			attrs = append(attrs, codeAttr)
+			span.SetAttributes(codeAttr)
+		}
+		attrOpt := metric.WithAttributes(attrs...)
+
+		// Increment request counter.
+		s.requests.Add(ctx, 1, attrOpt)
+
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		s.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), attrOpt)
+	}()
+
+	var (
+		recordError = func(stage string, err error) {
+			span.RecordError(err)
+
+			// https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+			// Span Status MUST be left unset if HTTP status code was in the 1xx, 2xx or 3xx ranges,
+			// unless there was another error (e.g., network error receiving the response body; or 3xx codes with
+			// max redirects exceeded), in which case status MUST be set to Error.
+			code := statusWriter.status
+			if code >= 100 && code < 500 {
+				span.SetStatus(codes.Error, stage)
+			}
+
+			attrSet := labeler.AttributeSet()
+			attrs := attrSet.ToSlice()
+			if code != 0 {
+				attrs = append(attrs, semconv.HTTPResponseStatusCode(code))
+			}
+
+			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
+		}
+		err error
+	)
+
+	var response *PostInitializeOK
+	if m := s.cfg.Middleware; m != nil {
+		mreq := middleware.Request{
+			Context:          ctx,
+			OperationName:    PostInitializeOperation,
+			OperationSummary: "サービスを初期化する",
+			OperationID:      "post-initialize",
+			Body:             nil,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
 
 		type (
-			Request  = OptRegisterUserReq
+			Request  = struct{}
 			Params   = struct{}
-			Response = RegisterUserRes
+			Response = *PostInitializeOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -2454,12 +2454,12 @@ func (s *Server) handleRegisterUserRequest(args [0]string, argsEscaped bool, w h
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.RegisterUser(ctx, request)
+				response, err = s.h.PostInitialize(ctx)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.RegisterUser(ctx, request)
+		response, err = s.h.PostInitialize(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -2467,7 +2467,7 @@ func (s *Server) handleRegisterUserRequest(args [0]string, argsEscaped bool, w h
 		return
 	}
 
-	if err := encodeRegisterUserResponse(response, w, span); err != nil {
+	if err := encodePostInitializeResponse(response, w, span); err != nil {
 		defer recordError("EncodeResponse", err)
 		if !errors.Is(err, ht.ErrInternalServerErrorResponse) {
 			s.cfg.ErrorHandler(ctx, w, r, err)

@@ -84,7 +84,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					if len(elem) == 0 {
 						switch r.Method {
 						case "GET":
-							s.handleGetInquiriesRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairGetInquiriesRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
@@ -113,7 +113,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleGetInquiryRequest([1]string{
+								s.handleChairGetInquiryRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
@@ -149,7 +149,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "POST":
-								s.handlePostInquiryRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleAppPostInquiryRequest([0]string{}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "POST")
 							}
@@ -169,7 +169,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleGetAppNotificationRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleAppGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "GET")
 							}
@@ -201,7 +201,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								// Leaf node.
 								switch r.Method {
 								case "POST":
-									s.handleRegisterUserRequest([0]string{}, elemIsEscaped, w, r)
+									s.handleAppPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
 								default:
 									s.notAllowed(w, r, "POST")
 								}
@@ -220,7 +220,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							if len(elem) == 0 {
 								switch r.Method {
 								case "POST":
-									s.handlePostRequestRequest([0]string{}, elemIsEscaped, w, r)
+									s.handleAppPostRequestRequest([0]string{}, elemIsEscaped, w, r)
 								default:
 									s.notAllowed(w, r, "POST")
 								}
@@ -248,7 +248,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								if len(elem) == 0 {
 									switch r.Method {
 									case "GET":
-										s.handleGetAppRequestRequest([1]string{
+										s.handleAppGetRequestRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -270,7 +270,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 										// Leaf node.
 										switch r.Method {
 										case "POST":
-											s.handleEvaluateRequest([1]string{
+											s.handleAppPostRequestEvaluateRequest([1]string{
 												args[0],
 											}, elemIsEscaped, w, r)
 										default:
@@ -290,9 +290,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'd': // Prefix: "driver/"
+			case 'c': // Prefix: "chair/"
 
-				if l := len("driver/"); len(elem) >= l && elem[0:l] == "driver/" {
+				if l := len("chair/"); len(elem) >= l && elem[0:l] == "chair/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -314,7 +314,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handleActivateDriverRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairPostActivateRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -334,7 +334,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handlePostDriverCoordinateRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairPostCoordinateRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -354,7 +354,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handleDeactivateDriverRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairPostDeactivateRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -374,7 +374,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "GET":
-							s.handleGetDriverNotificationRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
@@ -406,7 +406,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "POST":
-								s.handleRegisterDriverRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleChairPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "POST")
 							}
@@ -434,7 +434,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						if len(elem) == 0 {
 							switch r.Method {
 							case "GET":
-								s.handleGetRequestRequest([1]string{
+								s.handleChairGetRequestRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
@@ -468,7 +468,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 									// Leaf node.
 									switch r.Method {
 									case "POST":
-										s.handleAcceptRequestRequest([1]string{
+										s.handleChairPostRequestAcceptRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
@@ -502,7 +502,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 										// Leaf node.
 										switch r.Method {
 										case "POST":
-											s.handleDenyRequestRequest([1]string{
+											s.handleChairPostRequestDenyRequest([1]string{
 												args[0],
 											}, elemIsEscaped, w, r)
 										default:
@@ -524,7 +524,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 										// Leaf node.
 										switch r.Method {
 										case "POST":
-											s.handleDepartRequest([1]string{
+											s.handleChairPostRequestDepartRequest([1]string{
 												args[0],
 											}, elemIsEscaped, w, r)
 										default:
@@ -556,7 +556,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					// Leaf node.
 					switch r.Method {
 					case "POST":
-						s.handleInitializeRequest([0]string{}, elemIsEscaped, w, r)
+						s.handlePostInitializeRequest([0]string{}, elemIsEscaped, w, r)
 					default:
 						s.notAllowed(w, r, "POST")
 					}
@@ -681,9 +681,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					if len(elem) == 0 {
 						switch method {
 						case "GET":
-							r.name = GetInquiriesOperation
+							r.name = ChairGetInquiriesOperation
 							r.summary = "問い合わせの一覧を取得する"
-							r.operationID = "get-inquiries"
+							r.operationID = "chair-get-inquiries"
 							r.pathPattern = "/admin/inquiries"
 							r.args = args
 							r.count = 0
@@ -714,9 +714,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "GET":
-								r.name = GetInquiryOperation
+								r.name = ChairGetInquiryOperation
 								r.summary = "指定したIDの問い合わせ内容を取得"
-								r.operationID = "get-inquiry"
+								r.operationID = "chair-get-inquiry"
 								r.pathPattern = "/admin/inquiries/{inquiry_id}"
 								r.args = args
 								r.count = 1
@@ -752,9 +752,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "POST":
-								r.name = PostInquiryOperation
+								r.name = AppPostInquiryOperation
 								r.summary = "ユーザーが問い合わせを送信する"
-								r.operationID = "post-inquiry"
+								r.operationID = "app-post-inquiry"
 								r.pathPattern = "/app/inquiry"
 								r.args = args
 								r.count = 0
@@ -776,9 +776,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "GET":
-								r.name = GetAppNotificationOperation
+								r.name = AppGetNotificationOperation
 								r.summary = "ユーザー向け通知エンドポイント"
-								r.operationID = "get-app-notification"
+								r.operationID = "app-get-notification"
 								r.pathPattern = "/app/notification"
 								r.args = args
 								r.count = 0
@@ -812,9 +812,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								// Leaf node.
 								switch method {
 								case "POST":
-									r.name = RegisterUserOperation
+									r.name = AppPostRegisterOperation
 									r.summary = "ユーザーが会員登録を行う"
-									r.operationID = "register-user"
+									r.operationID = "app-post-register"
 									r.pathPattern = "/app/register"
 									r.args = args
 									r.count = 0
@@ -835,9 +835,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							if len(elem) == 0 {
 								switch method {
 								case "POST":
-									r.name = PostRequestOperation
+									r.name = AppPostRequestOperation
 									r.summary = "ユーザーが配車要求を行う"
-									r.operationID = "post-request"
+									r.operationID = "app-post-request"
 									r.pathPattern = "/app/requests"
 									r.args = args
 									r.count = 0
@@ -867,9 +867,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								if len(elem) == 0 {
 									switch method {
 									case "GET":
-										r.name = GetAppRequestOperation
+										r.name = AppGetRequestOperation
 										r.summary = "ユーザーが配車要求の状態を確認する"
-										r.operationID = "get-app-request"
+										r.operationID = "app-get-request"
 										r.pathPattern = "/app/requests/{request_id}"
 										r.args = args
 										r.count = 1
@@ -891,9 +891,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										// Leaf node.
 										switch method {
 										case "POST":
-											r.name = EvaluateOperation
-											r.summary = "ユーザーがドライバーを評価する"
-											r.operationID = "evaluate"
+											r.name = AppPostRequestEvaluateOperation
+											r.summary = "ユーザーが椅子を評価する"
+											r.operationID = "app-post-request-evaluate"
 											r.pathPattern = "/app/requests/{request_id}/evaluate"
 											r.args = args
 											r.count = 1
@@ -913,9 +913,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'd': // Prefix: "driver/"
+			case 'c': // Prefix: "chair/"
 
-				if l := len("driver/"); len(elem) >= l && elem[0:l] == "driver/" {
+				if l := len("chair/"); len(elem) >= l && elem[0:l] == "chair/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -937,10 +937,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = ActivateDriverOperation
-							r.summary = "ドライバーが配車受付を開始する"
-							r.operationID = "activate-driver"
-							r.pathPattern = "/driver/activate"
+							r.name = ChairPostActivateOperation
+							r.summary = "椅子が配車受付を開始する"
+							r.operationID = "chair-post-activate"
+							r.pathPattern = "/chair/activate"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -961,10 +961,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = PostDriverCoordinateOperation
-							r.summary = "ドライバーが位置情報を送信する"
-							r.operationID = "post-driver-coordinate"
-							r.pathPattern = "/driver/coordinate"
+							r.name = ChairPostCoordinateOperation
+							r.summary = "椅子が位置情報を送信する"
+							r.operationID = "chair-post-coordinate"
+							r.pathPattern = "/chair/coordinate"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -985,10 +985,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = DeactivateDriverOperation
-							r.summary = "ドライバーが配車受付を停止する"
-							r.operationID = "deactivate-driver"
-							r.pathPattern = "/driver/deactivate"
+							r.name = ChairPostDeactivateOperation
+							r.summary = "椅子が配車受付を停止する"
+							r.operationID = "chair-post-deactivate"
+							r.pathPattern = "/chair/deactivate"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1009,10 +1009,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "GET":
-							r.name = GetDriverNotificationOperation
-							r.summary = "ドライバー向け通知エンドポイント"
-							r.operationID = "get-driver-notification"
-							r.pathPattern = "/driver/notification"
+							r.name = ChairGetNotificationOperation
+							r.summary = "椅子向け通知エンドポイント"
+							r.operationID = "chair-get-notification"
+							r.pathPattern = "/chair/notification"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1045,10 +1045,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "POST":
-								r.name = RegisterDriverOperation
-								r.summary = "ドライバー登録を行う"
-								r.operationID = "register-driver"
-								r.pathPattern = "/driver/register"
+								r.name = ChairPostRegisterOperation
+								r.summary = "椅子登録を行う"
+								r.operationID = "chair-post-register"
+								r.pathPattern = "/chair/register"
 								r.args = args
 								r.count = 0
 								return r, true
@@ -1077,10 +1077,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						if len(elem) == 0 {
 							switch method {
 							case "GET":
-								r.name = GetRequestOperation
-								r.summary = "ドライバーが配車要求情報を取得する"
-								r.operationID = "get-request"
-								r.pathPattern = "/driver/requests/{request_id}"
+								r.name = ChairGetRequestOperation
+								r.summary = "椅子が配車要求情報を取得する"
+								r.operationID = "chair-get-request"
+								r.pathPattern = "/chair/requests/{request_id}"
 								r.args = args
 								r.count = 1
 								return r, true
@@ -1113,10 +1113,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									// Leaf node.
 									switch method {
 									case "POST":
-										r.name = AcceptRequestOperation
-										r.summary = "ドライバーが配車要求を受理する"
-										r.operationID = "accept-request"
-										r.pathPattern = "/driver/requests/{request_id}/accept"
+										r.name = ChairPostRequestAcceptOperation
+										r.summary = "椅子が配車要求を受理する"
+										r.operationID = "chair-post-request-accept"
+										r.pathPattern = "/chair/requests/{request_id}/accept"
 										r.args = args
 										r.count = 1
 										return r, true
@@ -1149,10 +1149,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										// Leaf node.
 										switch method {
 										case "POST":
-											r.name = DenyRequestOperation
-											r.summary = "ドライバーが配車要求を拒否する"
-											r.operationID = "deny-request"
-											r.pathPattern = "/driver/requests/{request_id}/deny"
+											r.name = ChairPostRequestDenyOperation
+											r.summary = "椅子が配車要求を拒否する"
+											r.operationID = "chair-post-request-deny"
+											r.pathPattern = "/chair/requests/{request_id}/deny"
 											r.args = args
 											r.count = 1
 											return r, true
@@ -1173,10 +1173,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										// Leaf node.
 										switch method {
 										case "POST":
-											r.name = DepartOperation
-											r.summary = "ドライバーが配車位置から出発する(ユーザーが乗車完了した)"
-											r.operationID = "depart"
-											r.pathPattern = "/driver/requests/{request_id}/depart"
+											r.name = ChairPostRequestDepartOperation
+											r.summary = "椅子が配車位置から出発する(ユーザーが乗車完了した)"
+											r.operationID = "chair-post-request-depart"
+											r.pathPattern = "/chair/requests/{request_id}/depart"
 											r.args = args
 											r.count = 1
 											return r, true
@@ -1207,9 +1207,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					// Leaf node.
 					switch method {
 					case "POST":
-						r.name = InitializeOperation
+						r.name = PostInitializeOperation
 						r.summary = "サービスを初期化する"
-						r.operationID = "initialize"
+						r.operationID = "post-initialize"
 						r.pathPattern = "/initialize"
 						r.args = args
 						r.count = 0
