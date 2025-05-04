@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 
 	"github.com/guregu/null/v5"
 )
@@ -46,6 +47,9 @@ type Chair struct {
 	NotificationConn NotificationStream
 	// NotificationHandleErrors 通知処理によって発生した未処理のエラー
 	NotificationHandleErrors []error
+
+	// Rand 専用の乱数
+	Rand *rand.Rand
 }
 
 type RegisteredChairData struct {
@@ -103,7 +107,7 @@ func (c *Chair) Tick(ctx *Context) error {
 
 		case RequestStatusDispatching:
 			// 配椅子位置に向かう
-			c.moveToward(ctx, c.Request.PickupPoint)
+			c.moveToward(c.Request.PickupPoint)
 			if c.Current.Equals(c.Request.PickupPoint) {
 				// 配椅子位置に到着
 				c.Request.DesiredStatus = RequestStatusDispatched
@@ -132,7 +136,7 @@ func (c *Chair) Tick(ctx *Context) error {
 
 		case RequestStatusCarrying:
 			// 目的地に向かう
-			c.moveToward(ctx, c.Request.DestinationPoint)
+			c.moveToward(c.Request.DestinationPoint)
 			if c.Current.Equals(c.Request.DestinationPoint) {
 				// 目的地に到着
 				c.Request.DesiredStatus = RequestStatusArrived
@@ -195,14 +199,14 @@ func (c *Chair) Tick(ctx *Context) error {
 			c.NotificationConn = nil
 		} else {
 			// ランダムに徘徊する
-			c.moveRandom(ctx)
+			c.moveRandom()
 		}
 
 	// 未稼働
 	case c.State == ChairStateInactive:
 		// TODO 動かし方調整
 		// 退勤時の座標と出勤時の座標を変えておきたいためにある程度動かしておく
-		c.moveRandom(ctx)
+		c.moveRandom()
 
 		if c.WorkTime.Include(ctx.world.TimeOfDay) {
 			// 稼働時刻になっているので出勤する
@@ -258,9 +262,9 @@ func (c *Chair) AssignRequest(serverRequestID string) error {
 	return nil
 }
 
-func (c *Chair) moveToward(ctx *Context, target Coordinate) {
+func (c *Chair) moveToward(target Coordinate) {
 	// ランダムにx, y方向で近づける
-	x := ctx.rand.IntN(c.Speed + 1)
+	x := c.Rand.IntN(c.Speed + 1)
 	y := c.Speed - x
 	remain := 0
 
@@ -329,8 +333,8 @@ func (c *Chair) moveToward(ctx *Context, target Coordinate) {
 	}
 }
 
-func (c *Chair) moveRandom(ctx *Context) {
-	c.Current = RandomCoordinateAwayFromHereWithRand(c.Current, c.Speed, ctx.rand)
+func (c *Chair) moveRandom() {
+	c.Current = RandomCoordinateAwayFromHereWithRand(c.Current, c.Speed, c.Rand)
 }
 
 func (c *Chair) isRequestAcceptable(req *Request, timeOfDay int) bool {

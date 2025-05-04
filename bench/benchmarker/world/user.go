@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand/v2"
 )
 
 type UserState int
@@ -37,6 +38,9 @@ type User struct {
 	NotificationConn NotificationStream
 	// NotificationHandleErrors 通知処理によって発生した未処理のエラー
 	NotificationHandleErrors []error
+
+	// Rand 専用の乱数
+	Rand *rand.Rand
 }
 
 type RegisteredUserData struct {
@@ -136,8 +140,8 @@ func (u *User) CreateRequest(ctx *Context) error {
 	}
 
 	// TODO 目的地の決定方法をランダムじゃなくする
-	pickup := RandomCoordinateOnRegionWithRand(u.Region, ctx.rand)
-	dest := RandomCoordinateAwayFromHereWithRand(pickup, ctx.rand.IntN(100)+5, ctx.rand)
+	pickup := RandomCoordinateOnRegionWithRand(u.Region, u.Rand)
+	dest := RandomCoordinateAwayFromHereWithRand(pickup, u.Rand.IntN(100)+5, u.Rand)
 
 	req := &Request{
 		User:             u,
