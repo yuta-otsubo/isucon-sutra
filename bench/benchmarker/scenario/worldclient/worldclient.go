@@ -338,17 +338,17 @@ func (c *WorldClient) ConnectUserNotificationStream(ctx *world.Context, user *wo
 
 func (c *WorldClient) ConnectChairNotificationStream(ctx *world.Context, chair *world.Chair, receiver world.NotificationReceiverFunc) (world.NotificationStream, error) {
 	go func() {
+		chairClient, err := c.getChairClient(chair.ServerID)
+		if err != nil {
+			return
+		}
+
 		for {
 			select {
 			case <-c.ctx.Done():
 				c.contestantLogger.Info("Chair notification stream closed", zap.String("chair_id", chair.ServerID))
 				return
 			default:
-			}
-
-			chairClient, err := c.getChairClient(chair.ServerID)
-			if err != nil {
-				return
 			}
 
 			res, result, err := chairClient.client.ChairGetNotification(chairClient.ctx)
@@ -361,10 +361,11 @@ func (c *WorldClient) ConnectChairNotificationStream(ctx *world.Context, chair *
 				// TODO: 意図しない通知の種類の減点
 				switch receivedRequest.Status.Value {
 				case api.RequestStatusMatching:
-					// event = &world.ChairNotificationEventMatching{}
+					event = &world.ChairNotificationEventMatched{
+						ServerRequestID: receivedRequest.RequestID,
+					}
 				case api.RequestStatusDispatching:
 					// event = &world.ChairNotificationEventDispatching{}
-					event = &world.ChairNotificationEventMatched{}
 				case api.RequestStatusCarrying:
 					// event = &world.ChairNotificationEventCarrying{}
 				case api.RequestStatusArrived:
