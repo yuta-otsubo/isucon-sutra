@@ -50,7 +50,7 @@ func NewScenario(target string, contestantLogger *zap.Logger) *Scenario {
 		ClientIdleConnTimeout: 10 * time.Second,
 		InsecureSkipVerify:    true,
 		ContestantLogger:      contestantLogger,
-	}, userNotificationReceiverMap, chairNotificationReceiverMap, requestQueue)
+	}, requestQueue, contestantLogger)
 	worldCtx := world.NewContext(w, worldClient)
 
 	return &Scenario{
@@ -122,7 +122,6 @@ func (s *Scenario) Load(ctx context.Context, step *isucandar.BenchmarkStep) erro
 			InitialCoordinate: world.RandomCoordinateOnRegion(region),
 			WorkTime:          world.NewInterval(world.ConvertHour(0), world.ConvertHour(23)),
 		})
-		s.contestantLogger.Info("CreateChair", zap.Any("chair", chair))
 		if err != nil {
 			return err
 		}
@@ -135,29 +134,28 @@ func (s *Scenario) Load(ctx context.Context, step *isucandar.BenchmarkStep) erro
 		u.State = world.UserStateActive
 	}
 
-	// TODO: webapp側でマッチングさせる
-	go func() {
-		for id := range s.requestQueue {
-			matched := false
-			for _, chair := range s.world.ChairDB.Iter() {
-				if chair.State == world.ChairStateActive && !chair.ServerRequestID.Valid {
-					if f, ok := s.chairNotificationReceiverMap.Get(chair.ServerID); ok {
-						f(&world.ChairNotificationEventMatched{ServerRequestID: id})
-					}
-					matched = true
-					break
-				}
-			}
-			if !matched {
-				s.requestQueue <- id
-			}
-		}
-	}()
+	// TODO webapp側でマッチングさせる
+	// go func() {
+	// 	for id := range s.requestQueue {
+	// 		matched := false
+	// 		for _, chair := range s.world.ChairDB.Iter() {
+	// 			if chair.State == world.ChairStateActive && !chair.ServerRequestID.Valid {
+	// 				if f, ok := s.chairNotificationReceiverMap.Get(chair.ServerID); ok {
+	// 					f(&world.ChairNotificationEventMatched{ServerRequestID: id})
+	// 				}
+	// 				matched = true
+	// 				break
+	// 			}
+	// 		}
+	// 		if !matched {
+	// 			s.requestQueue <- id
+	// 		}
+	// 	}
+	// }()
 
 	for now := range world.ConvertHour(24 * 14) {
 		s.world.Tick(s.worldCtx)
 
-		// % は余剰演算子で、割り切れるときだけログを出す = 1時間ごと
 		if now%world.ConvertHour(1) == 0 {
 			s.contestantLogger.Info("tick", zap.Int("time", now/world.ConvertHour(1)))
 		}
