@@ -5,9 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	// isucandarはISUCONなどの負荷試験で使える機能を集めたフレームワーク
 	"github.com/isucon/isucandar/agent"
-	// zapはGoの高性能なロギングライブラリ
 	"go.uber.org/zap"
 )
 
@@ -16,7 +14,7 @@ type Client struct {
 
 	contestantLogger *zap.Logger
 
-	requestModifier []func(*http.Request)
+	requestModifiers []func(*http.Request)
 }
 
 type ClientConfig struct {
@@ -30,7 +28,7 @@ type ClientConfig struct {
 func NewClient(config ClientConfig) (*Client, error) {
 	ag, err := agent.NewAgent(
 		agent.WithBaseURL(config.TargetBaseURL),
-		// agent.WithTimeout(config.DefaultClientTimeout),
+		//agent.WithTimeout(config.DefaultClientTimeout),
 		agent.WithTimeout(1000*time.Hour),
 		agent.WithNoCache(),
 		agent.WithCloneTransport(&http.Transport{
@@ -52,5 +50,5 @@ func NewClient(config ClientConfig) (*Client, error) {
 }
 
 func (c *Client) AddRequestModifier(modifier func(*http.Request)) {
-	c.requestModifier = append(c.requestModifier, modifier)
+	c.requestModifiers = append(c.requestModifiers, modifier)
 }

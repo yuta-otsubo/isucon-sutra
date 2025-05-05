@@ -113,3 +113,6 @@ const resolveUrl = (
   if (query) query = `?${query}`;
   return url.replace(/\{\w*\}/g, (key) => pathParams[key.slice(1, -1)]) + query;
 };
+
+// apiFetchをisuconFetchの別名として追加
+export const apiFetch = isuconFetch;

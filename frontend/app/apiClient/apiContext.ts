@@ -97,3 +97,9 @@ const hasQueryParams = (
 } => {
   return Boolean((operation.variables as any).queryParams);
 };
+
+// IsuconContextの別名としてApiContextをエクスポート
+export type ApiContext = IsuconContext;
+
+// useIsuconContextの別名としてuseApiContextをエクスポート
+export const useApiContext = useIsuconContext;

@@ -28,7 +28,7 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
       return () => {
         document.removeEventListener("click", handleOutsideClick);
       };
-    }, [onClose]);
+    }, [handleClose]);
 
     useEffect(() => {
       setTimeout(() => {
