@@ -10,6 +10,12 @@ import (
 )
 
 func TestChair_moveRandom(t *testing.T) {
+	region := &Region{
+		RegionOffsetX: 0,
+		RegionOffsetY: 0,
+		RegionWidth:   100,
+		RegionHeight:  100,
+	}
 	c := Chair{
 		Current: C(0, 0),
 		Speed:   13,
@@ -19,6 +25,7 @@ func TestChair_moveRandom(t *testing.T) {
 		prev := c.Current
 		c.moveRandom()
 		assert.Equal(t, c.Speed, prev.DistanceTo(c.Current), "ランダムに動く量は常にSpeedと一致しなければならない")
+		assert.True(t, c.Current.Within(region), "ランダムに動く範囲はリージョン内に収まっている")
 	}
 }
 
