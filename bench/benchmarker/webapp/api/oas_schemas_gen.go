@@ -297,9 +297,9 @@ type Chair struct {
 	// 椅子名.
 	Name string `json:"name"`
 	// 車種.
-	CarModel string `json:"car_model"`
+	ChairModel string `json:"chair_model"`
 	// カーナンバー.
-	CarNo string `json:"car_no"`
+	ChairNo string `json:"chair_no"`
 }
 
 // GetID returns the value of ID.
@@ -312,14 +312,14 @@ func (s *Chair) GetName() string {
 	return s.Name
 }
 
-// GetCarModel returns the value of CarModel.
-func (s *Chair) GetCarModel() string {
-	return s.CarModel
+// GetChairModel returns the value of ChairModel.
+func (s *Chair) GetChairModel() string {
+	return s.ChairModel
 }
 
-// GetCarNo returns the value of CarNo.
-func (s *Chair) GetCarNo() string {
-	return s.CarNo
+// GetChairNo returns the value of ChairNo.
+func (s *Chair) GetChairNo() string {
+	return s.ChairNo
 }
 
 // SetID sets the value of ID.
@@ -332,14 +332,14 @@ func (s *Chair) SetName(val string) {
 	s.Name = val
 }
 
-// SetCarModel sets the value of CarModel.
-func (s *Chair) SetCarModel(val string) {
-	s.CarModel = val
+// SetChairModel sets the value of ChairModel.
+func (s *Chair) SetChairModel(val string) {
+	s.ChairModel = val
 }
 
-// SetCarNo sets the value of CarNo.
-func (s *Chair) SetCarNo(val string) {
-	s.CarNo = val
+// SetChairNo sets the value of ChairNo.
+func (s *Chair) SetChairNo(val string) {
+	s.ChairNo = val
 }
 
 type ChairGetInquiriesOK struct {
@@ -510,9 +510,9 @@ type ChairPostRegisterReq struct {
 	// 生年月日.
 	DateOfBirth string `json:"date_of_birth"`
 	// 車種.
-	CarModel string `json:"car_model"`
+	ChairModel string `json:"chair_model"`
 	// カーナンバー.
-	CarNo string `json:"car_no"`
+	ChairNo string `json:"chair_no"`
 }
 
 // GetUsername returns the value of Username.
@@ -535,14 +535,14 @@ func (s *ChairPostRegisterReq) GetDateOfBirth() string {
 	return s.DateOfBirth
 }
 
-// GetCarModel returns the value of CarModel.
-func (s *ChairPostRegisterReq) GetCarModel() string {
-	return s.CarModel
+// GetChairModel returns the value of ChairModel.
+func (s *ChairPostRegisterReq) GetChairModel() string {
+	return s.ChairModel
 }
 
-// GetCarNo returns the value of CarNo.
-func (s *ChairPostRegisterReq) GetCarNo() string {
-	return s.CarNo
+// GetChairNo returns the value of ChairNo.
+func (s *ChairPostRegisterReq) GetChairNo() string {
+	return s.ChairNo
 }
 
 // SetUsername sets the value of Username.
@@ -565,14 +565,14 @@ func (s *ChairPostRegisterReq) SetDateOfBirth(val string) {
 	s.DateOfBirth = val
 }
 
-// SetCarModel sets the value of CarModel.
-func (s *ChairPostRegisterReq) SetCarModel(val string) {
-	s.CarModel = val
+// SetChairModel sets the value of ChairModel.
+func (s *ChairPostRegisterReq) SetChairModel(val string) {
+	s.ChairModel = val
 }
 
-// SetCarNo sets the value of CarNo.
-func (s *ChairPostRegisterReq) SetCarNo(val string) {
-	s.CarNo = val
+// SetChairNo sets the value of ChairNo.
+func (s *ChairPostRegisterReq) SetChairNo(val string) {
+	s.ChairNo = val
 }
 
 // ChairPostRequestAcceptNoContent is response for ChairPostRequestAccept operation.

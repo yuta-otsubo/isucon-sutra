@@ -896,20 +896,20 @@ func (s *Chair) encodeFields(e *jx.Encoder) {
 		e.Str(s.Name)
 	}
 	{
-		e.FieldStart("car_model")
-		e.Str(s.CarModel)
+		e.FieldStart("chair_model")
+		e.Str(s.ChairModel)
 	}
 	{
-		e.FieldStart("car_no")
-		e.Str(s.CarNo)
+		e.FieldStart("chair_no")
+		e.Str(s.ChairNo)
 	}
 }
 
 var jsonFieldsNameOfChair = [4]string{
 	0: "id",
 	1: "name",
-	2: "car_model",
-	3: "car_no",
+	2: "chair_model",
+	3: "chair_no",
 }
 
 // Decode decodes Chair from json.
@@ -945,29 +945,29 @@ func (s *Chair) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"name\"")
 			}
-		case "car_model":
+		case "chair_model":
 			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
 				v, err := d.Str()
-				s.CarModel = string(v)
+				s.ChairModel = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"car_model\"")
+				return errors.Wrap(err, "decode field \"chair_model\"")
 			}
-		case "car_no":
+		case "chair_no":
 			requiredBitSet[0] |= 1 << 3
 			if err := func() error {
 				v, err := d.Str()
-				s.CarNo = string(v)
+				s.ChairNo = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"car_no\"")
+				return errors.Wrap(err, "decode field \"chair_no\"")
 			}
 		default:
 			return d.Skip()
@@ -1631,12 +1631,12 @@ func (s *ChairPostRegisterReq) encodeFields(e *jx.Encoder) {
 		e.Str(s.DateOfBirth)
 	}
 	{
-		e.FieldStart("car_model")
-		e.Str(s.CarModel)
+		e.FieldStart("chair_model")
+		e.Str(s.ChairModel)
 	}
 	{
-		e.FieldStart("car_no")
-		e.Str(s.CarNo)
+		e.FieldStart("chair_no")
+		e.Str(s.ChairNo)
 	}
 }
 
@@ -1645,8 +1645,8 @@ var jsonFieldsNameOfChairPostRegisterReq = [6]string{
 	1: "firstname",
 	2: "lastname",
 	3: "date_of_birth",
-	4: "car_model",
-	5: "car_no",
+	4: "chair_model",
+	5: "chair_no",
 }
 
 // Decode decodes ChairPostRegisterReq from json.
@@ -1706,29 +1706,29 @@ func (s *ChairPostRegisterReq) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"date_of_birth\"")
 			}
-		case "car_model":
+		case "chair_model":
 			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
 				v, err := d.Str()
-				s.CarModel = string(v)
+				s.ChairModel = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"car_model\"")
+				return errors.Wrap(err, "decode field \"chair_model\"")
 			}
-		case "car_no":
+		case "chair_no":
 			requiredBitSet[0] |= 1 << 5
 			if err := func() error {
 				v, err := d.Str()
-				s.CarNo = string(v)
+				s.ChairNo = string(v)
 				if err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"car_no\"")
+				return errors.Wrap(err, "decode field \"chair_no\"")
 			}
 		default:
 			return d.Skip()
