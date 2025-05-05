@@ -72,10 +72,11 @@ func (c *Chair) Tick(ctx *Context) error {
 	switch {
 	// 通知処理にエラーが発生している
 	case len(c.NotificationHandleErrors) > 0:
-		// TODO この処理に1tick使っていいか考える
+		// TODO この処理に1tick使って良いか考える
 		err := errors.Join(c.NotificationHandleErrors...)
 		c.NotificationHandleErrors = c.NotificationHandleErrors[:0] // 配列クリア
 		return err
+
 	// 進行中のリクエストが存在
 	case c.Request != nil:
 		switch c.Request.ChairStatus {
@@ -157,7 +158,11 @@ func (c *Chair) Tick(ctx *Context) error {
 			c.ServerRequestID = null.String{}
 
 		case RequestStatusCanceled:
-			// TODO
+			// サーバー側でリクエストがキャンセルされた
+
+			// 進行中のリクエストが無い状態にする
+			c.Request = nil
+			c.ServerRequestID = null.String{}
 		}
 
 	// オファーされたリクエストが存在するが、詳細を未取得
@@ -246,8 +251,8 @@ func (c *Chair) ChangeRequestStatus(status RequestStatus) error {
 	if request == nil {
 		return CodeError(ErrorCodeChairNotAssignedButStatusChanged)
 	}
-	if request.DesiredStatus != status {
-		return CodeError(ErrorCodeUnexpectedStatusTransitionOccurred)
+	if status != RequestStatusCanceled && request.DesiredStatus != status {
+		return CodeError(ErrorCodeUnexpectedChairRequestStatusTransitionOccurred)
 	}
 	request.ChairStatus = status
 	return nil
@@ -358,13 +363,11 @@ func (c *Chair) HandleNotification(event NotificationEvent) {
 		err := c.AssignRequest(data.ServerRequestID)
 		if err != nil {
 			c.NotificationHandleErrors = append(c.NotificationHandleErrors, err)
-			return
 		}
 	case *ChairNotificationEventCompleted:
 		err := c.ChangeRequestStatus(RequestStatusCompleted)
 		if err != nil {
 			c.NotificationHandleErrors = append(c.NotificationHandleErrors, err)
-			return
 		}
 	}
 }

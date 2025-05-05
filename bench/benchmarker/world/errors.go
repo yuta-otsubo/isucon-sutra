@@ -24,8 +24,10 @@ const (
 	ErrorCodeUserNotRequestingButStatusChanged
 	// ErrorCodeChairNotAssignedButStatusChanged 椅子にリクエストが割り当てられていないのに、椅子のステータスが更新された
 	ErrorCodeChairNotAssignedButStatusChanged
-	// ErrorCodeUnexpectedStatusTransitionOccurred 想定されていないRequestStatusの遷移が発生した
-	ErrorCodeUnexpectedStatusTransitionOccurred
+	// ErrorCodeUnexpectedUserRequestStatusTransitionOccurred 想定されていないユーザーのRequestStatusの遷移が発生した
+	ErrorCodeUnexpectedUserRequestStatusTransitionOccurred
+	// ErrorCodeUnexpectedChairRequestStatusTransitionOccurred 想定されていない椅子のRequestStatusの遷移が発生した
+	ErrorCodeUnexpectedChairRequestStatusTransitionOccurred
 	// ErrorCodeFailedToActivate 椅子がリクエストの受付を開始しようとしたが失敗した
 	ErrorCodeFailedToActivate
 	// ErrorCodeFailedToDeactivate 椅子がリクエストの受付を停止しようとしたが失敗した
@@ -34,11 +36,11 @@ const (
 	ErrorCodeChairAlreadyHasRequest
 	// ErrorCodeFailedToGetRequestDetail リクエスト詳細の取得が失敗した
 	ErrorCodeFailedToGetRequestDetail
-	// ErrorCodeFailedToRegisterUser ユーザーの登録に失敗した
+	// ErrorCodeFailedToRegisterUser ユーザー登録に失敗した
 	ErrorCodeFailedToRegisterUser
-	// ErrorCodeFailedToRegisterChair 椅子の登録に失敗した
+	// ErrorCodeFailedToRegisterChair 椅子登録に失敗した
 	ErrorCodeFailedToRegisterChair
-	// ErrorCodeFailedToConnectNotificationStream 通知ストリームの接続に失敗した
+	// ErrorCodeFailedToConnectNotificationStream 通知ストリームへの接続に失敗した
 	ErrorCodeFailedToConnectNotificationStream
 )
 

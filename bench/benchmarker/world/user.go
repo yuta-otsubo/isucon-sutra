@@ -3,7 +3,6 @@ package world
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math/rand/v2"
 )
 
@@ -65,7 +64,7 @@ func (u *User) Tick(ctx *Context) error {
 	switch {
 	// 通知処理にエラーが発生している
 	case len(u.NotificationHandleErrors) > 0:
-		// TODO この処理に1tick使っていいか考える
+		// TODO この処理に1tick使って良いか考える
 		err := errors.Join(u.NotificationHandleErrors...)
 		u.NotificationHandleErrors = u.NotificationHandleErrors[:0] // 配列クリア
 		return err
@@ -75,7 +74,6 @@ func (u *User) Tick(ctx *Context) error {
 		switch u.Request.UserStatus {
 		case RequestStatusMatching:
 			// マッチングされるまで待機する
-			// TODO: 待たされ続けた場合のキャンセル
 			break
 
 		case RequestStatusDispatching:
@@ -109,8 +107,13 @@ func (u *User) Tick(ctx *Context) error {
 			u.Request = nil
 
 		case RequestStatusCanceled:
-			// ここに分岐することはありえない
-			panic("unexpected state")
+			// サーバー側でリクエストがキャンセルされた
+			u.Request.DesiredStatus = RequestStatusCanceled
+
+			// 進行中のリクエストが無い状態にする
+			u.Request = nil
+
+			// TODO: キャンセルペナルティ
 		}
 
 	// 進行中のリクエストは存在しないが、ユーザーがアクティブ状態
@@ -168,8 +171,8 @@ func (u *User) ChangeRequestStatus(status RequestStatus) error {
 	if request == nil {
 		return CodeError(ErrorCodeUserNotRequestingButStatusChanged)
 	}
-	if request.DesiredStatus != status {
-		return WrapCodeError(ErrorCodeUnexpectedStatusTransitionOccurred, fmt.Errorf("request server id: %v, request request status: %v, status: %v", request.ServerID, request.DesiredStatus, status))
+	if status != RequestStatusCanceled && request.DesiredStatus != status {
+		return WrapCodeError(ErrorCodeUnexpectedUserRequestStatusTransitionOccurred, fmt.Errorf("request server id: %v, expect: %v, got: %v", request.ServerID, request.DesiredStatus, status))
 	}
 	request.UserStatus = status
 	return nil
@@ -181,26 +184,26 @@ func (u *User) HandleNotification(event NotificationEvent) {
 		err := u.ChangeRequestStatus(RequestStatusDispatching)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
-			return
 		}
 	case *UserNotificationEventDispatched:
 		err := u.ChangeRequestStatus(RequestStatusDispatched)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
-			return
 		}
 	case *UserNotificationEventCarrying:
 		err := u.ChangeRequestStatus(RequestStatusCarrying)
 		if err != nil {
 			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
-			return
 		}
 	case *UserNotificationEventArrived:
 		err := u.ChangeRequestStatus(RequestStatusArrived)
 		if err != nil {
-			log.Println(err)
-			// TODO エラーハンドリング
-			return
+			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
+		}
+	case *UserNotificationEventCanceled:
+		err := u.ChangeRequestStatus(RequestStatusCanceled)
+		if err != nil {
+			u.NotificationHandleErrors = append(u.NotificationHandleErrors, err)
 		}
 	}
 }
