@@ -174,8 +174,8 @@ func appPostRequests(w http.ResponseWriter, r *http.Request) {
 			}
 
 			_, err = tx.Exec(
-				`UPDATE ride_requests SET chair_id = ?, status = ? WHERE id = ?`,
-				chair.ID, "DISPATCHING", requestID,
+				`UPDATE ride_requests SET chair_id = ?, matched_at = NOW() WHERE id = ?`,
+				chair.ID, requestID,
 			)
 			if err != nil {
 				return false, err
@@ -238,10 +238,9 @@ func appGetRequest(w http.ResponseWriter, r *http.Request) {
 		RequestID:             rideRequest.ID,
 		PickupCoordinate:      Coordinate{Latitude: rideRequest.PickupLatitude, Longitude: rideRequest.PickupLongitude},
 		DestinationCoordinate: Coordinate{Latitude: rideRequest.DestinationLatitude, Longitude: rideRequest.DestinationLongitude},
-		// TODO
-		Status:    strings.ToLower(rideRequest.Status),
-		CreatedAt: rideRequest.RequestedAt.Unix(),
-		UpdateAt:  rideRequest.UpdatedAt.Unix(),
+		Status:                rideRequest.Status,
+		CreatedAt:             rideRequest.RequestedAt.Unix(),
+		UpdateAt:              rideRequest.UpdatedAt.Unix(),
 	}
 
 	chair := &Chair{}
@@ -343,7 +342,7 @@ func appGetNotification(w http.ResponseWriter, r *http.Request) {
 					Latitude:  rideRequest.DestinationLatitude,
 					Longitude: rideRequest.DestinationLongitude,
 				},
-				Status: strings.ToLower(rideRequest.Status),
+				Status: rideRequest.Status,
 				Chair: simpleChair{
 					ID:         chair.ID,
 					Name:       chair.Firstname + " " + chair.Lastname,
