@@ -17,6 +17,7 @@ func TestChair_moveRandom(t *testing.T) {
 		RegionHeight:  100,
 	}
 	c := Chair{
+		Region:  region,
 		Current: C(0, 0),
 		Speed:   13,
 		Rand:    rand.New(rand.NewPCG(rand.Uint64(), rand.Uint64())),
