@@ -8,10 +8,14 @@ includes:
 tasks:
   init:
     cmds:
-      - go install github.com/sqldef/cmd/mysqldef@latest
+      - go install github.com/sqldef/sqldef/cmd/mysqldef@latest
   prepare:
     cmds:
       - docker compose -f compose-local.yml up -d
+    dir: ./development
+  prepare:down:
+    cmds:
+      - docker compose -f compose-local.yml down -v
     dir: ./development
   migrate:
     cmds:
