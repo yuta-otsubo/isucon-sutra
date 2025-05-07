@@ -209,21 +209,6 @@ func (s *Server) decodeAppPostRequestRequest(r *http.Request) (
 			}
 			return req, close, err
 		}
-		if err := func() error {
-			if value, ok := request.Get(); ok {
-				if err := func() error {
-					if err := value.Validate(); err != nil {
-						return err
-					}
-					return nil
-				}(); err != nil {
-					return err
-				}
-			}
-			return nil
-		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
-		}
 		return request, close, nil
 	default:
 		return req, close, validate.InvalidContentType(ct)
@@ -441,21 +426,6 @@ func (s *Server) decodeChairPostCoordinateRequest(r *http.Request) (
 				Err:         err,
 			}
 			return req, close, err
-		}
-		if err := func() error {
-			if value, ok := request.Get(); ok {
-				if err := func() error {
-					if err := value.Validate(); err != nil {
-						return err
-					}
-					return nil
-				}(); err != nil {
-					return err
-				}
-			}
-			return nil
-		}(); err != nil {
-			return req, close, errors.Wrap(err, "validate")
 		}
 		return request, close, nil
 	default:
