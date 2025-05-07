@@ -120,7 +120,7 @@ func bindJSON(r *http.Request, v interface{}) error {
 	return json.NewDecoder(r.Body).Decode(v)
 }
 
-func respondJSON(w http.ResponseWriter, statusCode int, v interface{}) {
+func respondJSON(w http.ResponseWriter, statusCode int, v any) {
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(statusCode)
 	buf, err := json.Marshal(v)
@@ -129,10 +129,9 @@ func respondJSON(w http.ResponseWriter, statusCode int, v interface{}) {
 		return
 	}
 	w.Write(buf)
-	return
 }
 
-func writeSSE(w http.ResponseWriter, event string, data interface{}) error {
+func writeSSE(w http.ResponseWriter, event string, data any) error {
 	_, err := w.Write([]byte("event: " + event + "\n"))
 	if err != nil {
 		return err
@@ -164,7 +163,6 @@ func respondError(w http.ResponseWriter, statusCode int, err error) {
 		return
 	}
 	w.Write(buf)
-	return
 }
 
 func secureRandomStr(b int) string {
