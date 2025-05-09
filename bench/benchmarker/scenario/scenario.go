@@ -138,27 +138,12 @@ func (s *Scenario) Load(ctx context.Context, step *isucandar.BenchmarkStep) erro
 		u.State = world.UserStateActive
 	}
 
-	// TODO webapp側でマッチングさせる
-	// go func() {
-	// 	for id := range s.requestQueue {
-	// 		matched := false
-	// 		for _, chair := range s.world.ChairDB.Iter() {
-	// 			if chair.State == world.ChairStateActive && !chair.ServerRequestID.Valid {
-	// 				if f, ok := s.chairNotificationReceiverMap.Get(chair.ServerID); ok {
-	// 					f(&world.ChairNotificationEventMatched{ServerRequestID: id})
-	// 				}
-	// 				matched = true
-	// 				break
-	// 			}
-	// 		}
-	// 		if !matched {
-	// 			s.requestQueue <- id
-	// 		}
-	// 	}
-	// }()
-
 	for now := range world.ConvertHour(24 * 14) {
-		s.world.Tick(s.worldCtx)
+		err := s.world.Tick(s.worldCtx)
+		if err != nil {
+			s.contestantLogger.Error("critical error", zap.Error(err))
+			return err
+		}
 
 		if now%world.ConvertHour(1) == 0 {
 			s.contestantLogger.Info("tick", zap.Int("time", now/world.ConvertHour(1)))
