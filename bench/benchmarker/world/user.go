@@ -122,7 +122,7 @@ func (u *User) Tick(ctx *Context) error {
 
 			// 進行中のリクエストが無い状態にする
 			u.Request = nil
-			return CodeError(ErrorCodeRequestCanceleByServer)
+			return CodeError(ErrorCodeRequestCanceledByServer)
 		}
 
 	// 進行中のリクエストは存在しないが、ユーザーがアクティブ状態
