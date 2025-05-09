@@ -86,22 +86,22 @@ func (u *User) Tick(ctx *Context) error {
 
 		case RequestStatusDispatching:
 			// 椅子が到着するまで待つ
-			// 一向に椅子が到着しない場合は、このユーザーの行動はハングする
+			// 一向に到着しない場合は、このユーザーの行動はハングする
 			break
 
 		case RequestStatusDispatched:
 			// 椅子が出発するのを待つ
-			// 一向に椅子が到着しない場合は、このユーザーの行動はハングする
+			// 一向に到着しない場合は、このユーザーの行動はハングする
 			break
 
 		case RequestStatusCarrying:
 			// 椅子が到着するのを待つ
-			// 一向に椅子が到着しない場合は、このユーザーの行動はハングする
+			// 一向に到着しない場合は、このユーザーの行動はハングする
 			break
 
 		case RequestStatusArrived:
 			// 送迎の評価を行う
-			// TODO: 評価をする
+			// TODO 評価を送る
 			log.Printf("evaluation: %v", u.Request.CalculateEvaluation())
 			err := ctx.client.SendEvaluation(ctx, u.Request)
 			if err != nil {
@@ -122,8 +122,7 @@ func (u *User) Tick(ctx *Context) error {
 
 			// 進行中のリクエストが無い状態にする
 			u.Request = nil
-
-			return CodeError(ErrorCodeRequestCanceleByServer)
+			return CodeError(ErrorCodeRequestCanceledByServer)
 		}
 
 	// 進行中のリクエストは存在しないが、ユーザーがアクティブ状態
@@ -186,7 +185,16 @@ func (u *User) ChangeRequestStatus(status RequestStatus) error {
 		return CodeError(ErrorCodeUserNotRequestingButStatusChanged)
 	}
 	if status != RequestStatusCanceled && request.DesiredStatus != status {
-		return WrapCodeError(ErrorCodeUnexpectedUserRequestStatusTransitionOccurred, fmt.Errorf("request server id: %v, expect: %v, got: %v", request.ServerID, request.DesiredStatus, status))
+		switch request.UserStatus {
+		case RequestStatusMatching:
+			if request.DesiredStatus == RequestStatusDispatched {
+				// ユーザーにDispatchingが送られる前に、椅子が到着している場合があるが、その時にDispatchingを受け取ることを許容する
+				break
+			}
+			return WrapCodeError(ErrorCodeUnexpectedUserRequestStatusTransitionOccurred, fmt.Errorf("request server id: %v, expect: %v, got: %v (current: %v)", request.ServerID, request.DesiredStatus, status, request.UserStatus))
+		default:
+			return WrapCodeError(ErrorCodeUnexpectedUserRequestStatusTransitionOccurred, fmt.Errorf("request server id: %v, expect: %v, got: %v (current: %v)", request.ServerID, request.DesiredStatus, status, request.UserStatus))
+		}
 	}
 	request.UserStatus = status
 	return nil
