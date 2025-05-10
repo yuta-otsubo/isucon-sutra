@@ -15,11 +15,11 @@ var _ Handler = UnimplementedHandler{}
 
 // AppGetNotification implements app-get-notification operation.
 //
-// ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
+// 最新の自分の配車要求を取得します。.
 //
 // GET /app/notification
-func (UnimplementedHandler) AppGetNotification(ctx context.Context) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) AppGetNotification(ctx context.Context) (r AppGetNotificationRes, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // AppGetRequest implements app-get-request operation.
@@ -90,8 +90,8 @@ func (UnimplementedHandler) ChairGetInquiry(ctx context.Context, params ChairGet
 // 椅子に配車要求を通知するなどで使う想定.
 //
 // GET /chair/notification
-func (UnimplementedHandler) ChairGetNotification(ctx context.Context) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) ChairGetNotification(ctx context.Context) (r ChairGetNotificationRes, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // ChairGetRequest implements chair-get-request operation.

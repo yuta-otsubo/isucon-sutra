@@ -10,10 +10,10 @@ import (
 type Handler interface {
 	// AppGetNotification implements app-get-notification operation.
 	//
-	// ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
+	// 最新の自分の配車要求を取得します。.
 	//
 	// GET /app/notification
-	AppGetNotification(ctx context.Context) error
+	AppGetNotification(ctx context.Context) (AppGetNotificationRes, error)
 	// AppGetRequest implements app-get-request operation.
 	//
 	// ユーザーが配車要求の状態を確認する.
@@ -61,7 +61,7 @@ type Handler interface {
 	// 椅子に配車要求を通知するなどで使う想定.
 	//
 	// GET /chair/notification
-	ChairGetNotification(ctx context.Context) error
+	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
 	// ChairGetRequest implements chair-get-request operation.
 	//
 	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
