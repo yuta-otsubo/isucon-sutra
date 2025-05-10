@@ -32,7 +32,7 @@ func (c *codeRecorder) WriteHeader(status int) {
 
 // handleAppGetNotificationRequest handles app-get-notification operation.
 //
-// ポーリング方式にしない場合に、ユーザーのアプリに配車要求の各種状態遷移を通知するなどに使う想定.
+// 最新の自分の配車要求を取得します。.
 //
 // GET /app/notification
 func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -101,7 +101,7 @@ func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped boo
 		err error
 	)
 
-	var response *AppGetNotificationOK
+	var response AppGetNotificationRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -116,7 +116,7 @@ func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped boo
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = *AppGetNotificationOK
+			Response = AppGetNotificationRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -127,12 +127,12 @@ func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped boo
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.AppGetNotification(ctx)
+				response, err = s.h.AppGetNotification(ctx)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.AppGetNotification(ctx)
+		response, err = s.h.AppGetNotification(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -1205,7 +1205,7 @@ func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped b
 		err error
 	)
 
-	var response *ChairGetNotificationOK
+	var response ChairGetNotificationRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -1220,7 +1220,7 @@ func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped b
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = *ChairGetNotificationOK
+			Response = ChairGetNotificationRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1231,12 +1231,12 @@ func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped b
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.ChairGetNotification(ctx)
+				response, err = s.h.ChairGetNotification(ctx)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.ChairGetNotification(ctx)
+		response, err = s.h.ChairGetNotification(ctx)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

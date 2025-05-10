@@ -11,16 +11,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func encodeAppGetNotificationResponse(response *AppGetNotificationOK, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
-
-	return nil
-}
-
-func encodeAppGetRequestResponse(response AppGetRequestRes, w http.ResponseWriter, span trace.Span) error {
+func encodeAppGetNotificationResponse(response AppGetNotificationRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *AppGetRequestOK:
+	case *AppRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -33,9 +26,42 @@ func encodeAppGetRequestResponse(response AppGetRequestRes, w http.ResponseWrite
 
 		return nil
 
-	case *AppGetRequestNotFound:
+	case *AppGetNotificationNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeAppGetRequestResponse(response AppGetRequestRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *AppRequest:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -66,9 +92,16 @@ func encodeAppPostRegisterResponse(response AppPostRegisterRes, w http.ResponseW
 
 		return nil
 
-	case *AppPostRegisterBadRequest:
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -100,14 +133,28 @@ func encodeAppPostRequestEvaluateResponse(response AppPostRequestEvaluateRes, w 
 		return nil
 
 	case *AppPostRequestEvaluateBadRequest:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *AppPostRequestEvaluateNotFound:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -145,9 +192,16 @@ func encodeChairGetInquiryResponse(response ChairGetInquiryRes, w http.ResponseW
 
 		return nil
 
-	case *ChairGetInquiryNotFound:
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -156,16 +210,9 @@ func encodeChairGetInquiryResponse(response ChairGetInquiryRes, w http.ResponseW
 	}
 }
 
-func encodeChairGetNotificationResponse(response *ChairGetNotificationOK, w http.ResponseWriter, span trace.Span) error {
-	w.WriteHeader(200)
-	span.SetStatus(codes.Ok, http.StatusText(200))
-
-	return nil
-}
-
-func encodeChairGetRequestResponse(response ChairGetRequestRes, w http.ResponseWriter, span trace.Span) error {
+func encodeChairGetNotificationResponse(response ChairGetNotificationRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *ChairGetRequestOK:
+	case *ChairRequest:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -178,9 +225,42 @@ func encodeChairGetRequestResponse(response ChairGetRequestRes, w http.ResponseW
 
 		return nil
 
-	case *ChairGetRequestNotFound:
+	case *ChairGetNotificationNoContent:
+		w.WriteHeader(204)
+		span.SetStatus(codes.Ok, http.StatusText(204))
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
+func encodeChairGetRequestResponse(response ChairGetRequestRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *ChairRequest:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -232,9 +312,16 @@ func encodeChairPostRequestAcceptResponse(response ChairPostRequestAcceptRes, w 
 
 		return nil
 
-	case *ChairPostRequestAcceptNotFound:
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -251,9 +338,16 @@ func encodeChairPostRequestDenyResponse(response ChairPostRequestDenyRes, w http
 
 		return nil
 
-	case *ChairPostRequestDenyNotFound:
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
@@ -271,14 +365,28 @@ func encodeChairPostRequestDepartResponse(response ChairPostRequestDepartRes, w 
 		return nil
 
 	case *ChairPostRequestDepartBadRequest:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(400)
 		span.SetStatus(codes.Error, http.StatusText(400))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
 	case *ChairPostRequestDepartNotFound:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(404)
 		span.SetStatus(codes.Error, http.StatusText(404))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
 
 		return nil
 
