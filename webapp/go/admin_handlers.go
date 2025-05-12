@@ -2,6 +2,8 @@
 package main
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 	"strconv"
 )
@@ -75,7 +77,11 @@ func adminGetInquiry(w http.ResponseWriter, r *http.Request) {
 	inquiry := Inquiry{}
 	err := db.Get(&inquiry, "SELECT * FROM inquiries WHERE id = ?", inquiryID)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		if errors.Is(err, sql.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		respondError(w, http.StatusInternalServerError, err)
 		return
 	}
 
