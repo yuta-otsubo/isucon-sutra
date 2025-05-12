@@ -20,7 +20,7 @@ jobs:
         with:
           go-version-file: 'bench/go.mod'
           cache-dependency-path: |
-            bench/go.sum
+            ./bench/go.sum
       - name: Install Task
         uses: arduino/setup-task@v2
       - name: Build bench
@@ -36,7 +36,7 @@ jobs:
         with:
           go-version-file: 'bench/go.mod'
           cache-dependency-path: |
-            bench/go.sum
+            ./bench/go.sum
       - name: Install Task
         uses: arduino/setup-task@v2
       - name: Run bench Test
