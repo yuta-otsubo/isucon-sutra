@@ -5,62 +5,46 @@ import {
   useEffect,
   useImperativeHandle,
 } from "react";
+import { useOnClickOutside } from "~/components/hooks/useOnClickOutside";
 
 type ModalProps = PropsWithChildren<{
-  onClose?: () => void; // モーダルが閉じられる際のコールバック
+  onClose?: () => void;
 }>;
 
 export const Modal = forwardRef<{ close: () => void }, ModalProps>(
   ({ children, onClose }, ref) => {
     const sheetRef = useRef<HTMLDivElement>(null);
 
-    // モーダルの描画後に位置を設定し、領域外クリックを監視
-    useEffect(() => {
-      // 領域外クリックでモーダルを閉じる
-      const handleOutsideClick = (e: MouseEvent) => {
-        if (sheetRef.current && !sheetRef.current.contains(e.target as Node)) {
-          handleClose();
-        }
-      };
-
-      document.addEventListener("click", handleOutsideClick);
-
-      return () => {
-        document.removeEventListener("click", handleOutsideClick);
-      };
-    }, [handleClose]);
-
-    useEffect(() => {
-      setTimeout(() => {
-        if (sheetRef.current) {
-          sheetRef.current.style.transform = `translateY(0)`; // 初期位置に表示
-        }
-      }, 50); // アニメーション付きで描画するためのおまじない
-    }, []);
-
-    // モーダルを閉じる処理（アニメーションを待つ）
     const handleClose = () => {
       if (sheetRef.current) {
         const modal = sheetRef.current;
 
         const handleTransitionEnd = () => {
-          onClose?.(); // アニメーションが終わってからonCloseを呼び出す
-          modal.removeEventListener("transitionend", handleTransitionEnd); // イベントリスナーの解除
+          onClose?.();
+          modal.removeEventListener("transitionend", handleTransitionEnd);
         };
 
-        modal.addEventListener("transitionend", handleTransitionEnd); // アニメーションの終了を待つ
-        modal.style.transform = `translateY(100%)`; // 画面下に隠す
+        modal.addEventListener("transitionend", handleTransitionEnd);
+        modal.style.transform = `translateY(100%)`;
       }
     };
 
-    // 外部から`handleClose`を呼び出すための関数を提供
+    useEffect(() => {
+      setTimeout(() => {
+        if (sheetRef.current) {
+          sheetRef.current.style.transform = `translateY(0)`;
+        }
+      }, 50);
+    }, []);
+
+    useOnClickOutside(sheetRef, handleClose);
+
     useImperativeHandle(ref, () => ({
       close: handleClose,
     }));
 
     return (
       <>
-        {/* オーバーレイを追加 */}
         <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
         <div
           className={
@@ -76,5 +60,4 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
   },
 );
 
-// display nameを追加
 Modal.displayName = "Modal";
