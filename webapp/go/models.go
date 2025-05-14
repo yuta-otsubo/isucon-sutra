@@ -39,6 +39,7 @@ type Chair struct {
 type RideRequest struct {
 	ID                   string         `db:"id"`
 	UserID               string         `db:"user_id"`
+	DriverID             string         `db:"driver_id"`
 	ChairID              sql.NullString `db:"chair_id"`
 	Status               string         `db:"status"`
 	PickupLatitude       int            `db:"pickup_latitude"`
