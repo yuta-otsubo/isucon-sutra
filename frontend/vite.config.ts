@@ -2,8 +2,8 @@ import { vitePlugin as remix } from "@remix-run/dev";
 import { defineConfig, UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-const DEFAULT_HOSTNAME = 'localhost';
-const DEFAULT_PORT = 3000;
+ const DEFAULT_HOSTNAME = 'localhost';
+ const DEFAULT_PORT = 3000;
 
 export const config = {
   plugins: [
@@ -27,17 +27,12 @@ export const config = {
     },
     host: DEFAULT_HOSTNAME,
     port: DEFAULT_PORT,
+    strictPort: true
   },
   preview: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
     host: DEFAULT_HOSTNAME,
     port: DEFAULT_PORT,
+    strictPort: true
   }
 } as const satisfies UserConfig;
 
