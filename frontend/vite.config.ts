@@ -1,14 +1,11 @@
 import { vitePlugin as remix } from "@remix-run/dev";
-import { defineConfig } from "vite";
+import { defineConfig, UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-declare module "@remix-run/node" {
-  interface Future {
-    v3_singleFetch: true;
-  }
-}
+ const DEFAULT_HOSTNAME = 'localhost';
+ const DEFAULT_PORT = 3000;
 
-export default defineConfig({
+export const config = {
   plugins: [
     remix({
       ssr: false,
@@ -16,10 +13,27 @@ export default defineConfig({
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,
-        v3_singleFetch: true,
-        v3_lazyRouteDiscovery: true,
       },
     }),
     tsconfigPaths(),
   ],
-});
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+    host: DEFAULT_HOSTNAME,
+    port: DEFAULT_PORT,
+    strictPort: true
+  },
+  preview: {
+    host: DEFAULT_HOSTNAME,
+    port: DEFAULT_PORT,
+    strictPort: true
+  }
+} as const satisfies UserConfig;
+
+export default defineConfig(config);
