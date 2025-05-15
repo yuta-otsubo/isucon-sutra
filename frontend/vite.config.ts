@@ -20,7 +20,6 @@ const getLoginedSearchParamURL = async(target: 'app' | 'driver') => {
   })
   let json: Record<string, string>;
   if (fetched.status === 500) {
-    //
     json = JSON.parse(readFileSync(`./${target}LocalLogin`).toString()) as typeof json;
   } else {
     json = await fetched.json() as typeof json;
@@ -35,10 +34,12 @@ const getLoginedSearchParamURL = async(target: 'app' | 'driver') => {
 const customConsolePlugin: Plugin = {
   name: 'custom-test-user-login',
   configureServer(server) {
+
+
     server.httpServer?.once('listening', () => {
       (async() => {
         console.log(`logined client page: \x1b[32m  ${await getLoginedSearchParamURL('app')} \x1b[0m`);   
-      })().catch(e => console.error(e))
+      })().catch(e =>console.log(`LOGIN ERROR: ${e}`))
     });
   }
 };
