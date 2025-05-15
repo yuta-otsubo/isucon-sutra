@@ -1,6 +1,6 @@
 import { IsuconContext } from "./apiContext";
 
-const baseUrl = "http://localhost:8080/";
+const baseUrl = "http://localhost:3000/api";
 
 export type ErrorWrapper<TError> =
   | TError
