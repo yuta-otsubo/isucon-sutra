@@ -5,7 +5,7 @@ type Size = "xl" | "lg" | "sm" | "xs";
 type Variant = "danger";
 
 type TextProps = PropsWithChildren<{
-  tagName?: 'p' | 'div'
+  tagName?: "p" | "div";
   bold?: boolean;
   size?: Size;
   variant?: Variant;
@@ -37,7 +37,7 @@ const getVariantClass = (variant?: Variant) => {
 };
 
 export const Text: FC<TextProps> = ({
-  tagName = 'p',
+  tagName = "p",
   bold,
   size,
   variant,
