@@ -139,3 +139,53 @@ frontend/
 4. **public/**
    - ブラウザから直接アクセス可能な静的リソース
    - アプリケーションのロゴや favicon などのアセットを格納
+
+### .ts と .tsx の違い
+
+- JSX構文を使わないTypeScriptファイル -> .ts
+- JSX構文を使うTypeScriptファイル -> .tsx
+
+JSX構文とは: Reactのコンポーネントを記述するためのXMLライクな構文
+具体例:
+
+**No JSX**
+```jsx
+import React from 'react';
+
+function GreetingNoJSX({ name }) {
+  return React.createElement(
+    'div',
+    { className: 'greeting' },
+    React.createElement(
+      'h1',
+      null,
+      'こんにちは、',
+      name,
+      'さん！'
+    ),
+    React.createElement(
+      'p',
+      null,
+      'Reactへようこそ。'
+    )
+  );
+}
+
+export default GreetingNoJSX;
+```
+
+**JSX**
+```jsx
+import React from 'react';
+
+function GreetingJSX({ name }) {
+  return (
+    <div className="greeting">
+      <h1>こんにちは、{name}さん！</h1>
+      <p>Reactへようこそ。</p>
+    </div>
+  );
+}
+
+export default GreetingJSX;
+```
