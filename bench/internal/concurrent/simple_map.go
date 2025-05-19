@@ -25,7 +25,7 @@ func (s *SimpleMap[K, V]) Get(key K) (V, bool) {
 	return v, ok
 }
 
-func (s *SimpleMap[K, V]) GetOrSetDefault(key K, def func() V) V {
+func (s *SimpleMap[K, V]) GetOrSetDefault(key K, def func() V) (result V, set bool) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	v, ok := s.m[key]
@@ -33,7 +33,7 @@ func (s *SimpleMap[K, V]) GetOrSetDefault(key K, def func() V) V {
 		v = def()
 		s.m[key] = v
 	}
-	return v
+	return v, set
 }
 
 func (s *SimpleMap[K, V]) Set(key K, value V) {
