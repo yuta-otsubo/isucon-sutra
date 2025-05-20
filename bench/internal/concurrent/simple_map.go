@@ -1,4 +1,3 @@
-// 複数のゴルーチンから同じマップにアクセスする必要がある場合に、データの競合を避けるために使用
 package concurrent
 
 import (
@@ -25,15 +24,16 @@ func (s *SimpleMap[K, V]) Get(key K) (V, bool) {
 	return v, ok
 }
 
-func (s *SimpleMap[K, V]) GetOrSetDefault(key K, def func() V) V {
+func (s *SimpleMap[K, V]) GetOrSetDefault(key K, def func() V) (result V, set bool) {
 	s.lock.Lock()
 	defer s.lock.Unlock()
 	v, ok := s.m[key]
 	if !ok {
 		v = def()
 		s.m[key] = v
+		set = true
 	}
-	return v
+	return v, set
 }
 
 func (s *SimpleMap[K, V]) Set(key K, value V) {
