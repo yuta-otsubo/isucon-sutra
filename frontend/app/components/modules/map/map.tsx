@@ -1,14 +1,14 @@
 import {
-    FC,
-    MouseEventHandler,
-    TouchEventHandler,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
+  FC,
+  MouseEventHandler,
+  TouchEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 
-  const size = 2000;
+  const size = 5000;
 
   const draw = (ctx: CanvasRenderingContext2D) => {
     const grad = ctx.createLinearGradient(0, 0, size, 0);
