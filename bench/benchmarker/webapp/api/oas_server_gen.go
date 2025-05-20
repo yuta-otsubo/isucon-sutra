@@ -26,6 +26,12 @@ type Handler interface {
 	//
 	// POST /app/inquiry
 	AppPostInquiry(ctx context.Context, req OptAppPostInquiryReq) error
+	// AppPostPaymentMethods implements app-post-payment-methods operation.
+	//
+	// 決済トークンの登録.
+	//
+	// POST /app/payment-methods
+	AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) error
 	// AppPostRegister implements app-post-register operation.
 	//
 	// ユーザーが会員登録を行う.
@@ -110,6 +116,12 @@ type Handler interface {
 	//
 	// POST /chair/requests/{request_id}/depart
 	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
+	// ChairPostRequestPayment implements chair-post-request-payment operation.
+	//
+	// 支払いを実行する.
+	//
+	// POST /chair/requests/{request_id}/payment
+	ChairPostRequestPayment(ctx context.Context, params ChairPostRequestPaymentParams) (ChairPostRequestPaymentRes, error)
 	// PostInitialize implements post-initialize operation.
 	//
 	// サービスを初期化する.

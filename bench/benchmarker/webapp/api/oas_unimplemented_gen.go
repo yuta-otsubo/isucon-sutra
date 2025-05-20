@@ -40,6 +40,15 @@ func (UnimplementedHandler) AppPostInquiry(ctx context.Context, req OptAppPostIn
 	return ht.ErrNotImplemented
 }
 
+// AppPostPaymentMethods implements app-post-payment-methods operation.
+//
+// 決済トークンの登録.
+//
+// POST /app/payment-methods
+func (UnimplementedHandler) AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) error {
+	return ht.ErrNotImplemented
+}
+
 // AppPostRegister implements app-post-register operation.
 //
 // ユーザーが会員登録を行う.
@@ -163,6 +172,15 @@ func (UnimplementedHandler) ChairPostRequestDeny(ctx context.Context, params Cha
 //
 // POST /chair/requests/{request_id}/depart
 func (UnimplementedHandler) ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (r ChairPostRequestDepartRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ChairPostRequestPayment implements chair-post-request-payment operation.
+//
+// 支払いを実行する.
+//
+// POST /chair/requests/{request_id}/payment
+func (UnimplementedHandler) ChairPostRequestPayment(ctx context.Context, params ChairPostRequestPaymentParams) (r ChairPostRequestPaymentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
