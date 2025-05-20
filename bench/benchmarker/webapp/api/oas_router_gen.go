@@ -177,6 +177,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 
+					case 'p': // Prefix: "payment-methods"
+
+						if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleAppPostPaymentMethodsRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
 					case 'r': // Prefix: "re"
 
 						if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
@@ -536,6 +556,28 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 								}
 
+							case 'p': // Prefix: "payment"
+
+								if l := len("payment"); len(elem) >= l && elem[0:l] == "payment" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch r.Method {
+									case "POST":
+										s.handleChairPostRequestPaymentRequest([1]string{
+											args[0],
+										}, elemIsEscaped, w, r)
+									default:
+										s.notAllowed(w, r, "POST")
+									}
+
+									return
+								}
+
 							}
 
 						}
@@ -780,6 +822,30 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								r.summary = "ユーザー向け通知エンドポイント"
 								r.operationID = "app-get-notification"
 								r.pathPattern = "/app/notification"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'p': // Prefix: "payment-methods"
+
+						if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = AppPostPaymentMethodsOperation
+								r.summary = "決済トークンの登録"
+								r.operationID = "app-post-payment-methods"
+								r.pathPattern = "/app/payment-methods"
 								r.args = args
 								r.count = 0
 								return r, true
@@ -1185,6 +1251,30 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										}
 									}
 
+								}
+
+							case 'p': // Prefix: "payment"
+
+								if l := len("payment"); len(elem) >= l && elem[0:l] == "payment" {
+									elem = elem[l:]
+								} else {
+									break
+								}
+
+								if len(elem) == 0 {
+									// Leaf node.
+									switch method {
+									case "POST":
+										r.name = ChairPostRequestPaymentOperation
+										r.summary = "支払いを実行する"
+										r.operationID = "chair-post-request-payment"
+										r.pathPattern = "/chair/requests/{request_id}/payment"
+										r.args = args
+										r.count = 1
+										return r, true
+									default:
+										return
+									}
 								}
 
 							}
