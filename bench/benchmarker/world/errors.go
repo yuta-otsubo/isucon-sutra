@@ -44,6 +44,8 @@ const (
 	ErrorCodeFailedToConnectNotificationStream
 	// ErrorCodeRequestCanceledByServer リクエストがサーバー側でキャンセルされた
 	ErrorCodeRequestCanceledByServer
+	// ErrorCodeFailedToRegisterPaymentMethods ユーザーの支払い情報の登録に失敗しました
+	ErrorCodeFailedToRegisterPaymentMethods
 )
 
 var CriticalErrorCodes = map[ErrorCode]bool{
