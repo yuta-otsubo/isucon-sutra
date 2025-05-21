@@ -1,10 +1,11 @@
 import { useSearchParams } from "@remix-run/react";
-import { type ReactNode, createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, type ReactNode } from "react";
 import {
   useAppGetNotification,
   type AppGetNotificationError,
 } from "~/apiClient/apiComponents";
 import type { AppRequest, RequestStatus } from "~/apiClient/apiSchemas";
+import { ErrorMessage } from "~/components/primitives/error-message/error-message";
 import type { User } from "~/types";
 
 const UserContext = createContext<Partial<User>>({});
@@ -36,6 +37,7 @@ const RequestProvider = ({
     if (data instanceof Blob) {
       return undefined;
     }
+    // TODO:
     const status = (searchParams.get("debug_status") ?? undefined) as
       | RequestStatus
       | undefined;
@@ -54,12 +56,12 @@ const RequestProvider = ({
 };
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  // TODO:
   const [searchParams] = useSearchParams();
   const accessToken = searchParams.get("access_token") ?? undefined;
   const id = searchParams.get("user_id") ?? undefined;
-
   if (accessToken === undefined || id === undefined) {
-    return <div>must set access_token and user_id</div>;
+    return <ErrorMessage>must set access_token and user_id</ErrorMessage>;
   }
 
   return (

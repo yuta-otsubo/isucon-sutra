@@ -1,11 +1,15 @@
 import {
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ErrorMessage } from "./components/primitives/error-message/error-message";
+import { MainFrame } from "./components/primitives/frame/frame";
 import "./tailwind.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -19,9 +23,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="overscroll-none">
+      <body className="overscroll-none bg-gray-100">
         <QueryClientProvider client={queryClient}>
-          {children}
+          <MainFrame>{children}</MainFrame>
         </QueryClientProvider>
         <ScrollRestoration />
         <Scripts />
@@ -32,6 +36,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+  return (
+    <ErrorMessage>
+      {isRouteErrorResponse(error)
+        ? `${error.status} ${error.statusText}`
+        : error instanceof Error
+          ? error.message
+          : "Unknown Error"}
+    </ErrorMessage>
+  );
 }
 
 export function HydrateFallback() {
