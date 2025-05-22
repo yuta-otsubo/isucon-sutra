@@ -189,6 +189,6 @@ func (UnimplementedHandler) ChairPostRequestPayment(ctx context.Context, params 
 // サービスを初期化する.
 //
 // POST /initialize
-func (UnimplementedHandler) PostInitialize(ctx context.Context) (r *PostInitializeOK, _ error) {
+func (UnimplementedHandler) PostInitialize(ctx context.Context, req OptPostInitializeReq) (r *PostInitializeOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
