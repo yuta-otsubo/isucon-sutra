@@ -2701,8 +2701,27 @@ func (s *Server) handlePostInitializeRequest(args [0]string, argsEscaped bool, w
 
 			s.errors.Add(ctx, 1, metric.WithAttributes(attrs...))
 		}
-		err error
+		err          error
+		opErrContext = ogenerrors.OperationContext{
+			Name: PostInitializeOperation,
+			ID:   "post-initialize",
+		}
 	)
+	request, close, err := s.decodePostInitializeRequest(r)
+	if err != nil {
+		err = &ogenerrors.DecodeRequestError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeRequest", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
+	defer func() {
+		if err := close(); err != nil {
+			recordError("CloseRequest", err)
+		}
+	}()
 
 	var response *PostInitializeOK
 	if m := s.cfg.Middleware; m != nil {
@@ -2711,13 +2730,13 @@ func (s *Server) handlePostInitializeRequest(args [0]string, argsEscaped bool, w
 			OperationName:    PostInitializeOperation,
 			OperationSummary: "サービスを初期化する",
 			OperationID:      "post-initialize",
-			Body:             nil,
+			Body:             request,
 			Params:           middleware.Parameters{},
 			Raw:              r,
 		}
 
 		type (
-			Request  = struct{}
+			Request  = OptPostInitializeReq
 			Params   = struct{}
 			Response = *PostInitializeOK
 		)
@@ -2730,12 +2749,12 @@ func (s *Server) handlePostInitializeRequest(args [0]string, argsEscaped bool, w
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.PostInitialize(ctx)
+				response, err = s.h.PostInitialize(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.PostInitialize(ctx)
+		response, err = s.h.PostInitialize(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

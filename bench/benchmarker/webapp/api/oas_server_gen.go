@@ -127,7 +127,7 @@ type Handler interface {
 	// サービスを初期化する.
 	//
 	// POST /initialize
-	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
+	PostInitialize(ctx context.Context, req OptPostInitializeReq) (*PostInitializeOK, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and
