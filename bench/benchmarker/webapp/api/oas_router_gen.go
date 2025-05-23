@@ -61,9 +61,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "a"
+			case 'a': // Prefix: "app/"
 
-				if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+				if l := len("app/"); len(elem) >= l && elem[0:l] == "app/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -73,61 +73,49 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
-				case 'd': // Prefix: "dmin/inquiries"
+				case 'n': // Prefix: "notification"
 
-					if l := len("dmin/inquiries"); len(elem) >= l && elem[0:l] == "dmin/inquiries" {
+					if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
+						// Leaf node.
 						switch r.Method {
 						case "GET":
-							s.handleChairGetInquiriesRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleAppGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
 
 						return
 					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
 
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
+				case 'p': // Prefix: "payment-methods"
 
-						// Param: "inquiry_id"
-						// Leaf parameter, slashes are prohibited
-						idx := strings.IndexByte(elem, '/')
-						if idx >= 0 {
-							break
-						}
-						args[0] = elem
-						elem = ""
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleChairGetInquiryRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
-							}
-
-							return
-						}
-
+					if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-				case 'p': // Prefix: "pp/"
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleAppPostPaymentMethodsRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
 
-					if l := len("pp/"); len(elem) >= l && elem[0:l] == "pp/" {
+						return
+					}
+
+				case 'r': // Prefix: "re"
+
+					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
 						elem = elem[l:]
 					} else {
 						break
@@ -137,9 +125,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						break
 					}
 					switch elem[0] {
-					case 'i': // Prefix: "inquiry"
+					case 'g': // Prefix: "gister"
 
-						if l := len("inquiry"); len(elem) >= l && elem[0:l] == "inquiry" {
+						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
 							elem = elem[l:]
 						} else {
 							break
@@ -149,7 +137,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "POST":
-								s.handleAppPostInquiryRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleAppPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "POST")
 							}
@@ -157,149 +145,75 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							return
 						}
 
-					case 'n': // Prefix: "notification"
+					case 'q': // Prefix: "quests"
 
-						if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
+						if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "GET":
-								s.handleAppGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
-							}
-
-							return
-						}
-
-					case 'p': // Prefix: "payment-methods"
-
-						if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
 							switch r.Method {
 							case "POST":
-								s.handleAppPostPaymentMethodsRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleAppPostRequestRequest([0]string{}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "POST")
 							}
 
 							return
-						}
-
-					case 'r': // Prefix: "re"
-
-						if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							break
 						}
 						switch elem[0] {
-						case 'g': // Prefix: "gister"
+						case '/': // Prefix: "/"
 
-							if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch r.Method {
-								case "POST":
-									s.handleAppPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
-								default:
-									s.notAllowed(w, r, "POST")
-								}
-
-								return
+							// Param: "request_id"
+							// Match until "/"
+							idx := strings.IndexByte(elem, '/')
+							if idx < 0 {
+								idx = len(elem)
 							}
-
-						case 'q': // Prefix: "quests"
-
-							if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
-								elem = elem[l:]
-							} else {
-								break
-							}
+							args[0] = elem[:idx]
+							elem = elem[idx:]
 
 							if len(elem) == 0 {
 								switch r.Method {
-								case "POST":
-									s.handleAppPostRequestRequest([0]string{}, elemIsEscaped, w, r)
+								case "GET":
+									s.handleAppGetRequestRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
 								default:
-									s.notAllowed(w, r, "POST")
+									s.notAllowed(w, r, "GET")
 								}
 
 								return
 							}
 							switch elem[0] {
-							case '/': // Prefix: "/"
+							case '/': // Prefix: "/evaluate"
 
-								if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
 									elem = elem[l:]
 								} else {
 									break
 								}
 
-								// Param: "request_id"
-								// Match until "/"
-								idx := strings.IndexByte(elem, '/')
-								if idx < 0 {
-									idx = len(elem)
-								}
-								args[0] = elem[:idx]
-								elem = elem[idx:]
-
 								if len(elem) == 0 {
+									// Leaf node.
 									switch r.Method {
-									case "GET":
-										s.handleAppGetRequestRequest([1]string{
+									case "POST":
+										s.handleAppPostRequestEvaluateRequest([1]string{
 											args[0],
 										}, elemIsEscaped, w, r)
 									default:
-										s.notAllowed(w, r, "GET")
+										s.notAllowed(w, r, "POST")
 									}
 
 									return
-								}
-								switch elem[0] {
-								case '/': // Prefix: "/evaluate"
-
-									if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch r.Method {
-										case "POST":
-											s.handleAppPostRequestEvaluateRequest([1]string{
-												args[0],
-											}, elemIsEscaped, w, r)
-										default:
-											s.notAllowed(w, r, "POST")
-										}
-
-										return
-									}
-
 								}
 
 							}
@@ -606,6 +520,60 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
+			case 'p': // Prefix: "provider/"
+
+				if l := len("provider/"); len(elem) >= l && elem[0:l] == "provider/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'r': // Prefix: "register"
+
+					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleProviderPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
+				case 's': // Prefix: "sales"
+
+					if l := len("sales"); len(elem) >= l && elem[0:l] == "sales" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleProviderGetSalesRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
+				}
+
 			}
 
 		}
@@ -700,9 +668,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 				break
 			}
 			switch elem[0] {
-			case 'a': // Prefix: "a"
+			case 'a': // Prefix: "app/"
 
-				if l := len("a"); len(elem) >= l && elem[0:l] == "a" {
+				if l := len("app/"); len(elem) >= l && elem[0:l] == "app/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -712,21 +680,22 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
-				case 'd': // Prefix: "dmin/inquiries"
+				case 'n': // Prefix: "notification"
 
-					if l := len("dmin/inquiries"); len(elem) >= l && elem[0:l] == "dmin/inquiries" {
+					if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
+						// Leaf node.
 						switch method {
 						case "GET":
-							r.name = ChairGetInquiriesOperation
-							r.summary = "問い合わせの一覧を取得する"
-							r.operationID = "chair-get-inquiries"
-							r.pathPattern = "/admin/inquiries"
+							r.name = AppGetNotificationOperation
+							r.summary = "ユーザー向け通知エンドポイント"
+							r.operationID = "app-get-notification"
+							r.pathPattern = "/app/notification"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -734,45 +703,34 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							return
 						}
 					}
-					switch elem[0] {
-					case '/': // Prefix: "/"
 
-						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
+				case 'p': // Prefix: "payment-methods"
 
-						// Param: "inquiry_id"
-						// Leaf parameter, slashes are prohibited
-						idx := strings.IndexByte(elem, '/')
-						if idx >= 0 {
-							break
-						}
-						args[0] = elem
-						elem = ""
-
-						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "GET":
-								r.name = ChairGetInquiryOperation
-								r.summary = "指定したIDの問い合わせ内容を取得"
-								r.operationID = "chair-get-inquiry"
-								r.pathPattern = "/admin/inquiries/{inquiry_id}"
-								r.args = args
-								r.count = 1
-								return r, true
-							default:
-								return
-							}
-						}
-
+					if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-				case 'p': // Prefix: "pp/"
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = AppPostPaymentMethodsOperation
+							r.summary = "決済トークンの登録"
+							r.operationID = "app-post-payment-methods"
+							r.pathPattern = "/app/payment-methods"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
 
-					if l := len("pp/"); len(elem) >= l && elem[0:l] == "pp/" {
+				case 'r': // Prefix: "re"
+
+					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
 						elem = elem[l:]
 					} else {
 						break
@@ -782,9 +740,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						break
 					}
 					switch elem[0] {
-					case 'i': // Prefix: "inquiry"
+					case 'g': // Prefix: "gister"
 
-						if l := len("inquiry"); len(elem) >= l && elem[0:l] == "inquiry" {
+						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
 							elem = elem[l:]
 						} else {
 							break
@@ -794,10 +752,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "POST":
-								r.name = AppPostInquiryOperation
-								r.summary = "ユーザーが問い合わせを送信する"
-								r.operationID = "app-post-inquiry"
-								r.pathPattern = "/app/inquiry"
+								r.name = AppPostRegisterOperation
+								r.summary = "ユーザーが会員登録を行う"
+								r.operationID = "app-post-register"
+								r.pathPattern = "/app/register"
 								r.args = args
 								r.count = 0
 								return r, true
@@ -806,169 +764,83 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							}
 						}
 
-					case 'n': // Prefix: "notification"
+					case 'q': // Prefix: "quests"
 
-						if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
+						if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "GET":
-								r.name = AppGetNotificationOperation
-								r.summary = "ユーザー向け通知エンドポイント"
-								r.operationID = "app-get-notification"
-								r.pathPattern = "/app/notification"
-								r.args = args
-								r.count = 0
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'p': // Prefix: "payment-methods"
-
-						if l := len("payment-methods"); len(elem) >= l && elem[0:l] == "payment-methods" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							// Leaf node.
 							switch method {
 							case "POST":
-								r.name = AppPostPaymentMethodsOperation
-								r.summary = "決済トークンの登録"
-								r.operationID = "app-post-payment-methods"
-								r.pathPattern = "/app/payment-methods"
+								r.name = AppPostRequestOperation
+								r.summary = "ユーザーが配車要求を行う"
+								r.operationID = "app-post-request"
+								r.pathPattern = "/app/requests"
 								r.args = args
 								r.count = 0
 								return r, true
 							default:
 								return
 							}
-						}
-
-					case 'r': // Prefix: "re"
-
-						if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						if len(elem) == 0 {
-							break
 						}
 						switch elem[0] {
-						case 'g': // Prefix: "gister"
+						case '/': // Prefix: "/"
 
-							if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
-							if len(elem) == 0 {
-								// Leaf node.
-								switch method {
-								case "POST":
-									r.name = AppPostRegisterOperation
-									r.summary = "ユーザーが会員登録を行う"
-									r.operationID = "app-post-register"
-									r.pathPattern = "/app/register"
-									r.args = args
-									r.count = 0
-									return r, true
-								default:
-									return
-								}
+							// Param: "request_id"
+							// Match until "/"
+							idx := strings.IndexByte(elem, '/')
+							if idx < 0 {
+								idx = len(elem)
 							}
-
-						case 'q': // Prefix: "quests"
-
-							if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
-								elem = elem[l:]
-							} else {
-								break
-							}
+							args[0] = elem[:idx]
+							elem = elem[idx:]
 
 							if len(elem) == 0 {
 								switch method {
-								case "POST":
-									r.name = AppPostRequestOperation
-									r.summary = "ユーザーが配車要求を行う"
-									r.operationID = "app-post-request"
-									r.pathPattern = "/app/requests"
+								case "GET":
+									r.name = AppGetRequestOperation
+									r.summary = "ユーザーが配車要求の状態を確認する"
+									r.operationID = "app-get-request"
+									r.pathPattern = "/app/requests/{request_id}"
 									r.args = args
-									r.count = 0
+									r.count = 1
 									return r, true
 								default:
 									return
 								}
 							}
 							switch elem[0] {
-							case '/': // Prefix: "/"
+							case '/': // Prefix: "/evaluate"
 
-								if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+								if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
 									elem = elem[l:]
 								} else {
 									break
 								}
 
-								// Param: "request_id"
-								// Match until "/"
-								idx := strings.IndexByte(elem, '/')
-								if idx < 0 {
-									idx = len(elem)
-								}
-								args[0] = elem[:idx]
-								elem = elem[idx:]
-
 								if len(elem) == 0 {
+									// Leaf node.
 									switch method {
-									case "GET":
-										r.name = AppGetRequestOperation
-										r.summary = "ユーザーが配車要求の状態を確認する"
-										r.operationID = "app-get-request"
-										r.pathPattern = "/app/requests/{request_id}"
+									case "POST":
+										r.name = AppPostRequestEvaluateOperation
+										r.summary = "ユーザーが椅子を評価する"
+										r.operationID = "app-post-request-evaluate"
+										r.pathPattern = "/app/requests/{request_id}/evaluate"
 										r.args = args
 										r.count = 1
 										return r, true
 									default:
 										return
 									}
-								}
-								switch elem[0] {
-								case '/': // Prefix: "/evaluate"
-
-									if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch method {
-										case "POST":
-											r.name = AppPostRequestEvaluateOperation
-											r.summary = "ユーザーが椅子を評価する"
-											r.operationID = "app-post-request-evaluate"
-											r.pathPattern = "/app/requests/{request_id}/evaluate"
-											r.args = args
-											r.count = 1
-											return r, true
-										default:
-											return
-										}
-									}
-
 								}
 
 							}
@@ -1307,6 +1179,68 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					default:
 						return
 					}
+				}
+
+			case 'p': // Prefix: "provider/"
+
+				if l := len("provider/"); len(elem) >= l && elem[0:l] == "provider/" {
+					elem = elem[l:]
+				} else {
+					break
+				}
+
+				if len(elem) == 0 {
+					break
+				}
+				switch elem[0] {
+				case 'r': // Prefix: "register"
+
+					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = ProviderPostRegisterOperation
+							r.summary = "椅子プロバイダーが登録を行う"
+							r.operationID = "provider-post-register"
+							r.pathPattern = "/provider/register"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 's': // Prefix: "sales"
+
+					if l := len("sales"); len(elem) >= l && elem[0:l] == "sales" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = ProviderGetSalesOperation
+							r.summary = "椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する"
+							r.operationID = "provider-get-sales"
+							r.pathPattern = "/provider/sales"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
 				}
 
 			}

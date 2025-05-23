@@ -31,15 +31,6 @@ func (UnimplementedHandler) AppGetRequest(ctx context.Context, params AppGetRequ
 	return r, ht.ErrNotImplemented
 }
 
-// AppPostInquiry implements app-post-inquiry operation.
-//
-// ユーザーが問い合わせを送信する.
-//
-// POST /app/inquiry
-func (UnimplementedHandler) AppPostInquiry(ctx context.Context, req OptAppPostInquiryReq) error {
-	return ht.ErrNotImplemented
-}
-
 // AppPostPaymentMethods implements app-post-payment-methods operation.
 //
 // 決済トークンの登録.
@@ -73,24 +64,6 @@ func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRe
 //
 // POST /app/requests/{request_id}/evaluate
 func (UnimplementedHandler) AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (r AppPostRequestEvaluateRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ChairGetInquiries implements chair-get-inquiries operation.
-//
-// 問い合わせの一覧を取得する.
-//
-// GET /admin/inquiries
-func (UnimplementedHandler) ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (r *ChairGetInquiriesOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ChairGetInquiry implements chair-get-inquiry operation.
-//
-// 指定したIDの問い合わせ内容を取得.
-//
-// GET /admin/inquiries/{inquiry_id}
-func (UnimplementedHandler) ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (r ChairGetInquiryRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -190,5 +163,23 @@ func (UnimplementedHandler) ChairPostRequestPayment(ctx context.Context, params 
 //
 // POST /initialize
 func (UnimplementedHandler) PostInitialize(ctx context.Context, req OptPostInitializeReq) (r *PostInitializeOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ProviderGetSales implements provider-get-sales operation.
+//
+// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+//
+// GET /provider/sales
+func (UnimplementedHandler) ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (r *ProviderGetSalesOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// ProviderPostRegister implements provider-post-register operation.
+//
+// 椅子プロバイダーが登録を行う.
+//
+// POST /provider/register
+func (UnimplementedHandler) ProviderPostRegister(ctx context.Context, req OptProviderPostRegisterReq) (r *ProviderPostRegisterCreated, _ error) {
 	return r, ht.ErrNotImplemented
 }

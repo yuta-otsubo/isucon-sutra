@@ -19,16 +19,18 @@ type Client interface {
 	SendDeactivate(ctx *Context, chair *Chair) error
 	// GetRequestByChair サーバーからリクエストの詳細を取得する(椅子側)
 	GetRequestByChair(ctx *Context, chair *Chair, serverRequestID string) (*GetRequestByChairResponse, error)
-	// RegisterUser サーバーにユーザを登録する
+	// RegisterUser サーバーにユーザーを登録する
 	RegisterUser(ctx *Context, data *RegisterUserRequest) (*RegisterUserResponse, error)
-	// RegisterChair サーバーに椅子を登録する
-	RegisterChair(ctx *Context, data *RegisterChairRequest) (*RegisterChairResponse, error)
+	// RegisterProvider サーバーにプロバイダーを登録する
+	RegisterProvider(ctx *Context, data *RegisterProviderRequest) (*RegisterProviderResponse, error)
+	// RegisterChair サーバーにユーザーを登録する
+	RegisterChair(ctx *Context, provider *Provider, data *RegisterChairRequest) (*RegisterChairResponse, error)
 	// RegisterPaymentMethods サーバーにユーザーの支払い情報を登録する
 	RegisterPaymentMethods(ctx *Context, user *User) error
-	// ConnectUserNotificationStream ユーザ用の通知ストリームに接続する
+	// ConnectUserNotificationStream ユーザー用の通知ストリームに接続する
 	ConnectUserNotificationStream(ctx *Context, user *User, receiver NotificationReceiverFunc) (NotificationStream, error)
 	// ConnectChairNotificationStream 椅子用の通知ストリームに接続する
-	ConnectChairNotificationStream(ctx *Context, chari *Chair, receiver NotificationReceiverFunc) (NotificationStream, error)
+	ConnectChairNotificationStream(ctx *Context, chair *Chair, receiver NotificationReceiverFunc) (NotificationStream, error)
 }
 
 type SendCreateRequestResponse struct {
@@ -49,13 +51,18 @@ type RegisterUserResponse struct {
 	AccessToken  string
 }
 
+type RegisterProviderRequest struct {
+	Name string
+}
+
+type RegisterProviderResponse struct {
+	ServerProviderID string
+	AccessToken      string
+}
+
 type RegisterChairRequest struct {
-	UserName    string
-	FirstName   string
-	LastName    string
-	DateOfBirth string
-	ChairModel  string
-	ChairNo     string
+	Name    string
+	Model  string
 }
 
 type RegisterChairResponse struct {

@@ -147,204 +147,6 @@ func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
-// ChairGetInquiriesParams is parameters of chair-get-inquiries operation.
-type ChairGetInquiriesParams struct {
-	// 取得件数.
-	Limit OptFloat64
-	// 取得カーソル.
-	Cursor OptString
-}
-
-func unpackChairGetInquiriesParams(packed middleware.Parameters) (params ChairGetInquiriesParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "limit",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.Limit = v.(OptFloat64)
-		}
-	}
-	{
-		key := middleware.ParameterKey{
-			Name: "cursor",
-			In:   "query",
-		}
-		if v, ok := packed[key]; ok {
-			params.Cursor = v.(OptString)
-		}
-	}
-	return params
-}
-
-func decodeChairGetInquiriesParams(args [0]string, argsEscaped bool, r *http.Request) (params ChairGetInquiriesParams, _ error) {
-	q := uri.NewQueryDecoder(r.URL.Query())
-	// Decode query: limit.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "limit",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotLimitVal float64
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToFloat64(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotLimitVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.Limit.SetTo(paramsDotLimitVal)
-				return nil
-			}); err != nil {
-				return err
-			}
-			if err := func() error {
-				if value, ok := params.Limit.Get(); ok {
-					if err := func() error {
-						if err := (validate.Float{}).Validate(float64(value)); err != nil {
-							return errors.Wrap(err, "float")
-						}
-						return nil
-					}(); err != nil {
-						return err
-					}
-				}
-				return nil
-			}(); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "limit",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	// Decode query: cursor.
-	if err := func() error {
-		cfg := uri.QueryParameterDecodingConfig{
-			Name:    "cursor",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.HasParam(cfg); err == nil {
-			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotCursorVal string
-				if err := func() error {
-					val, err := d.DecodeValue()
-					if err != nil {
-						return err
-					}
-
-					c, err := conv.ToString(val)
-					if err != nil {
-						return err
-					}
-
-					paramsDotCursorVal = c
-					return nil
-				}(); err != nil {
-					return err
-				}
-				params.Cursor.SetTo(paramsDotCursorVal)
-				return nil
-			}); err != nil {
-				return err
-			}
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "cursor",
-			In:   "query",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ChairGetInquiryParams is parameters of chair-get-inquiry operation.
-type ChairGetInquiryParams struct {
-	// 問い合わせID.
-	InquiryID string
-}
-
-func unpackChairGetInquiryParams(packed middleware.Parameters) (params ChairGetInquiryParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "inquiry_id",
-			In:   "path",
-		}
-		params.InquiryID = packed[key].(string)
-	}
-	return params
-}
-
-func decodeChairGetInquiryParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairGetInquiryParams, _ error) {
-	// Decode path: inquiry_id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "inquiry_id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.InquiryID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "inquiry_id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
 // ChairGetRequestParams is parameters of chair-get-request operation.
 type ChairGetRequestParams struct {
 	// 配車要求ID.
@@ -669,6 +471,109 @@ func decodeChairPostRequestPaymentParams(args [1]string, argsEscaped bool, r *ht
 		return params, &ogenerrors.DecodeParamError{
 			Name: "request_id",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// ProviderGetSalesParams is parameters of provider-get-sales operation.
+type ProviderGetSalesParams struct {
+	// 開始日（含む）.
+	Since string
+	// 終了日（含む）.
+	Until string
+}
+
+func unpackProviderGetSalesParams(packed middleware.Parameters) (params ProviderGetSalesParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "since",
+			In:   "query",
+		}
+		params.Since = packed[key].(string)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "until",
+			In:   "query",
+		}
+		params.Until = packed[key].(string)
+	}
+	return params
+}
+
+func decodeProviderGetSalesParams(args [0]string, argsEscaped bool, r *http.Request) (params ProviderGetSalesParams, _ error) {
+	q := uri.NewQueryDecoder(r.URL.Query())
+	// Decode query: since.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "since",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Since = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "since",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: until.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "until",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.Until = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "until",
+			In:   "query",
 			Err:  err,
 		}
 	}

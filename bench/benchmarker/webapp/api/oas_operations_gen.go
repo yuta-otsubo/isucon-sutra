@@ -8,13 +8,10 @@ type OperationName = string
 const (
 	AppGetNotificationOperation      OperationName = "AppGetNotification"
 	AppGetRequestOperation           OperationName = "AppGetRequest"
-	AppPostInquiryOperation          OperationName = "AppPostInquiry"
 	AppPostPaymentMethodsOperation   OperationName = "AppPostPaymentMethods"
 	AppPostRegisterOperation         OperationName = "AppPostRegister"
 	AppPostRequestOperation          OperationName = "AppPostRequest"
 	AppPostRequestEvaluateOperation  OperationName = "AppPostRequestEvaluate"
-	ChairGetInquiriesOperation       OperationName = "ChairGetInquiries"
-	ChairGetInquiryOperation         OperationName = "ChairGetInquiry"
 	ChairGetNotificationOperation    OperationName = "ChairGetNotification"
 	ChairGetRequestOperation         OperationName = "ChairGetRequest"
 	ChairPostActivateOperation       OperationName = "ChairPostActivate"
@@ -26,4 +23,6 @@ const (
 	ChairPostRequestDepartOperation  OperationName = "ChairPostRequestDepart"
 	ChairPostRequestPaymentOperation OperationName = "ChairPostRequestPayment"
 	PostInitializeOperation          OperationName = "PostInitialize"
+	ProviderGetSalesOperation        OperationName = "ProviderGetSales"
+	ProviderPostRegisterOperation    OperationName = "ProviderPostRegister"
 )
