@@ -129,7 +129,7 @@ type Invoker interface {
 	// サービスを初期化する.
 	//
 	// POST /initialize
-	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
+	PostInitialize(ctx context.Context, request OptPostInitializeReq) (*PostInitializeOK, error)
 	// ProviderGetSales invokes provider-get-sales operation.
 	//
 	// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
@@ -1499,12 +1499,12 @@ func (c *Client) sendChairPostRequestPayment(ctx context.Context, params ChairPo
 // サービスを初期化する.
 //
 // POST /initialize
-func (c *Client) PostInitialize(ctx context.Context) (*PostInitializeOK, error) {
-	res, err := c.sendPostInitialize(ctx)
+func (c *Client) PostInitialize(ctx context.Context, request OptPostInitializeReq) (*PostInitializeOK, error) {
+	res, err := c.sendPostInitialize(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendPostInitialize(ctx context.Context) (res *PostInitializeOK, err error) {
+func (c *Client) sendPostInitialize(ctx context.Context, request OptPostInitializeReq) (res *PostInitializeOK, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("post-initialize"),
 		semconv.HTTPRequestMethodKey.String("POST"),
@@ -1548,6 +1548,9 @@ func (c *Client) sendPostInitialize(ctx context.Context) (res *PostInitializeOK,
 	r, err := ht.NewRequest(ctx, "POST", u)
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodePostInitializeRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
 	}
 
 	stage = "SendRequest"

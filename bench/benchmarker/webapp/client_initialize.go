@@ -33,7 +33,7 @@ func (c *Client) PostInitialize(ctx context.Context, reqBody *api.PostInitialize
 		return nil, fmt.Errorf("POST /api/initialize のリクエストが失敗しました: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("POST /api/initialize へのリクエストに対して、期待されたHTTPステータスコードが確認できませんでした (expected: %d, actural: %d)", http.StatusOK, resp.StatusCode)
+		return nil, fmt.Errorf("POST /api/initialize へのリクエストに対して、期待されたHTTPステータスコードが確認できませんでした (expected:%d, actual:%d)", http.StatusOK, resp.StatusCode)
 	}
 	defer func() {
 		io.Copy(io.Discard, resp.Body)

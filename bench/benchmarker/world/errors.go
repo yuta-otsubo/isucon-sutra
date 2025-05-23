@@ -38,13 +38,15 @@ const (
 	ErrorCodeFailedToGetRequestDetail
 	// ErrorCodeFailedToRegisterUser ユーザー登録に失敗した
 	ErrorCodeFailedToRegisterUser
+	// ErrorCodeFailedToRegisterProvider プロバイダー登録に失敗した
+	ErrorCodeFailedToRegisterProvider
 	// ErrorCodeFailedToRegisterChair 椅子登録に失敗した
 	ErrorCodeFailedToRegisterChair
 	// ErrorCodeFailedToConnectNotificationStream 通知ストリームへの接続に失敗した
 	ErrorCodeFailedToConnectNotificationStream
 	// ErrorCodeRequestCanceledByServer リクエストがサーバー側でキャンセルされた
 	ErrorCodeRequestCanceledByServer
-	// ErrorCodeFailedToRegisterPaymentMethods ユーザーの支払い情報の登録に失敗しました
+	// ErrorCodeFailedToRegisterPaymentMethods ユーザーの支払い情報の登録に失敗した
 	ErrorCodeFailedToRegisterPaymentMethods
 )
 

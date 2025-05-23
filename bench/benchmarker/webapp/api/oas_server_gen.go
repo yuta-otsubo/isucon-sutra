@@ -109,7 +109,7 @@ type Handler interface {
 	// サービスを初期化する.
 	//
 	// POST /initialize
-	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
+	PostInitialize(ctx context.Context, req OptPostInitializeReq) (*PostInitializeOK, error)
 	// ProviderGetSales implements provider-get-sales operation.
 	//
 	// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
