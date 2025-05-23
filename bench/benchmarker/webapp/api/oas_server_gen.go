@@ -20,12 +20,6 @@ type Handler interface {
 	//
 	// GET /app/requests/{request_id}
 	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
-	// AppPostInquiry implements app-post-inquiry operation.
-	//
-	// ユーザーが問い合わせを送信する.
-	//
-	// POST /app/inquiry
-	AppPostInquiry(ctx context.Context, req OptAppPostInquiryReq) error
 	// AppPostPaymentMethods implements app-post-payment-methods operation.
 	//
 	// 決済トークンの登録.
@@ -50,18 +44,6 @@ type Handler interface {
 	//
 	// POST /app/requests/{request_id}/evaluate
 	AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error)
-	// ChairGetInquiries implements chair-get-inquiries operation.
-	//
-	// 問い合わせの一覧を取得する.
-	//
-	// GET /admin/inquiries
-	ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error)
-	// ChairGetInquiry implements chair-get-inquiry operation.
-	//
-	// 指定したIDの問い合わせ内容を取得.
-	//
-	// GET /admin/inquiries/{inquiry_id}
-	ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error)
 	// ChairGetNotification implements chair-get-notification operation.
 	//
 	// 椅子に配車要求を通知するなどで使う想定.
@@ -127,7 +109,19 @@ type Handler interface {
 	// サービスを初期化する.
 	//
 	// POST /initialize
-	PostInitialize(ctx context.Context, req OptPostInitializeReq) (*PostInitializeOK, error)
+	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
+	// ProviderGetSales implements provider-get-sales operation.
+	//
+	// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+	//
+	// GET /provider/sales
+	ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (*ProviderGetSalesOK, error)
+	// ProviderPostRegister implements provider-post-register operation.
+	//
+	// 椅子プロバイダーが登録を行う.
+	//
+	// POST /provider/register
+	ProviderPostRegister(ctx context.Context, req OptProviderPostRegisterReq) (*ProviderPostRegisterCreated, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

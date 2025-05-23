@@ -40,12 +40,6 @@ type Invoker interface {
 	//
 	// GET /app/requests/{request_id}
 	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
-	// AppPostInquiry invokes app-post-inquiry operation.
-	//
-	// ユーザーが問い合わせを送信する.
-	//
-	// POST /app/inquiry
-	AppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) error
 	// AppPostPaymentMethods invokes app-post-payment-methods operation.
 	//
 	// 決済トークンの登録.
@@ -70,18 +64,6 @@ type Invoker interface {
 	//
 	// POST /app/requests/{request_id}/evaluate
 	AppPostRequestEvaluate(ctx context.Context, request OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error)
-	// ChairGetInquiries invokes chair-get-inquiries operation.
-	//
-	// 問い合わせの一覧を取得する.
-	//
-	// GET /admin/inquiries
-	ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error)
-	// ChairGetInquiry invokes chair-get-inquiry operation.
-	//
-	// 指定したIDの問い合わせ内容を取得.
-	//
-	// GET /admin/inquiries/{inquiry_id}
-	ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error)
 	// ChairGetNotification invokes chair-get-notification operation.
 	//
 	// 椅子に配車要求を通知するなどで使う想定.
@@ -147,7 +129,19 @@ type Invoker interface {
 	// サービスを初期化する.
 	//
 	// POST /initialize
-	PostInitialize(ctx context.Context, request OptPostInitializeReq) (*PostInitializeOK, error)
+	PostInitialize(ctx context.Context) (*PostInitializeOK, error)
+	// ProviderGetSales invokes provider-get-sales operation.
+	//
+	// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+	//
+	// GET /provider/sales
+	ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (*ProviderGetSalesOK, error)
+	// ProviderPostRegister invokes provider-post-register operation.
+	//
+	// 椅子プロバイダーが登録を行う.
+	//
+	// POST /provider/register
+	ProviderPostRegister(ctx context.Context, request OptProviderPostRegisterReq) (*ProviderPostRegisterCreated, error)
 }
 
 // Client implements OAS client.
@@ -348,81 +342,6 @@ func (c *Client) sendAppGetRequest(ctx context.Context, params AppGetRequestPara
 
 	stage = "DecodeResponse"
 	result, err := decodeAppGetRequestResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// AppPostInquiry invokes app-post-inquiry operation.
-//
-// ユーザーが問い合わせを送信する.
-//
-// POST /app/inquiry
-func (c *Client) AppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) error {
-	_, err := c.sendAppPostInquiry(ctx, request)
-	return err
-}
-
-func (c *Client) sendAppPostInquiry(ctx context.Context, request OptAppPostInquiryReq) (res *AppPostInquiryNoContent, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("app-post-inquiry"),
-		semconv.HTTPRequestMethodKey.String("POST"),
-		semconv.HTTPRouteKey.String("/app/inquiry"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, AppPostInquiryOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/app/inquiry"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "POST", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-	if err := encodeAppPostInquiryRequest(request, r); err != nil {
-		return res, errors.Wrap(err, "encode request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeAppPostInquiryResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -742,206 +661,6 @@ func (c *Client) sendAppPostRequestEvaluate(ctx context.Context, request OptAppP
 
 	stage = "DecodeResponse"
 	result, err := decodeAppPostRequestEvaluateResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ChairGetInquiries invokes chair-get-inquiries operation.
-//
-// 問い合わせの一覧を取得する.
-//
-// GET /admin/inquiries
-func (c *Client) ChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (*ChairGetInquiriesOK, error) {
-	res, err := c.sendChairGetInquiries(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendChairGetInquiries(ctx context.Context, params ChairGetInquiriesParams) (res *ChairGetInquiriesOK, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("chair-get-inquiries"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/admin/inquiries"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetInquiriesOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [1]string
-	pathParts[0] = "/admin/inquiries"
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeQueryParams"
-	q := uri.NewQueryEncoder()
-	{
-		// Encode "limit" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "limit",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Limit.Get(); ok {
-				return e.EncodeValue(conv.Float64ToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	{
-		// Encode "cursor" parameter.
-		cfg := uri.QueryParameterEncodingConfig{
-			Name:    "cursor",
-			Style:   uri.QueryStyleForm,
-			Explode: true,
-		}
-
-		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
-			if val, ok := params.Cursor.Get(); ok {
-				return e.EncodeValue(conv.StringToString(val))
-			}
-			return nil
-		}); err != nil {
-			return res, errors.Wrap(err, "encode query")
-		}
-	}
-	u.RawQuery = q.Values().Encode()
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeChairGetInquiriesResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ChairGetInquiry invokes chair-get-inquiry operation.
-//
-// 指定したIDの問い合わせ内容を取得.
-//
-// GET /admin/inquiries/{inquiry_id}
-func (c *Client) ChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (ChairGetInquiryRes, error) {
-	res, err := c.sendChairGetInquiry(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendChairGetInquiry(ctx context.Context, params ChairGetInquiryParams) (res ChairGetInquiryRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("chair-get-inquiry"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/admin/inquiries/{inquiry_id}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetInquiryOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/admin/inquiries/"
-	{
-		// Encode "inquiry_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "inquiry_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.InquiryID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeChairGetInquiryResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
@@ -1780,12 +1499,12 @@ func (c *Client) sendChairPostRequestPayment(ctx context.Context, params ChairPo
 // サービスを初期化する.
 //
 // POST /initialize
-func (c *Client) PostInitialize(ctx context.Context, request OptPostInitializeReq) (*PostInitializeOK, error) {
-	res, err := c.sendPostInitialize(ctx, request)
+func (c *Client) PostInitialize(ctx context.Context) (*PostInitializeOK, error) {
+	res, err := c.sendPostInitialize(ctx)
 	return res, err
 }
 
-func (c *Client) sendPostInitialize(ctx context.Context, request OptPostInitializeReq) (res *PostInitializeOK, err error) {
+func (c *Client) sendPostInitialize(ctx context.Context) (res *PostInitializeOK, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("post-initialize"),
 		semconv.HTTPRequestMethodKey.String("POST"),
@@ -1830,7 +1549,183 @@ func (c *Client) sendPostInitialize(ctx context.Context, request OptPostInitiali
 	if err != nil {
 		return res, errors.Wrap(err, "create request")
 	}
-	if err := encodePostInitializeRequest(request, r); err != nil {
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodePostInitializeResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ProviderGetSales invokes provider-get-sales operation.
+//
+// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+//
+// GET /provider/sales
+func (c *Client) ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (*ProviderGetSalesOK, error) {
+	res, err := c.sendProviderGetSales(ctx, params)
+	return res, err
+}
+
+func (c *Client) sendProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (res *ProviderGetSalesOK, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("provider-get-sales"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/provider/sales"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ProviderGetSalesOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/provider/sales"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeQueryParams"
+	q := uri.NewQueryEncoder()
+	{
+		// Encode "since" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "since",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Since))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	{
+		// Encode "until" parameter.
+		cfg := uri.QueryParameterEncodingConfig{
+			Name:    "until",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.EncodeParam(cfg, func(e uri.Encoder) error {
+			return e.EncodeValue(conv.StringToString(params.Until))
+		}); err != nil {
+			return res, errors.Wrap(err, "encode query")
+		}
+	}
+	u.RawQuery = q.Values().Encode()
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeProviderGetSalesResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// ProviderPostRegister invokes provider-post-register operation.
+//
+// 椅子プロバイダーが登録を行う.
+//
+// POST /provider/register
+func (c *Client) ProviderPostRegister(ctx context.Context, request OptProviderPostRegisterReq) (*ProviderPostRegisterCreated, error) {
+	res, err := c.sendProviderPostRegister(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendProviderPostRegister(ctx context.Context, request OptProviderPostRegisterReq) (res *ProviderPostRegisterCreated, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("provider-post-register"),
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/provider/register"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, ProviderPostRegisterOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/provider/register"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeProviderPostRegisterRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
 	}
 
@@ -1842,7 +1737,7 @@ func (c *Client) sendPostInitialize(ctx context.Context, request OptPostInitiali
 	defer resp.Body.Close()
 
 	stage = "DecodeResponse"
-	result, err := decodePostInitializeResponse(resp)
+	result, err := decodeProviderPostRegisterResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}
