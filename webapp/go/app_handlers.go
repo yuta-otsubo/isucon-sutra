@@ -240,29 +240,7 @@ func appPostRequestEvaluate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tx, err := db.Beginx()
-	if err != nil {
-		respondError(w, http.StatusInternalServerError, err)
-		return
-	}
-	defer tx.Rollback()
-
-	rideRequest := &RideRequest{}
-	if err := tx.Get(rideRequest, `SELECT * FROM ride_requests WHERE id = ?`, requestID); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			respondError(w, http.StatusNotFound, errors.New("request not found"))
-			return
-		}
-		respondError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	if rideRequest.Status != "ARRIVED" {
-		respondError(w, http.StatusBadRequest, errors.New("not arrived yet"))
-		return
-	}
-
-	result, err := tx.Exec(
+	result, err := db.Exec(
 		`UPDATE ride_requests SET evaluation = ?, status = ?, updated_at = isu_now() WHERE id = ?`,
 		postAppEvaluateRequest.Evaluation, "COMPLETED", requestID)
 	if err != nil {
@@ -274,35 +252,6 @@ func appPostRequestEvaluate(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if count == 0 {
 		respondError(w, http.StatusNotFound, errors.New("request not found"))
-		return
-	}
-
-	paymentToken := &PaymentToken{}
-	if err := tx.Get(paymentToken, `SELECT * FROM payment_tokens WHERE user_id = ?`, rideRequest.UserID); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			respondError(w, http.StatusBadRequest, errors.New("payment token not registered"))
-			return
-		}
-		respondError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	paymentGatewayRequest := &paymentGatewayPostPaymentRequest{
-		Token: paymentToken.Token,
-		// TODO: calculate payment amount
-		Amount: 100,
-	}
-	if err := requestPaymentGatewayPostPayment(paymentGatewayRequest); err != nil {
-		if errors.Is(err, erroredUpstream) {
-			respondError(w, http.StatusBadGateway, err)
-			return
-		}
-		respondError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	if err := tx.Commit(); err != nil {
-		respondError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -422,30 +371,4 @@ func appGetNotificationSSE(w http.ResponseWriter, r *http.Request) {
 			lastRideRequest = rideRequest
 		}
 	}
-}
-
-type postAppInquiryRequest struct {
-	Subject string `json:"subject"`
-	Body    string `json:"body"`
-}
-
-func appPostInquiry(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value("user").(*User)
-
-	req := &postAppInquiryRequest{}
-	if err := bindJSON(r, req); err != nil {
-		respondError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	_, err := db.Exec(
-		`INSERT INTO inquiries (user_id, subject, body, created_at) VALUES (?, ?, ?, isu_now())`,
-		user.ID, req.Subject, req.Body,
-	)
-	if err != nil {
-		respondError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	w.WriteHeader(http.StatusNoContent)
 }

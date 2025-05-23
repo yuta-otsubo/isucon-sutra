@@ -81,7 +81,6 @@ func setup() http.Handler {
 		authedMux.HandleFunc("POST /app/requests/{request_id}/evaluate", appPostRequestEvaluate)
 		//authedMux.HandleFunc("GET /app/notification", appGetNotificationSSE)
 		authedMux.HandleFunc("GET /app/notification", appGetNotification)
-		authedMux.HandleFunc("POST /app/inquiry", appPostInquiry)
 	}
 
 	// chair handlers
@@ -103,28 +102,15 @@ func setup() http.Handler {
 
 	// admin
 	{
-		mux.HandleFunc("GET /admin/inquiries", adminGetInquiries)
-		mux.HandleFunc("GET /admin/inquiries/{inquiry_id}", adminGetInquiry)
 	}
 
 	return mux
 }
 
-type PostInitializeRequest struct {
-	PaymentServer string `json:"payment_server"`
-}
-
 func postInitialize(w http.ResponseWriter, r *http.Request) {
-	req := &PostInitializeRequest{}
-	if err := bindJSON(r, req); err != nil {
-		respondError(w, http.StatusBadRequest, err)
-		return
-	}
-
 	tables := []string{
 		"chair_locations",
 		"ride_requests",
-		"inquiries",
 		"users",
 		"chairs",
 	}
@@ -148,7 +134,6 @@ func postInitialize(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	paymentURL = req.PaymentServer
 
 	w.Header().Set("Content-Type", "application/json;charset=utf-8")
 	w.Write([]byte(`{"language":"golang"}`))
