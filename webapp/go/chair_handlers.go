@@ -463,6 +463,11 @@ func chairPostRequestDepart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if rideRequest.Status != "DISPATCHED" {
+		writeError(w, http.StatusBadRequest, errors.New("chair has not arrived yes"))
+		return
+	}
+
 	if _, err = tx.Exec("UPDATE ride_requests SET status = ?, updated_at = isu_now() WHERE id = ?", "CARRYING", requestID); err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 		return
