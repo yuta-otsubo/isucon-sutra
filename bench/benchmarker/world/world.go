@@ -6,7 +6,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/isucon/isucon14/bench/internal/random"
+	"github.com/yuta-otsubo/isucon-sutra/bench/internal/random"
 )
 
 const (
