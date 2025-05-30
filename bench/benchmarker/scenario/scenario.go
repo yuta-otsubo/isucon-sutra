@@ -7,6 +7,7 @@ import (
 
 	"github.com/isucon/isucandar"
 	"github.com/isucon/isucandar/score"
+	"github.com/samber/lo"
 	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/webapp/api"
 	"github.com/yuta-otsubo/isucon-sutra/bench/payment"
 	"go.uber.org/zap"
@@ -54,7 +55,7 @@ func NewScenario(target string, contestantLogger *zap.Logger) *Scenario {
 		ContestantLogger:      contestantLogger,
 	}, requestQueue, contestantLogger)
 	worldCtx := world.NewContext(w, worldClient)
-	paymentServer := payment.NewServer(w.PaymentDB, 300*time.Millisecond, 5)
+	paymentServer := payment.NewServer(w.PaymentDB, 30*time.Millisecond, 5)
 	// TODO: サーバーハンドリング
 	go func() {
 		http.ListenAndServe(":12345", paymentServer)
@@ -169,6 +170,7 @@ func (s *Scenario) Validation(ctx context.Context, step *isucandar.BenchmarkStep
 		s.contestantLogger.Info("final region result",
 			zap.Int("region", i),
 			zap.Int("users", region.UsersDB.Len()),
+			zap.Int("active_users", len(lo.Filter(region.UsersDB.ToSlice(), func(u *world.User, _ int) bool { return u.State == world.UserStateActive }))),
 			zap.Int("score", region.UserSatisfactionScore()),
 		)
 	}
