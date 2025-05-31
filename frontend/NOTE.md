@@ -189,3 +189,9 @@ function GreetingJSX({ name }) {
 
 export default GreetingJSX;
 ```
+
+## 画面の起動
+
+```sh
+pnpm run dev
+```
