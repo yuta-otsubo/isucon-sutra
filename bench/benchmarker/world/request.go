@@ -3,6 +3,7 @@ package world
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/guregu/null/v5"
 )
@@ -170,7 +171,7 @@ type Evaluation struct {
 }
 
 func (e Evaluation) String() string {
-	return fmt.Sprintf("score:%d (matching:%v, dispatch:%v, pickup:%v, drive:%v)", e.Score(), e.Matching, e.Dispatch, e.Pickup, e.Drive)
+	return fmt.Sprintf("score: %d (matching:%v, dispath:%v, pickup:%v, drive:%v)", e.Score(), e.Matching, e.Dispatch, e.Pickup, e.Drive)
 }
 
 func (e Evaluation) Score() int {
@@ -197,6 +198,8 @@ type RequestStatuses struct {
 	Chair RequestStatus
 	// User 現在ユーザーが認識しているステータス
 	User RequestStatus
+
+	m sync.RWMutex
 }
 
 func (s *RequestStatuses) String() string {
@@ -207,3 +210,19 @@ func (s *RequestStatuses) String() string {
 func (s *RequestStatuses) Get() (desired, chair, user RequestStatus) {
 	return s.Desired, s.Chair, s.User
 }
+
+// Lock DesiredのみをWrite Lockします
+// MEMO: ロックを取らなけらばならないところ以外はとってない
+func (s *RequestStatuses) Lock() { s.m.Lock() }
+
+// Unlock DesiredのみをWrite Unlockします
+// MEMO: ロックを取らなけらばならないところ以外はとってない
+func (s *RequestStatuses) Unlock() { s.m.Unlock() }
+
+// RLock DesiredのみをRead Lockします
+// MEMO: ロックを取らなけらばならないところ以外はとってない
+func (s *RequestStatuses) RLock() { s.m.RLock() }
+
+// RUnlock DesiredのみをRead Unlockします
+// MEMO: ロックを取らなけらばならないところ以外はとってない
+func (s *RequestStatuses) RUnlock() { s.m.RUnlock() }
