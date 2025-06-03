@@ -12,15 +12,18 @@ require (
 	github.com/mattn/go-gimei v0.0.4
 	github.com/ogen-go/ogen v1.13.0
 	github.com/oklog/ulid/v2 v2.1.0
-	github.com/samber/lo v1.50.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
-	go.opentelemetry.io/otel v1.35.0
-	go.opentelemetry.io/otel/metric v1.35.0
-	go.opentelemetry.io/otel/trace v1.35.0
+	go.opentelemetry.io/otel v1.36.0
+	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.36.0
+	go.opentelemetry.io/otel/metric v1.36.0
+	go.opentelemetry.io/otel/sdk v1.36.0
+	go.opentelemetry.io/otel/sdk/metric v1.36.0
+	go.opentelemetry.io/otel/trace v1.36.0
 	go.uber.org/mock v0.5.2
 	go.uber.org/zap v1.27.0
 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
