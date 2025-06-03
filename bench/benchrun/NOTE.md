@@ -10,7 +10,9 @@ benchrun/env.go
 benchrun/generate.go
 benchrun/proto/isuxportal/*
 
-proto/isuxportal/* 配下のファイルを元に、benchrun/gen/isuxportal/* 配下にGoのコードを生成する
+/benchrun/proto/isuxportal/*.proto ファイルを元に、/benchrun/gen/isuxportal/* 配下にGoのコードを生成する
+
+※isuxportal/*.proto ファイルは自分で用意する必要がある
 
 ## コード生成
 
