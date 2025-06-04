@@ -6,19 +6,16 @@ import (
 	"time"
 
 	"github.com/isucon/isucandar"
-	"github.com/isucon/isucandar/score"
 	"github.com/samber/lo"
+	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/scenario/worldclient"
+	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/webapp"
 	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/webapp/api"
+	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/world"
 	"github.com/yuta-otsubo/isucon-sutra/bench/benchrun"
 	"github.com/yuta-otsubo/isucon-sutra/bench/benchrun/gen/isuxportal/resources"
 	"github.com/yuta-otsubo/isucon-sutra/bench/payment"
 	"go.opentelemetry.io/otel/metric"
 	"go.uber.org/zap"
-
-	// "github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/scenario/agents/verify"
-	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/scenario/worldclient"
-	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/webapp"
-	"github.com/yuta-otsubo/isucon-sutra/bench/benchmarker/world"
 )
 
 // Scenario はシナリオを表す構造体
@@ -133,31 +130,31 @@ func (s *Scenario) Prepare(ctx context.Context, step *isucandar.BenchmarkStep) e
 	}
 
 	go func() {
-			ticker := time.NewTicker(3 * time.Second)
-			for {
-				select {
-				case <-ticker.C:
-					if err := sendResult(s, false, false); err != nil {
-						// TODO: エラーをadmin側に出力する
-					}
-				case <-ctx.Done():
-					ticker.Stop()
+		ticker := time.NewTicker(3 * time.Second)
+		for {
+			select {
+			case <-ticker.C:
+				if err := sendResult(s, false, false); err != nil {
+					// TODO: エラーをadmin側に出力する
 				}
+			case <-ctx.Done():
+				ticker.Stop()
 			}
+		}
 	}()
 
 	go func() {
-			ticker := time.NewTicker(3 * time.Second)
-			for {
-				select {
-				case <-ticker.C:
-					if err := sendResult(s, false, false); err != nil {
-						// TODO: エラーをadmin側に出力する
-					}
-				case <-ctx.Done():
-					ticker.Stop()
+		ticker := time.NewTicker(3 * time.Second)
+		for {
+			select {
+			case <-ticker.C:
+				if err := sendResult(s, false, false); err != nil {
+					// TODO: エラーをadmin側に出力する
 				}
+			case <-ctx.Done():
+				ticker.Stop()
 			}
+		}
 	}()
 
 	return nil
@@ -172,7 +169,7 @@ func (s *Scenario) Load(ctx context.Context, step *isucandar.BenchmarkStep) erro
 	go func() {
 		for req := range s.completedRequestChan {
 			s.contestantLogger.Info("request completed", zap.Stringer("request", req), zap.Stringer("eval", req.CalculateEvaluation()))
-			step.AddScore(score.ScoreTag("completed_request"))
+			step.AddScore("completed_request")
 		}
 	}()
 
@@ -241,7 +238,7 @@ func (s *Scenario) setupMeter() error {
 		return err
 	}
 
-	if _ , err := s.meter.Int64ObservableCounter("world.providers", metric.WithDescription("Number of providers"), metric.WithUnit("1"), metric.WithInt64Callback(func(ctx context.Context, o metric.Int64Observer) error {
+	if _, err := s.meter.Int64ObservableCounter("world.providers", metric.WithDescription("Number of providers"), metric.WithUnit("1"), metric.WithInt64Callback(func(ctx context.Context, o metric.Int64Observer) error {
 		o.Observe(int64(s.world.ProviderDB.Size()))
 		return nil
 	})); err != nil {
@@ -259,14 +256,13 @@ func (s *Scenario) setupMeter() error {
 }
 
 func sendResult(s *Scenario, finished bool, passed bool) error {
+	rawScore := lo.SumBy(s.world.ProviderDB.ToSlice(), func(p *world.Provider) int64 { return p.TotalSales.Load() })
 	if err := s.reporter.Report(&resources.BenchmarkResult{
 		Finished: finished,
-		Passed: passed,
-
-		// TODO: 仮置き
-		Score: s.world.Time,
+		Passed:   passed,
+		Score:    rawScore,
 		ScoreBreakdown: &resources.BenchmarkResult_ScoreBreakdown{
-			Raw: s.world.Time,
+			Raw:       rawScore,
 			Deduction: 0,
 		},
 		// Reason以外はsupervisorが設定する
