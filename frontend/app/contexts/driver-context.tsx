@@ -5,6 +5,7 @@ import {
   type ChairGetNotificationError,
 } from "~/apiClient/apiComponents";
 import type { ChairRequest, RequestStatus } from "~/apiClient/apiSchemas";
+import { useNotificationEventSource } from "~/components/hooks/notification-event-source";
 import type { User as Chair } from "~/types";
 
 const DriverContext = createContext<Partial<Chair>>({});
@@ -41,21 +42,6 @@ const RequestProvider = ({
       fetchedData = {};
     }
 
-    if (searchParams.get("debug_status")) {
-      fetchedData = {
-        request_id: "__DUMMY_REQUEST_ID__",
-        user: {
-          id: "1234",
-          name: "ゆーざー",
-        },
-        destination_coordinate: {
-          latitude: 34.12345678,
-          longitude: 120.447162,
-        },
-        ...fetchedData,
-      };
-    }
-
     // TODO:
     return { ...fetchedData, status } as ChairRequest;
   }, [data, searchParams]);
@@ -66,6 +52,34 @@ const RequestProvider = ({
 
   return (
     <RequestContext.Provider value={{ data: responseData, error, isLoading }}>
+      {children}
+    </RequestContext.Provider>
+  );
+};
+
+const RequestSSEProvider = ({
+  children,
+  accessToken,
+}: {
+  children: ReactNode;
+  accessToken: string;
+}) => {
+  const { request } = useNotificationEventSource("chair", accessToken);
+
+  // react-queryでstatusCodeが取れない && 現状statusCode:204はBlobで帰ってくる
+  const [searchParams] = useSearchParams();
+  const responseData = useMemo(() => {
+    const status = (searchParams.get("debug_status") ?? undefined) as
+      | RequestStatus
+      | undefined;
+
+    let fetchedData: Partial<ChairRequest> = request ?? {};
+    // TODO:
+    return { ...fetchedData, status } as ChairRequest;
+  }, [request, searchParams]);
+
+  return (
+    <RequestContext.Provider value={{ data: responseData, error: null, isLoading: false }}>
       {children}
     </RequestContext.Provider>
   );
@@ -99,11 +113,21 @@ export const DriverProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [accessTokenParameter, chairIdParameter]);
 
+  const isSSE: boolean = useMemo(() => {
+    return localStorage.getItem("isSSE") === "true";
+  }, []);
+
   return (
     <DriverContext.Provider value={chair}>
-      <RequestProvider accessToken={chair.accessToken ?? ""}>
-        {children}
-      </RequestProvider>
+      {isSSE ? (
+        <RequestSSEProvider accessToken={chair.accessToken ?? ""}>
+          {children}
+        </RequestSSEProvider>
+      ) : (
+        <RequestProvider accessToken={chair.accessToken ?? ""}>
+          {children}
+        </RequestProvider>
+      )}
     </DriverContext.Provider>
   );
 };
