@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { useRequest } from "../../contexts/driver-context";
+import { useUser } from "../../contexts/user-context";
 import { Carry } from "./requestComponent/carry";
 import { Pickup } from "./requestComponent/pickup";
 import { Reception } from "./requestComponent/reception";
@@ -8,15 +8,15 @@ export const meta: MetaFunction = () => {
   return [{ title: "ISUCON14" }, { name: "description", content: "isucon14" }];
 };
 function DriverRequest() {
-  const { data } = useRequest();
-  const requestStatus = data?.status ?? "IDLE";
+  const { request } = useUser();
+  const requestStatus = request?.status ?? "IDLE";
   switch (requestStatus) {
     case "IDLE":
     case "MATCHING":
-      return <Reception data={data} />;
+      return <Reception status={requestStatus} />;
     case "DISPATCHING":
     case "DISPATCHED":
-      return <Pickup data={data} />;
+      return <Pickup status={requestStatus} />;
     case "CARRYING":
     case "ARRIVED":
       return <Carry status={requestStatus} />;
