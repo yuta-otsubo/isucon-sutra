@@ -15,30 +15,30 @@
 ## Setup
 
 ```sh
-npx create-remix@latest --template remix-run/remix/templates/spa
+pnpm create remix@latest --template remix-run/remix/templates/spa
 ```
 
 ## Development
 
 ```sh
-npm run dev
+pnpm run dev
 ```
 
 ## Format
 
 ```sh
-npm run fmtcheck # format check
-npm run fmt # format fix
+pnpm run fmtcheck # format check
+pnpm run fmt # format fix
 ```
 
 ## Production
 
 ```sh
-npm run build
+pnpm run build
 ```
 
 ## Codegen
 
 ```sh
-npm run codegen
+pnpm run codegen
 ```

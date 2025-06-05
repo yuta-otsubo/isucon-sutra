@@ -15,9 +15,10 @@
     "codegen": "PROXY_URL=http://localhost:3000/api npx openapi-codegen gen isucon"
   },
   "dependencies": {
-    "@remix-run/node": "^2.16.7",
-    "@remix-run/react": "^2.16.7",
-    "@tanstack/react-query": "^5.76.1",
+    "@remix-run/node": "^2.16.8",
+    "@remix-run/react": "^2.16.8",
+    "@tanstack/react-query": "^5.80.6",
+    "event-source-polyfill": "^1.0.31",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^3.3.0"
@@ -25,8 +26,9 @@
   "devDependencies": {
     "@openapi-codegen/cli": "2.0.2",
     "@openapi-codegen/typescript": "~8.0.2",
-    "@remix-run/dev": "^2.16.7",
-    "@types/react": "^18.3.21",
+    "@remix-run/dev": "^2.16.8",
+    "@types/event-source-polyfill": "^1.0.5",
+    "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
@@ -37,7 +39,7 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "postcss": "^8.5.3",
+    "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
