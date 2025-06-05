@@ -1,11 +1,10 @@
-import { Coordinate, RequestStatus } from "~/apiClient/apiSchemas";
 import { RequestId } from "./apiClient/apiParameters";
-import { Chair } from "./apiClient/apiSchemas";
-type AccessToken = string;
+import { Chair, Coordinate, RequestStatus, User } from "./apiClient/apiSchemas";
+export type AccessToken = string;
 
 export type ClientAppRequest = {
   status?: RequestStatus;
-  payload: Partial<{
+  payload?: Partial<{
     request_id: RequestId;
     coordinate: Partial<{
       pickup: Coordinate;
@@ -13,11 +12,31 @@ export type ClientAppRequest = {
     }>;
     chair?: Chair;
   }>;
+  auth: {
+    accessToken: AccessToken;
+  };
+  user?: {
+    id?: string;
+    name?: string;
+  };
 };
 
-export type User = {
-  id: string;
-  name: string;
-  accessToken: AccessToken;
-  request?: ClientAppRequest;
+export type ClientChairRequest = {
+  status?: RequestStatus;
+  payload?: Partial<{
+    request_id: RequestId;
+    coordinate: Partial<{
+      pickup: Coordinate;
+      destination: Coordinate;
+    }>;
+    user?: User;
+  }>;
+  auth: {
+    accessToken: AccessToken;
+    userId?: string;
+  };
+  chair?: {
+    id: string;
+    name: string;
+  };
 };

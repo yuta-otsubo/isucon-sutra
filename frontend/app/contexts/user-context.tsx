@@ -1,37 +1,29 @@
 import { useSearchParams } from "@remix-run/react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { apiBaseURL } from "~/apiClient/APIBaseURL";
 import {
-  fetchAppGetNotification
-} from "~/apiClient/apiComponents";
-import { RequestId } from "~/apiClient/apiParameters";
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { apiBaseURL } from "~/apiClient/APIBaseURL";
+import { fetchAppGetNotification } from "~/apiClient/apiComponents";
 import type {
   AppRequest,
-  Chair,
   Coordinate,
   RequestStatus,
 } from "~/apiClient/apiSchemas";
-import type { User } from "~/types";
+import type { ClientAppRequest } from "~/types";
 
-type ClientAppRequest = {
-  status?: RequestStatus;
-  payload: Partial<{
-    request_id: RequestId;
-    coordinate: Partial<{
-      pickup: Coordinate;
-      destination: Coordinate;
-    }>;
-    chair?: Chair;
-  }>;
-};
-
-export const useClientAppRequest = (accessToken: string) => {
+export const useClientAppRequest = (accessToken: string, id?: string) => {
   const [searchParams] = useSearchParams();
-  const [clientAppRequest, setClientAppRequest] = useState<ClientAppRequest>();
-  const isSSE = false;
-  if (isSSE) {
-    useEffect(() => {
+  const [clientAppPayloadWithStatus, setClientAppPayloadWithStatus] =
+    useState<Omit<ClientAppRequest, "auth" | "user">>();
+  const isSSE = localStorage.getItem("isSSE") === "true";
+  useEffect(() => {
+    if (isSSE) {
       /**
        * WebAPI標準のものはAuthヘッダーを利用できないため
        */
@@ -46,11 +38,11 @@ export const useClientAppRequest = (accessToken: string) => {
       eventSource.onmessage = (event) => {
         if (typeof event.data === "string") {
           const eventData = JSON.parse(event.data) as AppRequest;
-          setClientAppRequest((preRequest) => {
+          setClientAppPayloadWithStatus((preRequest) => {
             if (
               preRequest === undefined ||
               eventData.status !== preRequest.status ||
-              eventData.request_id !== preRequest.payload.request_id
+              eventData.request_id !== preRequest.payload?.request_id
             ) {
               return {
                 status: eventData.status,
@@ -72,9 +64,7 @@ export const useClientAppRequest = (accessToken: string) => {
           eventSource.close();
         };
       };
-    }, [accessToken, setClientAppRequest]);
-  } else {
-    useEffect(() => {
+    } else {
       const abortController = new AbortController();
       (async () => {
         const appRequest = await fetchAppGetNotification(
@@ -85,7 +75,7 @@ export const useClientAppRequest = (accessToken: string) => {
           },
           abortController.signal,
         );
-        setClientAppRequest({
+        setClientAppPayloadWithStatus({
           status: appRequest.status,
           payload: {
             request_id: appRequest.request_id,
@@ -95,13 +85,12 @@ export const useClientAppRequest = (accessToken: string) => {
             },
             chair: appRequest.chair,
           },
-        } satisfies ClientAppRequest);
-      })();
-      return () => {
-        abortController.abort();
-      };
-    }, []);
-  }
+        });
+      })().catch((e) => {
+        console.error(`ERROR: ${e}`);
+      });
+    }
+  }, [accessToken, setClientAppPayloadWithStatus, isSSE]);
 
   const responseClientAppRequest = useMemo<ClientAppRequest | undefined>(() => {
     const debugStatus =
@@ -113,21 +102,33 @@ export const useClientAppRequest = (accessToken: string) => {
       if (!m) return;
       return { latitude: Number(m[1]), longitude: Number(m[2]) };
     })();
-    const candidateAppRequest = clientAppRequest;
+    const candidateAppRequest = clientAppPayloadWithStatus;
     if (debugStatus !== undefined && candidateAppRequest) {
       candidateAppRequest.status = debugStatus;
     }
-    if (debugDestinationCoordinate && candidateAppRequest?.payload.coordinate) {
+    if (
+      debugDestinationCoordinate &&
+      candidateAppRequest?.payload?.coordinate
+    ) {
       candidateAppRequest.payload.coordinate.destination =
         debugDestinationCoordinate;
     }
-    return candidateAppRequest;
-  }, [clientAppRequest]);
+    return {
+      ...candidateAppRequest,
+      auth: {
+        accessToken,
+      },
+      user: {
+        id,
+        name: "ISUCON太郎",
+      },
+    };
+  }, [clientAppPayloadWithStatus, searchParams, accessToken, id]);
 
   return responseClientAppRequest;
 };
 
-const UserContext = createContext<Partial<User>>({});
+const ClientAppRequestContext = createContext<Partial<ClientAppRequest>>({});
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   // TODO:
@@ -145,7 +146,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       return {
         accessToken: accessTokenParameter,
         id: userIdParameter,
-        name: "ISUCON太郎",
       };
     }
     const accessToken =
@@ -157,20 +157,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [accessTokenParameter, userIdParameter]);
 
-  const request = useClientAppRequest(accessToken ?? "");
+  const request = useClientAppRequest(accessToken ?? "", id ?? "");
 
   return (
-    <UserContext.Provider
-      value={{
-        name: "ISUCON太郎",
-        accessToken,
-        id,
-        request,
-      }}
-    >
+    <ClientAppRequestContext.Provider value={{ ...request }}>
       {children}
-    </UserContext.Provider>
+    </ClientAppRequestContext.Provider>
   );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useClientAppRequestContext = () =>
+  useContext(ClientAppRequestContext);
