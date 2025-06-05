@@ -1,10 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
 import { ClientActionFunctionArgs, Form, redirect } from "@remix-run/react";
-import {
-  fetchChairPostRegister,
-  fetchProviderPostRegister,
-} from "~/apiClient/apiComponents";
-import { TextInput } from "~/components/primitives/form/text";
+import { fetchChairPostRegister } from "~/apiClient/apiComponents";
 
 export const meta: MetaFunction = () => {
   return [
@@ -15,23 +11,13 @@ export const meta: MetaFunction = () => {
 
 export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const formData = await request.formData();
-
-  const provider = await fetchProviderPostRegister({
+  const data = await fetchChairPostRegister({
     body: {
-      name: String(formData.get("provider_name")) ?? "",
+      model: String(formData.get("model")) ?? "",
+      name: String(formData.get("name")) ?? "",
     },
   });
-
-  const chair = await fetchChairPostRegister({
-    headers: {
-      Authorization: `Bearer ${provider.access_token}`,
-    },
-    body: {
-      name: String(formData.get("chair_name")) ?? "",
-      model: String(formData.get("chair_model")) ?? "",
-    },
-  });
-  return redirect(`/driver?access_token=${chair.access_token}&id=${chair.id}`);
+  return redirect(`/driver?access_token=${data.access_token}&id=${data.id}`);
 };
 
 export default function DriverRegister() {
@@ -42,22 +28,20 @@ export default function DriverRegister() {
         method="POST"
       >
         <div>
-          <TextInput
-            id="provide_name"
-            name="provide_name"
-            label="Provider name:"
+          <label htmlFor="name">name:</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
-          <TextInput
-            id="chair_name"
-            name="chair_name"
-            label="Chair name:"
-            required
-          />
-          <TextInput
-            id="chair_model"
-            name="chair_model"
-            label="Chair model:"
+          <label htmlFor="model">Model:</label>
+          <input
+            type="text"
+            id="model"
+            name="model"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             required
           />
         </div>
