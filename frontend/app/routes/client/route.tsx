@@ -9,8 +9,9 @@ export default function ClientLayout() {
       <Outlet />
       <FooterNavigation
         navigationMenus={[
-          { icon: CircleIcon, link: "/client", label: "ride" },
-          { icon: CircleIcon, link: "/client/history", label: "history" },
+          { icon: CircleIcon, link: "/client", label: "HOME" },
+          { icon: CircleIcon, link: "/client/history", label: "LOG" },
+          { icon: CircleIcon, link: "/client/account", label: "USER" },
         ]}
       />
     </UserProvider>
