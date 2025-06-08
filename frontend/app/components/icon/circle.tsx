@@ -1,10 +1,6 @@
-import { IconType } from "./type";
+import type { ComponentProps, FC } from "react";
 
-/**
- * path: 円形のアウトラインを描画するための命令
- * 14z までで外形の円を、16z までで内側の円を描画
- */
-export const CircleIcon: IconType = function (props) {
+export const CircleIcon: FC<ComponentProps<"svg">> = function (props) {
   return (
     <svg
       fill="currentColor"
