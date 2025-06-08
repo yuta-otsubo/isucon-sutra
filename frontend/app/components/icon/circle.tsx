@@ -1,4 +1,4 @@
-import { IconType } from "./type";
+import type { IconType } from "~/types";
 
 /**
  * path: 円形のアウトラインを描画するための命令
