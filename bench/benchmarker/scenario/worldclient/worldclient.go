@@ -219,6 +219,21 @@ func (c *WorldClient) GetRequestByChair(ctx *world.Context, chair *world.Chair, 
 	return &world.GetRequestByChairResponse{}, nil
 }
 
+func (c *WorldClient) GetProviderSales(ctx *world.Context, provider *world.Provider) (*world.GetProviderSalesResponse, error) {
+	providerClient, err := c.getProviderClient(provider.ServerID)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: ちゃんと実装する
+	_, err = providerClient.client.ProviderGetSales(c.ctx, &api.ProviderGetSalesParams{})
+	if err != nil {
+		return nil, WrapCodeError(ErrorCodeFailedToGetProviderSales, err)
+	}
+
+	return &world.GetProviderSalesResponse{}, nil
+}
+
 func (c *WorldClient) RegisterUser(ctx *world.Context, data *world.RegisterUserRequest) (*world.RegisterUserResponse, error) {
 	client, err := webapp.NewClient(c.webappClientConfig)
 	if err != nil {
@@ -335,7 +350,7 @@ func (c *WorldClient) ConnectUserNotificationStream(ctx *world.Context, user *wo
 	u, _ := c.userClients.Get(user.ServerID)
 	u.sseContext = newCtx
 	go func() {
-		// c.contestantLogger.Info("User notification stream started", zap.String("user_id", user.ServerID))
+		//c.contestantLogger.Info("User notification stream started", zap.String("user_id", user.ServerID))
 		userClient, err := c.getUserClient(user.ServerID)
 		if err != nil {
 			return
@@ -344,7 +359,7 @@ func (c *WorldClient) ConnectUserNotificationStream(ctx *world.Context, user *wo
 		for {
 			select {
 			case <-userClient.sseContext.Done():
-				// c.contestantLogger.Info("User notification stream closed", zap.String("user_id", user.ServerID))
+				//c.contestantLogger.Info("User notification stream closed", zap.String("user_id", user.ServerID))
 				return
 			default:
 			}
@@ -408,7 +423,7 @@ func (c *WorldClient) ConnectChairNotificationStream(ctx *world.Context, chair *
 	cc, _ := c.chairClients.Get(chair.ServerID)
 	cc.sseContext = newCtx
 	go func() {
-		// c.contestantLogger.Info("Chair notification stream started", zap.String("chair_id", chair.ServerID))
+		//c.contestantLogger.Info("Chair notification stream started", zap.String("chair_id", chair.ServerID))
 		chairClient, err := c.getChairClient(chair.ServerID)
 		if err != nil {
 			return
@@ -417,7 +432,7 @@ func (c *WorldClient) ConnectChairNotificationStream(ctx *world.Context, chair *
 		for {
 			select {
 			case <-chairClient.sseContext.Done():
-				// c.contestantLogger.Info("Chair notification stream closed", zap.String("chair_id", chair.ServerID))
+				//c.contestantLogger.Info("Chair notification stream closed", zap.String("chair_id", chair.ServerID))
 				return
 			default:
 			}
