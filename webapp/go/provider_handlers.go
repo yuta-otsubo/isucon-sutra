@@ -121,6 +121,7 @@ func providerGetSales(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, res)
 }
 
+
 const (
 	initialFare     = 500
 	farePerDistance = 100
