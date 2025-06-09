@@ -42,6 +42,8 @@ const (
 	ErrorCodeFailedToPostRequest
 	// ErrorCodeFailedToPostPaymentMethods ユーザー支払い情報登録に失敗したエラー
 	ErrorCodeFailedToPostPaymentMethods
+	// ErrorCodeFailedToGetProviderSales プロバイダーの売上情報の取得に失敗したエラー
+	ErrorCodeFailedToGetProviderSales
 )
 
 type codeError struct {
