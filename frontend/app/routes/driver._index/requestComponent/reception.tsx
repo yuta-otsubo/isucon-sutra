@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import {
-    useChairPostActivate,
-    useChairPostDeactivate,
+  useChairPostActivate,
+  useChairPostDeactivate,
 } from "~/apiClient/apiComponents";
 
 import { Map } from "~/components/modules/map/map";
