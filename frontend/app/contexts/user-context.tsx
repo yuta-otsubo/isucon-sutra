@@ -22,6 +22,7 @@ export const useClientAppRequest = (accessToken: string, id?: string) => {
   const [clientAppPayloadWithStatus, setClientAppPayloadWithStatus] =
     useState<Omit<ClientAppRequest, "auth" | "user">>();
   const isSSE = localStorage.getItem("isSSE") === "true";
+
   useEffect(() => {
     if (isSSE) {
       /**
@@ -66,6 +67,45 @@ export const useClientAppRequest = (accessToken: string, id?: string) => {
       };
     } else {
       const abortController = new AbortController();
+
+      const polling = () => {
+        (async () => {
+          const current = await fetchAppGetNotification(
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            },
+            abortController.signal,
+          );
+          setClientAppPayloadWithStatus((prev) => {
+            if (
+              prev?.payload !== undefined &&
+              prev?.status === current.status &&
+              prev.payload?.request_id === current.request_id
+            ) {
+              return prev;
+            }
+
+            return {
+              status: current.status,
+              payload: {
+                request_id: current.request_id,
+                coordinate: {
+                  pickup: current.pickup_coordinate,
+                  destination: current.destination_coordinate,
+                },
+                chair: current.chair,
+              },
+            };
+          });
+        })().catch((e) => {
+          console.error(`ERROR: ${e}`);
+        });
+        window.setTimeout(polling, 3000);
+      };
+      polling();
+
       (async () => {
         const appRequest = await fetchAppGetNotification(
           {
