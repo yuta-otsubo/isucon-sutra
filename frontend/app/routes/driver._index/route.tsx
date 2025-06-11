@@ -5,6 +5,7 @@ import {
   useChairPostActivate,
   useChairPostDeactivate,
 } from "~/apiClient/apiComponents";
+import { useEmulator } from "~/components/hooks/emulate";
 import { Map } from "~/components/modules/map/map";
 import { Button } from "~/components/primitives/button/button";
 import { Modal } from "~/components/primitives/modal/modal";
@@ -26,6 +27,7 @@ export default function DriverRequestWrapper() {
   const requestStatus = data?.status;
   const modalRef = useRef<{ close: () => void }>(null);
 
+  useEmulator();
   const handleComplete = useCallback(() => {
     if (modalRef.current) {
       modalRef.current.close();

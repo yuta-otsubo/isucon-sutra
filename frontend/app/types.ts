@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import { RequestId } from "./apiClient/apiParameters";
 import {
   Coordinate as ApiCoodinate,
@@ -42,8 +43,12 @@ export type ClientChairRequest = {
     userId?: string;
   };
   chair?: {
-    id: string;
+    id?: string;
     name: string;
+    currentCoordinate: {
+      setter: Dispatch<SetStateAction<Coordinate | undefined>>;
+      location?: Coordinate;
+    };
   };
 };
 

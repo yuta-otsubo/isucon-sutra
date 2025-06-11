@@ -100,6 +100,7 @@ export type ChairRequest = {
    */
   request_id: string;
   user: User;
+  picku_doordinate?: Coordinate;
   destination_coordinate: Coordinate;
   status?: RequestStatus;
 };
