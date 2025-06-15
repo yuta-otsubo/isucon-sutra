@@ -9,7 +9,7 @@ require (
 	github.com/go-faster/jx v1.1.0
 	github.com/guregu/null/v5 v5.0.0
 	github.com/isucon/isucandar v0.0.0-20220322062028-6dd56dc57d72
-	github.com/isucon/isucon14/bench v0.0.0-20241213060201-53f8b627e040
+	github.com/yuta-otsubo/isucon-sutra/bench v0.0.0-20241213060201-53f8b627e040
 	github.com/mattn/go-gimei v0.0.4
 	github.com/ogen-go/ogen v1.13.0
 	github.com/oklog/ulid/v2 v2.1.0

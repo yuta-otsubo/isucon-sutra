@@ -37,6 +37,8 @@ type World struct {
 	RequestDB *RequestDB
 	// PaymentDB 支払い結果DB
 	PaymentDB *PaymentDB
+	// Client webappへのクライアント
+	Client WorldClient
 	// RootRand ルートの乱数生成器
 	RootRand *rand.Rand
 	// CompletedRequestChan 完了したリクエストのチャンネル
@@ -49,12 +51,13 @@ type World struct {
 	waitingTickCount   atomic.Int32
 	userIncrease       float64
 	chairIncreaseSales int64
+	increasingChairs   atomic.Int64
 
 	// TimeoutTickCount タイムアウトしたTickの累計数
 	TimeoutTickCount int
 }
 
-func NewWorld(tickTimeout time.Duration, completedRequestChan chan *Request) *World {
+func NewWorld(tickTimeout time.Duration, completedRequestChan chan *Request, client WorldClient) *World {
 	return &World{
 		Regions: []*Region{
 			NewRegion("A", 0, 0, 100, 100),
@@ -65,6 +68,7 @@ func NewWorld(tickTimeout time.Duration, completedRequestChan chan *Request) *Wo
 		ChairDB:              NewGenericDB[ChairID, *Chair](),
 		RequestDB:            NewRequestDB(),
 		PaymentDB:            NewPaymentDB(),
+		Client:               client,
 		RootRand:             random.NewLockedRand(rand.NewPCG(0, 0)),
 		CompletedRequestChan: completedRequestChan,
 		tickTimeout:          tickTimeout,
@@ -91,24 +95,28 @@ func (w *World) Tick(ctx *Context) error {
 				}()
 			}
 		}
-		// 前回タイムアウトしなかったらプロバイダ毎に増加させる
-		for _, p := range w.ProviderDB.Iter() {
-			increase := p.TotalSales.Load()/w.chairIncreaseSales - int64(p.ChairDB.Len()) + 10
-			if increase > 0 {
-				for range increase {
-					w.waitingTickCount.Add(1)
-					go func() {
-						defer w.waitingTickCount.Add(-1)
-						_, err := w.CreateChair(ctx, &CreateChairArgs{
-							Provider:          p,
-							InitialCoordinate: RandomCoordinateOnRegionWithRand(p.Region, p.Rand),
-							WorkTime:          NewInterval(0, ConvertHour(2000)),
-						})
-						if err != nil {
-							w.HandleTickError(ctx, err)
-						}
+	}
+
+	for _, p := range w.ProviderDB.Iter() {
+		increase := p.TotalSales.Load()/w.chairIncreaseSales - int64(p.ChairDB.Len()) + 10 - w.increasingChairs.Load()
+		if increase > 0 {
+			w.increasingChairs.Add(increase)
+			for range increase {
+				w.waitingTickCount.Add(1)
+				go func() {
+					defer func() {
+						w.waitingTickCount.Add(-1)
+						w.increasingChairs.Add(-1)
 					}()
-				}
+					_, err := w.CreateChair(ctx, &CreateChairArgs{
+						Provider:          p,
+						InitialCoordinate: RandomCoordinateOnRegionWithRand(p.Region, p.Rand),
+						WorkTime:          NewInterval(0, ConvertHour(2000)),
+					})
+					if err != nil {
+						w.HandleTickError(ctx, err)
+					}
+				}()
 			}
 		}
 	}
@@ -133,7 +141,6 @@ func (w *World) Tick(ctx *Context) error {
 			}
 		}()
 	}
-
 	for _, p := range w.ProviderDB.Iter() {
 		w.waitingTickCount.Add(1)
 		go func() {
@@ -181,7 +188,7 @@ func (w *World) CreateUser(ctx *Context, args *CreateUserArgs) (*User, error) {
 		DateOfBirth: random.GenerateDateOfBirth(),
 	}
 
-	res, err := ctx.client.RegisterUser(ctx, &RegisterUserRequest{
+	res, err := w.Client.RegisterUser(ctx, &RegisterUserRequest{
 		UserName:    registeredData.UserName,
 		FirstName:   registeredData.FirstName,
 		LastName:    registeredData.LastName,
@@ -198,6 +205,7 @@ func (w *World) CreateUser(ctx *Context, args *CreateUserArgs) (*User, error) {
 		RegisteredData:    registeredData,
 		AccessToken:       res.AccessToken,
 		PaymentToken:      random.GeneratePaymentToken(),
+		Client:            res.Client,
 		Rand:              random.CreateChildRand(w.RootRand),
 		notificationQueue: make(chan NotificationEvent, 500),
 	}
@@ -219,7 +227,7 @@ func (w *World) CreateProvider(ctx *Context, args *CreateProviderArgs) (*Provide
 		Name: random.GenerateProviderName(),
 	}
 
-	res, err := ctx.client.RegisterProvider(ctx, &RegisterProviderRequest{
+	res, err := w.Client.RegisterProvider(ctx, &RegisterProviderRequest{
 		Name: registeredData.Name,
 	})
 	if err != nil {
@@ -232,6 +240,7 @@ func (w *World) CreateProvider(ctx *Context, args *CreateProviderArgs) (*Provide
 		ChairDB:        concurrent.NewSimpleMap[ChairID, *Chair](),
 		RegisteredData: registeredData,
 		AccessToken:    res.AccessToken,
+		Client:         res.Client,
 		Rand:           random.CreateChildRand(w.RootRand),
 	}
 	p.tickDone.Store(true)
@@ -255,7 +264,7 @@ func (w *World) CreateChair(ctx *Context, args *CreateChairArgs) (*Chair, error)
 		Model: random.GenerateChairModel(),
 	}
 
-	res, err := ctx.client.RegisterChair(ctx, args.Provider, &RegisterChairRequest{
+	res, err := args.Provider.Client.RegisterChair(ctx, args.Provider, &RegisterChairRequest{
 		Name:  registeredData.Name,
 		Model: registeredData.Model,
 	})
@@ -273,6 +282,7 @@ func (w *World) CreateChair(ctx *Context, args *CreateChairArgs) (*Chair, error)
 		WorkTime:          args.WorkTime,
 		RegisteredData:    registeredData,
 		AccessToken:       res.AccessToken,
+		Client:            res.Client,
 		Rand:              random.CreateChildRand(args.Provider.Rand),
 		notificationQueue: make(chan NotificationEvent, 500),
 	}
