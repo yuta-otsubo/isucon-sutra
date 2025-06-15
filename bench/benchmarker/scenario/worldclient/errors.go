@@ -8,14 +8,8 @@ import (
 type ErrorCode int
 
 const (
-	// ErrorCodeNotFoundUserClient UserClientが見つからないエラー
-	ErrorCodeNotFoundUserClient ErrorCode = iota + 10000
-	// ErrorCodeNotFoundProviderClient ProviderClientが見つからないエラー
-	ErrorCodeNotFoundProviderClient
-	// ErrorCodeNotFoundChairClient ChairClientが見つからないエラー
-	ErrorCodeNotFoundChairClient
 	// ErrorCodeFailedToPostCoordinate 座標送信に失敗したエラー
-	ErrorCodeFailedToPostCoordinate
+	ErrorCodeFailedToPostCoordinate = iota + 10000
 	// ErrorCodeFailedToPostAccept リクエスト受諾に失敗したエラー
 	ErrorCodeFailedToPostAccept
 	// ErrorCodeFailedToPostDeny リクエスト拒否に失敗したエラー
@@ -42,7 +36,7 @@ const (
 	ErrorCodeFailedToPostRequest
 	// ErrorCodeFailedToPostPaymentMethods ユーザー支払い情報登録に失敗したエラー
 	ErrorCodeFailedToPostPaymentMethods
-	// ErrorCodeFailedToGetProviderSales プロバイダーの売上情報の取得に失敗したエラー
+	// ErrorCodeFailedToGetProviderSales プロバイダーの売り上げ情報の取得に失敗したエラー
 	ErrorCodeFailedToGetProviderSales
 )
 
