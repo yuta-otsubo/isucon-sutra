@@ -16,10 +16,19 @@ services:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
       MYSQL_DATABASE: isucon
+      MYSQL_USER: isucon
+      MYSQL_PASSWORD: isucon
     ports:
       - 3306:3306
     volumes:
-      - ./mysql/db:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "isucon", "-pisucon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mysql_data:
