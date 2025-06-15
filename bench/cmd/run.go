@@ -46,7 +46,7 @@ var runCmd = &cobra.Command{
 		}
 
 		if benchrun.GetPublicIP() != "" {
-			paymentURL = fmt.Sprintf("https://%s:%d", benchrun.GetPublicIP(), 12345)
+			paymentURL = fmt.Sprintf("http://%s:%d", benchrun.GetPublicIP(), 12345)
 		}
 
 		var reporter benchrun.Reporter
@@ -65,6 +65,8 @@ var runCmd = &cobra.Command{
 			return err
 		}
 		defer exporter.Shutdown(context.Background())
+
+		l.Info("[DEBUG] target", zap.String("targetURL", targetURL), zap.String("targetAddr", targetAddr), zap.String("benchrun.GetTargetAddress()", benchrun.GetTargetAddress()))
 
 		s := scenario.NewScenario(targetURL, targetAddr, paymentURL, contestantLogger, reporter, meter)
 
