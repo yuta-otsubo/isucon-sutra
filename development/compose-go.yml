@@ -3,25 +3,33 @@ services:
     build:
       context: ../webapp/go
     ports:
-      - 8080:8080
+      - "8080:8080"
     working_dir: /home/isucon/webapp/go
     depends_on:
       db:
         condition: service_healthy
     environment:
       DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: isucon
+      DB_PASSWORD: isucon
+      DB_NAME: isucon
   db:
     image: mysql:8
     environment:
-      ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
       MYSQL_DATABASE: isucon
       MYSQL_USER: isucon
       MYSQL_PASSWORD: isucon
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
       - ./mysql/db:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
+      test:
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uisucon", "-pisucon"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
