@@ -6,4 +6,3 @@ COPY . .
 RUN go build -o webapp .
 
 CMD ["/home/isucon/webapp/go/webapp"]
-
