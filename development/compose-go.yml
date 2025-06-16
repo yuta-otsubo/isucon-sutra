@@ -24,8 +24,4 @@ services:
       - ./mysql/db:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "isucon", "-pisucon"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+      test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
