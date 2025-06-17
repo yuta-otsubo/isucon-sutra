@@ -1,25 +1,25 @@
 package cmd
 
 import (
+	"log/slog"
 	"os"
 
-	// cobraはGo言語用のコマンドラインアプリケーションフレームワーク
-	// 引数の処理やサブコマンドの実装を簡素化する
 	"github.com/spf13/cobra"
-	"github.com/yuta-otsubo/isucon-sutra/bench/internal/logger"
 )
 
 var rootCmd = &cobra.Command{
 	Use:     "bench",
-	Short:   "ISUCON14 benchmark",
+	Short:   "ISUCON14 benchmarker",
 	Version: version,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		logger.SetupGlobalLogger()
-	},
 }
 
 func Execute() {
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		AddSource: true,
+		Level:     slog.LevelDebug,
+	})))
 	if err := rootCmd.Execute(); err != nil {
+		slog.Error(err.Error())
 		os.Exit(1)
 	}
 }

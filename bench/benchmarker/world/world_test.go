@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
+	"github.com/neilotoole/slogt"
 	"github.com/oklog/ulid/v2"
 	"github.com/yuta-otsubo/isucon-sutra/bench/internal/concurrent"
 )
@@ -253,7 +254,7 @@ func TestWorld(t *testing.T) {
 			chairNotificationReceiverMap: concurrent.NewSimpleMap[string, NotificationReceiverFunc](),
 			eventQueue:                   make(chan *eventEntry, 1000),
 		}
-		world = NewWorld(30*time.Millisecond, completedRequestChan, client)
+		world = NewWorld(30*time.Millisecond, completedRequestChan, client, slogt.New(t))
 		ctx   = &Context{
 			world: world,
 		}

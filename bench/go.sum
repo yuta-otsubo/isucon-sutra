@@ -66,8 +66,6 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/isucon/isucandar v0.0.0-20220322062028-6dd56dc57d72 h1:mCWYjY0ZaMGAFqwCC/hsEZZl+R8mymuVIRhmVO8r/EE=
 github.com/isucon/isucandar v0.0.0-20220322062028-6dd56dc57d72/go.mod h1:1j6H6zxOUW/sSAOGay1iE0CW6mM58U/OTIKvKXwbRaQ=
-github.com/isucon/isucon14/bench v0.0.0-20241213060201-53f8b627e040 h1:r10sCZJ14QZzcBwKxQpTtlQmwfconwe0mlB4OqvezKU=
-github.com/isucon/isucon14/bench v0.0.0-20241213060201-53f8b627e040/go.mod h1:YukzyD4JQeq3gjBy0a5F/QbQ7m+QC23jMLVLGnSDMOo=
 github.com/julienschmidt/httprouter v1.3.0 h1:U0609e9tgbseu3rBINet9P48AI/D3oJs4dN7jwJOQ1U=
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
 github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=
@@ -90,6 +88,8 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/mitchellh/go-wordwrap v1.0.1 h1:TLuKupo69TCn6TQSyGxwI1EblZZEsQ0vMlAFQflz0v0=
 github.com/mitchellh/go-wordwrap v1.0.1/go.mod h1:R62XHJLzvMFRBbcrT7m7WgmE1eOyTSsCt+hzestvNj0=
+github.com/neilotoole/slogt v1.1.0 h1:c7qE92sq+V0yvCuaxph+RQ2jOKL61c4hqS1Bv9W7FZE=
+github.com/neilotoole/slogt v1.1.0/go.mod h1:RCrGXkPc/hYybNulqQrMHRtvlQ7F6NktNVLuLwk6V+w=
 github.com/ogen-go/ogen v1.13.0 h1:RI3jAMZvn6fIlFCZR8g9KqTmpGRxBMmsax1qcjhcD38=
 github.com/ogen-go/ogen v1.13.0/go.mod h1:SNGTKeDIFhILb0+22f+gkT1FaeYmFgKrNmzUXMsnDro=
 github.com/oklog/ulid/v2 v2.1.0 h1:+9lhoxAP56we25tyYETBBY1YLA2SaoLvUFgrP2miPJU=
