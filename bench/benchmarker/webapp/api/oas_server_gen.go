@@ -98,12 +98,6 @@ type Handler interface {
 	//
 	// POST /chair/requests/{request_id}/depart
 	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
-	// ChairPostRequestPayment implements chair-post-request-payment operation.
-	//
-	// 支払いを実行する.
-	//
-	// POST /chair/requests/{request_id}/payment
-	ChairPostRequestPayment(ctx context.Context, params ChairPostRequestPaymentParams) (ChairPostRequestPaymentRes, error)
 	// PostInitialize implements post-initialize operation.
 	//
 	// サービスを初期化する.

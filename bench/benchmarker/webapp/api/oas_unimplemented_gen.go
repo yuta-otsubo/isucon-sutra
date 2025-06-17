@@ -148,15 +148,6 @@ func (UnimplementedHandler) ChairPostRequestDepart(ctx context.Context, params C
 	return r, ht.ErrNotImplemented
 }
 
-// ChairPostRequestPayment implements chair-post-request-payment operation.
-//
-// 支払いを実行する.
-//
-// POST /chair/requests/{request_id}/payment
-func (UnimplementedHandler) ChairPostRequestPayment(ctx context.Context, params ChairPostRequestPaymentParams) (r ChairPostRequestPaymentRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // PostInitialize implements post-initialize operation.
 //
 // サービスを初期化する.
