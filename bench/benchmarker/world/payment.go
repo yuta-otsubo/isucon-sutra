@@ -1,6 +1,7 @@
 package world
 
 import (
+	"github.com/samber/lo"
 	"github.com/yuta-otsubo/isucon-sutra/bench/internal/concurrent"
 	"github.com/yuta-otsubo/isucon-sutra/bench/payment"
 )
@@ -27,4 +28,8 @@ func (db *PaymentDB) Verify(p *payment.Payment) payment.Status {
 	}
 	db.CommittedPayments.Append(p)
 	return payment.StatusSuccess
+}
+
+func (db *PaymentDB) TotalPayment() int64 {
+	return lo.SumBy(db.CommittedPayments.ToSlice(), func(p *payment.Payment) int64 { return int64(p.Amount) })
 }

@@ -470,28 +470,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 								}
 
-							case 'p': // Prefix: "payment"
-
-								if l := len("payment"); len(elem) >= l && elem[0:l] == "payment" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "POST":
-										s.handleChairPostRequestPaymentRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "POST")
-									}
-
-									return
-								}
-
 							}
 
 						}
@@ -1123,30 +1101,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 										}
 									}
 
-								}
-
-							case 'p': // Prefix: "payment"
-
-								if l := len("payment"); len(elem) >= l && elem[0:l] == "payment" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch method {
-									case "POST":
-										r.name = ChairPostRequestPaymentOperation
-										r.summary = "支払いを実行する"
-										r.operationID = "chair-post-request-payment"
-										r.pathPattern = "/chair/requests/{request_id}/payment"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
 								}
 
 							}
