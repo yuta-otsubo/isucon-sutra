@@ -33,10 +33,6 @@ jobs:
         working-directory: ./development
         run: |
           sudo docker compose -f compose-go.yml up -d --build
-          echo "Waiting for services to start..."
-          sleep 10
-          sudo docker compose -f compose-go.yml ps
-          sudo docker compose -f compose-go.yml logs db
       - name: Run bench
         working-directory: ./bench
         run: |
