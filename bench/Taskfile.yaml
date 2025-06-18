@@ -16,3 +16,4 @@ tasks:
   image-build:
     cmds:
       - ko build -L .
+
