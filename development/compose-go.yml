@@ -12,6 +12,10 @@ services:
       DB_HOST: db
   db:
     image: mysql:8
+    # コンテナ停止時の猶予時間（デフォルト10秒）
+    stop_grace_period: 30s
+    # 失敗時の再起動ポリシー
+    restart: unless-stopped
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
@@ -24,4 +28,8 @@ services:
       - ./mysql/db:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uisucon", "-pisucon"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
