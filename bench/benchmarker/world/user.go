@@ -129,7 +129,7 @@ func (u *User) Tick(ctx *Context) error {
 				}
 
 				// サーバーが評価を受理したので完了状態になるのを待機する
-				u.Request.CompletedAt = ctx.world.Time
+				u.Request.CompletedAt = ctx.CurrentTime()
 				u.Request.Statuses.Desired = RequestStatusCompleted
 				u.Request.Evaluated = true
 				if requests := len(u.RequestHistory); requests == 1 {
@@ -145,7 +145,6 @@ func (u *User) Tick(ctx *Context) error {
 		case RequestStatusCompleted:
 			// 進行中のリクエストが無い状態にする
 			u.Request = nil
-
 		}
 
 	// 進行中のリクエストは存在しないが、ユーザーがアクティブ状態
@@ -154,7 +153,7 @@ func (u *User) Tick(ctx *Context) error {
 			// 通知コネクションが無い場合は繋いでおく
 			conn, err := u.Client.ConnectUserNotificationStream(ctx, u, func(event NotificationEvent) {
 				if !concurrent.TrySend(u.notificationQueue, event) {
-					slog.Error("通知受け取りチャンネルが詰まってる", slog.String("user server id", u.ServerID))
+					slog.Error("通知受け取りチャンネルが詰まってる", slog.String("user_server_id", u.ServerID))
 					u.notificationQueue <- event
 				}
 			})
@@ -201,7 +200,7 @@ func (u *User) CreateRequest(ctx *Context) error {
 		User:             u,
 		PickupPoint:      pickup,
 		DestinationPoint: dest,
-		RequestedAt:      ctx.world.Time,
+		RequestedAt:      ctx.CurrentTime(),
 		Statuses: RequestStatuses{
 			Desired: RequestStatusMatching,
 			Chair:   RequestStatusMatching,
