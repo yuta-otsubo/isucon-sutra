@@ -413,10 +413,10 @@ func decodeChairPostRequestDepartParams(args [1]string, argsEscaped bool, r *htt
 
 // ProviderGetSalesParams is parameters of provider-get-sales operation.
 type ProviderGetSalesParams struct {
-	// 開始日（含む）.
-	Since string
-	// 終了日（含む）.
-	Until string
+	// 開始日時（含む）.
+	Since OptString
+	// 終了日時（含む）.
+	Until OptString
 }
 
 func unpackProviderGetSalesParams(packed middleware.Parameters) (params ProviderGetSalesParams) {
@@ -425,14 +425,18 @@ func unpackProviderGetSalesParams(packed middleware.Parameters) (params Provider
 			Name: "since",
 			In:   "query",
 		}
-		params.Since = packed[key].(string)
+		if v, ok := packed[key]; ok {
+			params.Since = v.(OptString)
+		}
 	}
 	{
 		key := middleware.ParameterKey{
 			Name: "until",
 			In:   "query",
 		}
-		params.Until = packed[key].(string)
+		if v, ok := packed[key]; ok {
+			params.Until = v.(OptString)
+		}
 	}
 	return params
 }
@@ -449,23 +453,28 @@ func decodeProviderGetSalesParams(args [0]string, argsEscaped bool, r *http.Requ
 
 		if err := q.HasParam(cfg); err == nil {
 			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				val, err := d.DecodeValue()
-				if err != nil {
+				var paramsDotSinceVal string
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToString(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotSinceVal = c
+					return nil
+				}(); err != nil {
 					return err
 				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.Since = c
+				params.Since.SetTo(paramsDotSinceVal)
 				return nil
 			}); err != nil {
 				return err
 			}
-		} else {
-			return err
 		}
 		return nil
 	}(); err != nil {
@@ -485,23 +494,28 @@ func decodeProviderGetSalesParams(args [0]string, argsEscaped bool, r *http.Requ
 
 		if err := q.HasParam(cfg); err == nil {
 			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				val, err := d.DecodeValue()
-				if err != nil {
+				var paramsDotUntilVal string
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToString(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotUntilVal = c
+					return nil
+				}(); err != nil {
 					return err
 				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.Until = c
+				params.Until.SetTo(paramsDotUntilVal)
 				return nil
 			}); err != nil {
 				return err
 			}
-		} else {
-			return err
 		}
 		return nil
 	}(); err != nil {
