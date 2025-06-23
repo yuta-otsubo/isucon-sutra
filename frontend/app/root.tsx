@@ -23,7 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="overscroll-none bg-gray-100">
+      <body className="overscroll-none bg-neutral-100">
         <QueryClientProvider client={queryClient}>
           <MainFrame>{children}</MainFrame>
         </QueryClientProvider>
