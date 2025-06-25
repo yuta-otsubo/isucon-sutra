@@ -157,6 +157,15 @@ func (UnimplementedHandler) PostInitialize(ctx context.Context, req OptPostIniti
 	return r, ht.ErrNotImplemented
 }
 
+// ProviderGetChairs implements provider-get-chairs operation.
+//
+// 椅子プロバイダーが管理している椅子の一覧を取得する.
+//
+// GET /provider/chairs
+func (UnimplementedHandler) ProviderGetChairs(ctx context.Context) (r *ProviderGetChairsOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // ProviderGetSales implements provider-get-sales operation.
 //
 // 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.

@@ -510,6 +510,26 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
+				case 'c': // Prefix: "chairs"
+
+					if l := len("chairs"); len(elem) >= l && elem[0:l] == "chairs" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleProviderGetChairsRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
 				case 'r': // Prefix: "register"
 
 					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
@@ -1147,6 +1167,30 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
+				case 'c': // Prefix: "chairs"
+
+					if l := len("chairs"); len(elem) >= l && elem[0:l] == "chairs" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = ProviderGetChairsOperation
+							r.summary = "椅子プロバイダーが管理している椅子の一覧を取得する"
+							r.operationID = "provider-get-chairs"
+							r.pathPattern = "/provider/chairs"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
 				case 'r': // Prefix: "register"
 
 					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {

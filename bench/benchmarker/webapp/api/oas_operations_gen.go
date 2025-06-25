@@ -22,6 +22,7 @@ const (
 	ChairPostRequestDenyOperation   OperationName = "ChairPostRequestDeny"
 	ChairPostRequestDepartOperation OperationName = "ChairPostRequestDepart"
 	PostInitializeOperation         OperationName = "PostInitialize"
+	ProviderGetChairsOperation      OperationName = "ProviderGetChairs"
 	ProviderGetSalesOperation       OperationName = "ProviderGetSales"
 	ProviderPostRegisterOperation   OperationName = "ProviderPostRegister"
 )
