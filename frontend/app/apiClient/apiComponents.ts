@@ -4,7 +4,7 @@
  * @version 1.0
  */
 import * as reactQuery from "@tanstack/react-query";
-import { useApiContext, ApiContext } from "./apiContext";
+import { ApiContext, useApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
 import type * as Schemas from "./apiSchemas";
@@ -989,68 +989,6 @@ export const useChairPostRequestDepart = (
   >({
     mutationFn: (variables: ChairPostRequestDepartVariables) =>
       fetchChairPostRequestDepart({ ...fetcherOptions, ...variables }),
-    ...options,
-  });
-};
-
-export type ChairPostRequestPaymentPathParams = {
-  /**
-   * 配車要求ID
-   */
-  requestId: string;
-};
-
-export type ChairPostRequestPaymentError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: Schemas.Error;
-    }
-  | {
-      status: 404;
-      payload: Schemas.Error;
-    }
->;
-
-export type ChairPostRequestPaymentVariables = {
-  pathParams: ChairPostRequestPaymentPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchChairPostRequestPayment = (
-  variables: ChairPostRequestPaymentVariables,
-  signal?: AbortSignal,
-) =>
-  apiFetch<
-    undefined,
-    ChairPostRequestPaymentError,
-    undefined,
-    {},
-    {},
-    ChairPostRequestPaymentPathParams
-  >({
-    url: "/chair/requests/{requestId}/payment",
-    method: "post",
-    ...variables,
-    signal,
-  });
-
-export const useChairPostRequestPayment = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      ChairPostRequestPaymentError,
-      ChairPostRequestPaymentVariables
-    >,
-    "mutationFn"
-  >,
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    undefined,
-    ChairPostRequestPaymentError,
-    ChairPostRequestPaymentVariables
-  >({
-    mutationFn: (variables: ChairPostRequestPaymentVariables) =>
-      fetchChairPostRequestPayment({ ...fetcherOptions, ...variables }),
     ...options,
   });
 };

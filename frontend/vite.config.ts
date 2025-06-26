@@ -7,6 +7,7 @@ import {
   ChairPostRegisterRequestBody,
   ProviderPostRegisterRequestBody,
 } from "~/apiClient/apiComponents";
+import { alternativeURLExpression } from "./api-url.mjs";
 
 const DEFAULT_HOSTNAME = "localhost";
 const DEFAULT_PORT = 3000;
@@ -121,12 +122,14 @@ export const config = {
     tsconfigPaths(),
     customConsolePlugin,
   ],
+  define: {
+    [alternativeURLExpression]: `"${process.env["API_BASE_URL"] ?? "."}"`,
+  },
   server: {
     proxy: {
       "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
     host: DEFAULT_HOSTNAME,
