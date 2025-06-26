@@ -411,6 +411,72 @@ func decodeChairPostRequestDepartParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
+// ProviderGetChairDetailParams is parameters of provider-get-chair-detail operation.
+type ProviderGetChairDetailParams struct {
+	// 椅子ID.
+	ChairID string
+}
+
+func unpackProviderGetChairDetailParams(packed middleware.Parameters) (params ProviderGetChairDetailParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "chair_id",
+			In:   "path",
+		}
+		params.ChairID = packed[key].(string)
+	}
+	return params
+}
+
+func decodeProviderGetChairDetailParams(args [1]string, argsEscaped bool, r *http.Request) (params ProviderGetChairDetailParams, _ error) {
+	// Decode path: chair_id.
+	if err := func() error {
+		param := args[0]
+		if argsEscaped {
+			unescaped, err := url.PathUnescape(args[0])
+			if err != nil {
+				return errors.Wrap(err, "unescape path")
+			}
+			param = unescaped
+		}
+		if len(param) > 0 {
+			d := uri.NewPathDecoder(uri.PathDecoderConfig{
+				Param:   "chair_id",
+				Value:   param,
+				Style:   uri.PathStyleSimple,
+				Explode: false,
+			})
+
+			if err := func() error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToString(val)
+				if err != nil {
+					return err
+				}
+
+				params.ChairID = c
+				return nil
+			}(); err != nil {
+				return err
+			}
+		} else {
+			return validate.ErrFieldRequired
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "chair_id",
+			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // ProviderGetSalesParams is parameters of provider-get-sales operation.
 type ProviderGetSalesParams struct {
 	// 開始日時（含む）.

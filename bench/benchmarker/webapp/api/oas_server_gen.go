@@ -104,6 +104,12 @@ type Handler interface {
 	//
 	// POST /initialize
 	PostInitialize(ctx context.Context, req OptPostInitializeReq) (*PostInitializeOK, error)
+	// ProviderGetChairDetail implements provider-get-chair-detail operation.
+	//
+	// 管理している椅子の詳細を取得する.
+	//
+	// GET /provider/chairs/{chair_id}
+	ProviderGetChairDetail(ctx context.Context, params ProviderGetChairDetailParams) (*ProviderGetChairDetailOK, error)
 	// ProviderGetChairs implements provider-get-chairs operation.
 	//
 	// 椅子プロバイダーが管理している椅子の一覧を取得する.
