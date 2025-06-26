@@ -121,13 +121,13 @@ export const useClientChairRequest = (accessToken: string, id?: string) => {
       candidateAppRequest.status = debugStatus;
       candidateAppRequest.payload = { ...candidateAppRequest.payload };
       candidateAppRequest.payload.request_id = "__DUMMY_REQUEST_ID__";
-      (candidateAppRequest.payload.user = {
+      ((candidateAppRequest.payload.user = {
         id: "1234",
         name: "ゆーざー",
       }),
         (candidateAppRequest.payload.coordinate = {
           ...candidateAppRequest.payload.coordinate,
-        });
+        }));
       candidateAppRequest.payload.coordinate.destination = {
         latitude: 34,
         longitude: 120,
