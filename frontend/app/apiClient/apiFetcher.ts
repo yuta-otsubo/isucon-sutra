@@ -1,12 +1,12 @@
-import { IsuconContext } from "./apiContext";
+import { ApiContext } from "./apiContext";
 
-const baseUrl = "http://localhost:3000/api";
+const baseUrl = __API_BASE_URL__;
 
 export type ErrorWrapper<TError> =
   | TError
   | { status: "unknown"; payload: string };
 
-export type IsuconFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
+export type ApiFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
   url: string;
   method: string;
   body?: TBody;
@@ -14,9 +14,9 @@ export type IsuconFetcherOptions<TBody, THeaders, TQueryParams, TPathParams> = {
   queryParams?: TQueryParams;
   pathParams?: TPathParams;
   signal?: AbortSignal;
-} & IsuconContext["fetcherOptions"];
+} & ApiContext["fetcherOptions"];
 
-export async function isuconFetch<
+export async function apiFetch<
   TData,
   TError,
   TBody extends {} | FormData | undefined | null,
@@ -31,7 +31,7 @@ export async function isuconFetch<
   pathParams,
   queryParams,
   signal,
-}: IsuconFetcherOptions<
+}: ApiFetcherOptions<
   TBody,
   THeaders,
   TQueryParams,
@@ -113,6 +113,3 @@ const resolveUrl = (
   if (query) query = `?${query}`;
   return url.replace(/\{\w*\}/g, (key) => pathParams[key.slice(1, -1)]) + query;
 };
-
-// apiFetchをisuconFetchの別名として追加
-export const apiFetch = isuconFetch;
