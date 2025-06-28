@@ -67,7 +67,7 @@ type Handler interface {
 	// 椅子が位置情報を送信する.
 	//
 	// POST /chair/coordinate
-	ChairPostCoordinate(ctx context.Context, req OptCoordinate) error
+	ChairPostCoordinate(ctx context.Context, req OptCoordinate) (*ChairPostCoordinateOK, error)
 	// ChairPostDeactivate implements chair-post-deactivate operation.
 	//
 	// 椅子が配車受付を停止する.
