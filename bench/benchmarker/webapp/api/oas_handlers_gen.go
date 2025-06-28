@@ -1339,7 +1339,7 @@ func (s *Server) handleChairPostCoordinateRequest(args [0]string, argsEscaped bo
 		}
 	}()
 
-	var response *ChairPostCoordinateNoContent
+	var response *ChairPostCoordinateOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -1354,7 +1354,7 @@ func (s *Server) handleChairPostCoordinateRequest(args [0]string, argsEscaped bo
 		type (
 			Request  = OptCoordinate
 			Params   = struct{}
-			Response = *ChairPostCoordinateNoContent
+			Response = *ChairPostCoordinateOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -1365,12 +1365,12 @@ func (s *Server) handleChairPostCoordinateRequest(args [0]string, argsEscaped bo
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.ChairPostCoordinate(ctx, request)
+				response, err = s.h.ChairPostCoordinate(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.ChairPostCoordinate(ctx, request)
+		response, err = s.h.ChairPostCoordinate(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

@@ -100,6 +100,12 @@ func chairPostCoordinate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	location := &ChairLocation{}
+	if err := tx.Get(location, `SELECT * FROM chair_locations WHERE id = ?`, chairLocationID); err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+
 	rideRequest := &RideRequest{}
 	if err := tx.Get(rideRequest, `SELECT * FROM ride_requests WHERE chair_id = ? AND status NOT IN ('COMPLETED', 'CANCELED')`, chair.ID); err != nil {
 		if !errors.Is(err, sql.ErrNoRows) {
@@ -127,7 +133,9 @@ func chairPostCoordinate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	writeJSON(w, http.StatusOK, map[string]interface{}{
+		"datetime": location.CreatedAt,
+	})
 }
 
 func chairGetNotification(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +166,7 @@ func chairGetNotification(w http.ResponseWriter, r *http.Request) {
 	if !found || rideRequest.Status == "COMPLETED" || rideRequest.Status == "CANCELED" {
 		matchRequest := &RideRequest{}
 		// TODO: いい感じに椅子とユーザーをマッチングさせる
-		// MEMO: 多分、距離と椅子の移動時間が関係しそう
+		// MEMO: 多分距離と椅子の移動速度が関係しそう
 		if err := tx.Get(matchRequest, `SELECT * FROM ride_requests WHERE status = 'MATCHING' AND chair_id IS NULL ORDER BY requested_at LIMIT 1 FOR UPDATE`); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				w.WriteHeader(http.StatusNoContent)
@@ -247,7 +255,7 @@ func chairGetNotificationSSE(w http.ResponseWriter, r *http.Request) {
 				if !found || rideRequest.Status == "COMPLETED" || rideRequest.Status == "CANCELED" {
 					matchRequest := &RideRequest{}
 					// TODO: いい感じに椅子とユーザーをマッチングさせる
-					// MEMO: 多分、距離と椅子の移動時間が関係しそう
+					// MEMO: 多分距離と椅子の移動速度が関係しそう
 					if err := tx.Get(matchRequest, `SELECT * FROM ride_requests WHERE status = 'MATCHING' AND chair_id IS NULL ORDER BY requested_at LIMIT 1 FOR UPDATE`); err != nil {
 						if errors.Is(err, sql.ErrNoRows) {
 							return nil

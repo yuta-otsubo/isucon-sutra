@@ -99,8 +99,8 @@ func (UnimplementedHandler) ChairPostActivate(ctx context.Context, req *ChairPos
 // 椅子が位置情報を送信する.
 //
 // POST /chair/coordinate
-func (UnimplementedHandler) ChairPostCoordinate(ctx context.Context, req OptCoordinate) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) ChairPostCoordinate(ctx context.Context, req OptCoordinate) (r *ChairPostCoordinateOK, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // ChairPostDeactivate implements chair-post-deactivate operation.
