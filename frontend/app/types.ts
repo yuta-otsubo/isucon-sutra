@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { RequestId } from "./apiClient/apiParameters";
 import {
   Coordinate as ApiCoodinate,
-  Chair,
+  AppChair,
   RequestStatus,
   User,
 } from "./apiClient/apiSchemas";
@@ -17,7 +17,7 @@ export type ClientAppRequest = {
       pickup: Coordinate;
       destination: Coordinate;
     }>;
-    chair?: Chair;
+    chair?: AppChair;
   }>;
   auth: {
     accessToken: AccessToken;
