@@ -157,47 +157,47 @@ func (UnimplementedHandler) ChairPostRequestDepart(ctx context.Context, params C
 	return r, ht.ErrNotImplemented
 }
 
+// OwnerGetChairDetail implements owner-get-chair-detail operation.
+//
+// 管理している椅子の詳細を取得する.
+//
+// GET /owner/chairs/{chair_id}
+func (UnimplementedHandler) OwnerGetChairDetail(ctx context.Context, params OwnerGetChairDetailParams) (r *OwnerGetChairDetailOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// OwnerGetChairs implements owner-get-chairs operation.
+//
+// 椅子のオーナーが管理している椅子の一覧を取得する.
+//
+// GET /owner/chairs
+func (UnimplementedHandler) OwnerGetChairs(ctx context.Context) (r *OwnerGetChairsOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// OwnerGetSales implements owner-get-sales operation.
+//
+// 椅子のオーナーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+//
+// GET /owner/sales
+func (UnimplementedHandler) OwnerGetSales(ctx context.Context, params OwnerGetSalesParams) (r *OwnerGetSalesOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// OwnerPostRegister implements owner-post-register operation.
+//
+// 椅子のオーナー自身が登録を行う.
+//
+// POST /owner/register
+func (UnimplementedHandler) OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (r *OwnerPostRegisterCreated, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // PostInitialize implements post-initialize operation.
 //
 // サービスを初期化する.
 //
 // POST /initialize
 func (UnimplementedHandler) PostInitialize(ctx context.Context, req OptPostInitializeReq) (r *PostInitializeOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ProviderGetChairDetail implements provider-get-chair-detail operation.
-//
-// 管理している椅子の詳細を取得する.
-//
-// GET /provider/chairs/{chair_id}
-func (UnimplementedHandler) ProviderGetChairDetail(ctx context.Context, params ProviderGetChairDetailParams) (r *ProviderGetChairDetailOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ProviderGetChairs implements provider-get-chairs operation.
-//
-// 椅子プロバイダーが管理している椅子の一覧を取得する.
-//
-// GET /provider/chairs
-func (UnimplementedHandler) ProviderGetChairs(ctx context.Context) (r *ProviderGetChairsOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ProviderGetSales implements provider-get-sales operation.
-//
-// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
-//
-// GET /provider/sales
-func (UnimplementedHandler) ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (r *ProviderGetSalesOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ProviderPostRegister implements provider-post-register operation.
-//
-// 椅子プロバイダーが登録を行う.
-//
-// POST /provider/register
-func (UnimplementedHandler) ProviderPostRegister(ctx context.Context, req OptProviderPostRegisterReq) (r *ProviderPostRegisterCreated, _ error) {
 	return r, ht.ErrNotImplemented
 }

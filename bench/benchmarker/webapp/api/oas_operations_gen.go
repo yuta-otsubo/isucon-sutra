@@ -22,9 +22,9 @@ const (
 	ChairPostRequestAcceptOperation OperationName = "ChairPostRequestAccept"
 	ChairPostRequestDenyOperation   OperationName = "ChairPostRequestDeny"
 	ChairPostRequestDepartOperation OperationName = "ChairPostRequestDepart"
+	OwnerGetChairDetailOperation    OperationName = "OwnerGetChairDetail"
+	OwnerGetChairsOperation         OperationName = "OwnerGetChairs"
+	OwnerGetSalesOperation          OperationName = "OwnerGetSales"
+	OwnerPostRegisterOperation      OperationName = "OwnerPostRegister"
 	PostInitializeOperation         OperationName = "PostInitialize"
-	ProviderGetChairDetailOperation OperationName = "ProviderGetChairDetail"
-	ProviderGetChairsOperation      OperationName = "ProviderGetChairs"
-	ProviderGetSalesOperation       OperationName = "ProviderGetSales"
-	ProviderPostRegisterOperation   OperationName = "ProviderPostRegister"
 )

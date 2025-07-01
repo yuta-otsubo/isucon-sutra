@@ -104,36 +104,36 @@ type Handler interface {
 	//
 	// POST /chair/requests/{request_id}/depart
 	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
+	// OwnerGetChairDetail implements owner-get-chair-detail operation.
+	//
+	// 管理している椅子の詳細を取得する.
+	//
+	// GET /owner/chairs/{chair_id}
+	OwnerGetChairDetail(ctx context.Context, params OwnerGetChairDetailParams) (*OwnerGetChairDetailOK, error)
+	// OwnerGetChairs implements owner-get-chairs operation.
+	//
+	// 椅子のオーナーが管理している椅子の一覧を取得する.
+	//
+	// GET /owner/chairs
+	OwnerGetChairs(ctx context.Context) (*OwnerGetChairsOK, error)
+	// OwnerGetSales implements owner-get-sales operation.
+	//
+	// 椅子のオーナーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
+	//
+	// GET /owner/sales
+	OwnerGetSales(ctx context.Context, params OwnerGetSalesParams) (*OwnerGetSalesOK, error)
+	// OwnerPostRegister implements owner-post-register operation.
+	//
+	// 椅子のオーナー自身が登録を行う.
+	//
+	// POST /owner/register
+	OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (*OwnerPostRegisterCreated, error)
 	// PostInitialize implements post-initialize operation.
 	//
 	// サービスを初期化する.
 	//
 	// POST /initialize
 	PostInitialize(ctx context.Context, req OptPostInitializeReq) (*PostInitializeOK, error)
-	// ProviderGetChairDetail implements provider-get-chair-detail operation.
-	//
-	// 管理している椅子の詳細を取得する.
-	//
-	// GET /provider/chairs/{chair_id}
-	ProviderGetChairDetail(ctx context.Context, params ProviderGetChairDetailParams) (*ProviderGetChairDetailOK, error)
-	// ProviderGetChairs implements provider-get-chairs operation.
-	//
-	// 椅子プロバイダーが管理している椅子の一覧を取得する.
-	//
-	// GET /provider/chairs
-	ProviderGetChairs(ctx context.Context) (*ProviderGetChairsOK, error)
-	// ProviderGetSales implements provider-get-sales operation.
-	//
-	// 椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する.
-	//
-	// GET /provider/sales
-	ProviderGetSales(ctx context.Context, params ProviderGetSalesParams) (*ProviderGetSalesOK, error)
-	// ProviderPostRegister implements provider-post-register operation.
-	//
-	// 椅子プロバイダーが登録を行う.
-	//
-	// POST /provider/register
-	ProviderPostRegister(ctx context.Context, req OptProviderPostRegisterReq) (*ProviderPostRegisterCreated, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

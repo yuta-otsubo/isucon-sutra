@@ -566,13 +566,13 @@ func decodeChairPostRequestDepartParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
-// ProviderGetChairDetailParams is parameters of provider-get-chair-detail operation.
-type ProviderGetChairDetailParams struct {
+// OwnerGetChairDetailParams is parameters of owner-get-chair-detail operation.
+type OwnerGetChairDetailParams struct {
 	// 椅子ID.
 	ChairID string
 }
 
-func unpackProviderGetChairDetailParams(packed middleware.Parameters) (params ProviderGetChairDetailParams) {
+func unpackOwnerGetChairDetailParams(packed middleware.Parameters) (params OwnerGetChairDetailParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "chair_id",
@@ -583,7 +583,7 @@ func unpackProviderGetChairDetailParams(packed middleware.Parameters) (params Pr
 	return params
 }
 
-func decodeProviderGetChairDetailParams(args [1]string, argsEscaped bool, r *http.Request) (params ProviderGetChairDetailParams, _ error) {
+func decodeOwnerGetChairDetailParams(args [1]string, argsEscaped bool, r *http.Request) (params OwnerGetChairDetailParams, _ error) {
 	// Decode path: chair_id.
 	if err := func() error {
 		param := args[0]
@@ -632,15 +632,15 @@ func decodeProviderGetChairDetailParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
-// ProviderGetSalesParams is parameters of provider-get-sales operation.
-type ProviderGetSalesParams struct {
+// OwnerGetSalesParams is parameters of owner-get-sales operation.
+type OwnerGetSalesParams struct {
 	// 開始日時（含む）.
 	Since OptString
 	// 終了日時（含む）.
 	Until OptString
 }
 
-func unpackProviderGetSalesParams(packed middleware.Parameters) (params ProviderGetSalesParams) {
+func unpackOwnerGetSalesParams(packed middleware.Parameters) (params OwnerGetSalesParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "since",
@@ -662,7 +662,7 @@ func unpackProviderGetSalesParams(packed middleware.Parameters) (params Provider
 	return params
 }
 
-func decodeProviderGetSalesParams(args [0]string, argsEscaped bool, r *http.Request) (params ProviderGetSalesParams, _ error) {
+func decodeOwnerGetSalesParams(args [0]string, argsEscaped bool, r *http.Request) (params OwnerGetSalesParams, _ error) {
 	q := uri.NewQueryDecoder(r.URL.Query())
 	// Decode query: since.
 	if err := func() error {
