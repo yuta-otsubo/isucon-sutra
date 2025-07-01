@@ -6,6 +6,7 @@ package api
 type OperationName = string
 
 const (
+	AppGetNearbyChairsOperation     OperationName = "AppGetNearbyChairs"
 	AppGetNotificationOperation     OperationName = "AppGetNotification"
 	AppGetRequestOperation          OperationName = "AppGetRequest"
 	AppPostPaymentMethodsOperation  OperationName = "AppPostPaymentMethods"

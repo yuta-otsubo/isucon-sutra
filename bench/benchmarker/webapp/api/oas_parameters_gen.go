@@ -15,6 +15,161 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
+// AppGetNearbyChairsParams is parameters of app-get-nearby-chairs operation.
+type AppGetNearbyChairsParams struct {
+	// 緯度.
+	Latitude int
+	// 経度.
+	Longitude int
+	// 検索距離.
+	Distance OptInt
+}
+
+func unpackAppGetNearbyChairsParams(packed middleware.Parameters) (params AppGetNearbyChairsParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "latitude",
+			In:   "query",
+		}
+		params.Latitude = packed[key].(int)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "longitude",
+			In:   "query",
+		}
+		params.Longitude = packed[key].(int)
+	}
+	{
+		key := middleware.ParameterKey{
+			Name: "distance",
+			In:   "query",
+		}
+		if v, ok := packed[key]; ok {
+			params.Distance = v.(OptInt)
+		}
+	}
+	return params
+}
+
+func decodeAppGetNearbyChairsParams(args [0]string, argsEscaped bool, r *http.Request) (params AppGetNearbyChairsParams, _ error) {
+	q := uri.NewQueryDecoder(r.URL.Query())
+	// Decode query: latitude.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "latitude",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.Latitude = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "latitude",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: longitude.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "longitude",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				val, err := d.DecodeValue()
+				if err != nil {
+					return err
+				}
+
+				c, err := conv.ToInt(val)
+				if err != nil {
+					return err
+				}
+
+				params.Longitude = c
+				return nil
+			}); err != nil {
+				return err
+			}
+		} else {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "longitude",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	// Decode query: distance.
+	if err := func() error {
+		cfg := uri.QueryParameterDecodingConfig{
+			Name:    "distance",
+			Style:   uri.QueryStyleForm,
+			Explode: true,
+		}
+
+		if err := q.HasParam(cfg); err == nil {
+			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotDistanceVal int
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToInt(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotDistanceVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.Distance.SetTo(paramsDotDistanceVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "distance",
+			In:   "query",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
 // AppGetRequestParams is parameters of app-get-request operation.
 type AppGetRequestParams struct {
 	// 配車要求ID.
