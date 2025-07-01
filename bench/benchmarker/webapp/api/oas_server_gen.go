@@ -8,6 +8,12 @@ import (
 
 // Handler handles operations described by OpenAPI v3 specification.
 type Handler interface {
+	// AppGetNearbyChairs implements app-get-nearby-chairs operation.
+	//
+	// ユーザーの近くにいる椅子を取得する.
+	//
+	// GET /app/nearby-chairs
+	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
 	// AppGetNotification implements app-get-notification operation.
 	//
 	// 最新の自分の配車要求を取得します。.

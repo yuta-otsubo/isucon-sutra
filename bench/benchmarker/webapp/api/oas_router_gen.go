@@ -73,24 +73,58 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
-				case 'n': // Prefix: "notification"
+				case 'n': // Prefix: "n"
 
-					if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
+					if l := len("n"); len(elem) >= l && elem[0:l] == "n" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "GET":
-							s.handleAppGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
+						break
+					}
+					switch elem[0] {
+					case 'e': // Prefix: "earby-chairs"
+
+						if l := len("earby-chairs"); len(elem) >= l && elem[0:l] == "earby-chairs" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleAppGetNearbyChairsRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+
+					case 'o': // Prefix: "otification"
+
+						if l := len("otification"); len(elem) >= l && elem[0:l] == "otification" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "GET":
+								s.handleAppGetNotificationRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+
 					}
 
 				case 'p': // Prefix: "payment-methods"
@@ -710,28 +744,66 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
-				case 'n': // Prefix: "notification"
+				case 'n': // Prefix: "n"
 
-					if l := len("notification"); len(elem) >= l && elem[0:l] == "notification" {
+					if l := len("n"); len(elem) >= l && elem[0:l] == "n" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "GET":
-							r.name = AppGetNotificationOperation
-							r.summary = "ユーザー向け通知エンドポイント"
-							r.operationID = "app-get-notification"
-							r.pathPattern = "/app/notification"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
+						break
+					}
+					switch elem[0] {
+					case 'e': // Prefix: "earby-chairs"
+
+						if l := len("earby-chairs"); len(elem) >= l && elem[0:l] == "earby-chairs" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = AppGetNearbyChairsOperation
+								r.summary = "ユーザーの近くにいる椅子を取得する"
+								r.operationID = "app-get-nearby-chairs"
+								r.pathPattern = "/app/nearby-chairs"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'o': // Prefix: "otification"
+
+						if l := len("otification"); len(elem) >= l && elem[0:l] == "otification" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "GET":
+								r.name = AppGetNotificationOperation
+								r.summary = "ユーザー向け通知エンドポイント"
+								r.operationID = "app-get-notification"
+								r.pathPattern = "/app/notification"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
 					}
 
 				case 'p': // Prefix: "payment-methods"

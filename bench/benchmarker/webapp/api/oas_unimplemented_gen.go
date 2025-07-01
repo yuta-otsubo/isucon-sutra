@@ -13,6 +13,15 @@ type UnimplementedHandler struct{}
 
 var _ Handler = UnimplementedHandler{}
 
+// AppGetNearbyChairs implements app-get-nearby-chairs operation.
+//
+// ユーザーの近くにいる椅子を取得する.
+//
+// GET /app/nearby-chairs
+func (UnimplementedHandler) AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (r *AppGetNearbyChairsOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // AppGetNotification implements app-get-notification operation.
 //
 // 最新の自分の配車要求を取得します。.
