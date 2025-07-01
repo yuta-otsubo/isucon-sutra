@@ -532,9 +532,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 
-			case 'p': // Prefix: "provider/"
+			case 'o': // Prefix: "owner/"
 
-				if l := len("provider/"); len(elem) >= l && elem[0:l] == "provider/" {
+				if l := len("owner/"); len(elem) >= l && elem[0:l] == "owner/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -555,7 +555,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					if len(elem) == 0 {
 						switch r.Method {
 						case "GET":
-							s.handleProviderGetChairsRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleOwnerGetChairsRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
@@ -584,7 +584,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleProviderGetChairDetailRequest([1]string{
+								s.handleOwnerGetChairDetailRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
@@ -608,7 +608,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handleProviderPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleOwnerPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -628,7 +628,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "GET":
-							s.handleProviderGetSalesRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleOwnerGetSalesRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "GET")
 						}
@@ -1259,9 +1259,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					}
 				}
 
-			case 'p': // Prefix: "provider/"
+			case 'o': // Prefix: "owner/"
 
-				if l := len("provider/"); len(elem) >= l && elem[0:l] == "provider/" {
+				if l := len("owner/"); len(elem) >= l && elem[0:l] == "owner/" {
 					elem = elem[l:]
 				} else {
 					break
@@ -1282,10 +1282,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					if len(elem) == 0 {
 						switch method {
 						case "GET":
-							r.name = ProviderGetChairsOperation
-							r.summary = "椅子プロバイダーが管理している椅子の一覧を取得する"
-							r.operationID = "provider-get-chairs"
-							r.pathPattern = "/provider/chairs"
+							r.name = OwnerGetChairsOperation
+							r.summary = "椅子のオーナーが管理している椅子の一覧を取得する"
+							r.operationID = "owner-get-chairs"
+							r.pathPattern = "/owner/chairs"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1315,10 +1315,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "GET":
-								r.name = ProviderGetChairDetailOperation
+								r.name = OwnerGetChairDetailOperation
 								r.summary = "管理している椅子の詳細を取得する"
-								r.operationID = "provider-get-chair-detail"
-								r.pathPattern = "/provider/chairs/{chair_id}"
+								r.operationID = "owner-get-chair-detail"
+								r.pathPattern = "/owner/chairs/{chair_id}"
 								r.args = args
 								r.count = 1
 								return r, true
@@ -1341,10 +1341,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = ProviderPostRegisterOperation
-							r.summary = "椅子プロバイダーが登録を行う"
-							r.operationID = "provider-post-register"
-							r.pathPattern = "/provider/register"
+							r.name = OwnerPostRegisterOperation
+							r.summary = "椅子のオーナー自身が登録を行う"
+							r.operationID = "owner-post-register"
+							r.pathPattern = "/owner/register"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1365,10 +1365,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "GET":
-							r.name = ProviderGetSalesOperation
-							r.summary = "椅子プロバイダーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する"
-							r.operationID = "provider-get-sales"
-							r.pathPattern = "/provider/sales"
+							r.name = OwnerGetSalesOperation
+							r.summary = "椅子のオーナーが指定期間の全体・椅子ごと・モデルごとの売上情報を取得する"
+							r.operationID = "owner-get-sales"
+							r.pathPattern = "/owner/sales"
 							r.args = args
 							r.count = 0
 							return r, true
