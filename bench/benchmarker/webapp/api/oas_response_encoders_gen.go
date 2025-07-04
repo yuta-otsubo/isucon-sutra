@@ -27,7 +27,7 @@ func encodeAppGetNearbyChairsResponse(response *AppGetNearbyChairsOK, w http.Res
 
 func encodeAppGetNotificationResponse(response AppGetNotificationRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *AppRequest:
+	case *AppGetNotificationOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
@@ -186,7 +186,7 @@ func encodeAppPostRequestEvaluateResponse(response AppPostRequestEvaluateRes, w 
 
 func encodeChairGetNotificationResponse(response ChairGetNotificationRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *ChairRequest:
+	case *ChairGetNotificationOK:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(200)
 		span.SetStatus(codes.Ok, http.StatusText(200))
