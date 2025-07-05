@@ -523,7 +523,7 @@ func (s *Server) handleAppPostPaymentMethodsRequest(args [0]string, argsEscaped 
 		}
 	}()
 
-	var response *AppPostPaymentMethodsNoContent
+	var response AppPostPaymentMethodsRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -538,7 +538,7 @@ func (s *Server) handleAppPostPaymentMethodsRequest(args [0]string, argsEscaped 
 		type (
 			Request  = OptAppPostPaymentMethodsReq
 			Params   = struct{}
-			Response = *AppPostPaymentMethodsNoContent
+			Response = AppPostPaymentMethodsRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
@@ -549,12 +549,12 @@ func (s *Server) handleAppPostPaymentMethodsRequest(args [0]string, argsEscaped 
 			mreq,
 			nil,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				err = s.h.AppPostPaymentMethods(ctx, request)
+				response, err = s.h.AppPostPaymentMethods(ctx, request)
 				return response, err
 			},
 		)
 	} else {
-		err = s.h.AppPostPaymentMethods(ctx, request)
+		response, err = s.h.AppPostPaymentMethods(ctx, request)
 	}
 	if err != nil {
 		defer recordError("Internal", err)
@@ -799,7 +799,7 @@ func (s *Server) handleAppPostRequestRequest(args [0]string, argsEscaped bool, w
 		}
 	}()
 
-	var response *AppPostRequestAccepted
+	var response AppPostRequestRes
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -814,7 +814,7 @@ func (s *Server) handleAppPostRequestRequest(args [0]string, argsEscaped bool, w
 		type (
 			Request  = OptAppPostRequestReq
 			Params   = struct{}
-			Response = *AppPostRequestAccepted
+			Response = AppPostRequestRes
 		)
 		response, err = middleware.HookMiddleware[
 			Request,

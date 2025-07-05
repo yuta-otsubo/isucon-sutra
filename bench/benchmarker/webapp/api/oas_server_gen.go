@@ -31,7 +31,7 @@ type Handler interface {
 	// 決済トークンの登録.
 	//
 	// POST /app/payment-methods
-	AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) error
+	AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) (AppPostPaymentMethodsRes, error)
 	// AppPostRegister implements app-post-register operation.
 	//
 	// ユーザーが会員登録を行う.
@@ -43,7 +43,7 @@ type Handler interface {
 	// ユーザーが配車要求を行う.
 	//
 	// POST /app/requests
-	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (*AppPostRequestAccepted, error)
+	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (AppPostRequestRes, error)
 	// AppPostRequestEvaluate implements app-post-request-evaluate operation.
 	//
 	// ユーザーが椅子を評価する.
