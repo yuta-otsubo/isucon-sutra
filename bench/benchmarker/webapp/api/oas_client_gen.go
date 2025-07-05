@@ -51,7 +51,7 @@ type Invoker interface {
 	// 決済トークンの登録.
 	//
 	// POST /app/payment-methods
-	AppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) error
+	AppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) (AppPostPaymentMethodsRes, error)
 	// AppPostRegister invokes app-post-register operation.
 	//
 	// ユーザーが会員登録を行う.
@@ -63,7 +63,7 @@ type Invoker interface {
 	// ユーザーが配車要求を行う.
 	//
 	// POST /app/requests
-	AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (*AppPostRequestAccepted, error)
+	AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (AppPostRequestRes, error)
 	// AppPostRequestEvaluate invokes app-post-request-evaluate operation.
 	//
 	// ユーザーが椅子を評価する.
@@ -487,12 +487,12 @@ func (c *Client) sendAppGetRequest(ctx context.Context, params AppGetRequestPara
 // 決済トークンの登録.
 //
 // POST /app/payment-methods
-func (c *Client) AppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) error {
-	_, err := c.sendAppPostPaymentMethods(ctx, request)
-	return err
+func (c *Client) AppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) (AppPostPaymentMethodsRes, error) {
+	res, err := c.sendAppPostPaymentMethods(ctx, request)
+	return res, err
 }
 
-func (c *Client) sendAppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) (res *AppPostPaymentMethodsNoContent, err error) {
+func (c *Client) sendAppPostPaymentMethods(ctx context.Context, request OptAppPostPaymentMethodsReq) (res AppPostPaymentMethodsRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("app-post-payment-methods"),
 		semconv.HTTPRequestMethodKey.String("POST"),
@@ -637,12 +637,12 @@ func (c *Client) sendAppPostRegister(ctx context.Context, request OptAppPostRegi
 // ユーザーが配車要求を行う.
 //
 // POST /app/requests
-func (c *Client) AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (*AppPostRequestAccepted, error) {
+func (c *Client) AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (AppPostRequestRes, error) {
 	res, err := c.sendAppPostRequest(ctx, request)
 	return res, err
 }
 
-func (c *Client) sendAppPostRequest(ctx context.Context, request OptAppPostRequestReq) (res *AppPostRequestAccepted, err error) {
+func (c *Client) sendAppPostRequest(ctx context.Context, request OptAppPostRequestReq) (res AppPostRequestRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("app-post-request"),
 		semconv.HTTPRequestMethodKey.String("POST"),

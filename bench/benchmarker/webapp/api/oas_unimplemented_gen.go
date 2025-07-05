@@ -45,8 +45,8 @@ func (UnimplementedHandler) AppGetRequest(ctx context.Context, params AppGetRequ
 // 決済トークンの登録.
 //
 // POST /app/payment-methods
-func (UnimplementedHandler) AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) error {
-	return ht.ErrNotImplemented
+func (UnimplementedHandler) AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) (r AppPostPaymentMethodsRes, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // AppPostRegister implements app-post-register operation.
@@ -63,7 +63,7 @@ func (UnimplementedHandler) AppPostRegister(ctx context.Context, req OptAppPostR
 // ユーザーが配車要求を行う.
 //
 // POST /app/requests
-func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (r *AppPostRequestAccepted, _ error) {
+func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (r AppPostRequestRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
