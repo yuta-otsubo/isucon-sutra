@@ -815,8 +815,8 @@ components:
                     type: integer
                     description: 移動距離
                   duration:
-                    type: integer
-                    description: 移動時間 (ナノ秒)
+                    type: int64
+                    description: 移動時間 (ミリ秒)
                   evaluation:
                     type: integer
                     description: 評価
