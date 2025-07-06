@@ -189,6 +189,39 @@ func encodeAppPostRequestResponse(response AppPostRequestRes, w http.ResponseWri
 	}
 }
 
+func encodeAppPostRequestEstimateResponse(response AppPostRequestEstimateRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *AppPostRequestEstimateOK:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(200)
+		span.SetStatus(codes.Ok, http.StatusText(200))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
+	}
+}
+
 func encodeAppPostRequestEvaluateResponse(response AppPostRequestEvaluateRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
 	case *AppPostRequestEvaluateOK:
@@ -469,18 +502,37 @@ func encodeOwnerGetSalesResponse(response *OwnerGetSalesOK, w http.ResponseWrite
 	return nil
 }
 
-func encodeOwnerPostRegisterResponse(response *OwnerPostRegisterCreated, w http.ResponseWriter, span trace.Span) error {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	w.WriteHeader(201)
-	span.SetStatus(codes.Ok, http.StatusText(201))
+func encodeOwnerPostRegisterResponse(response OwnerPostRegisterRes, w http.ResponseWriter, span trace.Span) error {
+	switch response := response.(type) {
+	case *OwnerPostRegisterCreated:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(201)
+		span.SetStatus(codes.Ok, http.StatusText(201))
 
-	e := new(jx.Encoder)
-	response.Encode(e)
-	if _, err := e.WriteTo(w); err != nil {
-		return errors.Wrap(err, "write")
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	case *Error:
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(400)
+		span.SetStatus(codes.Error, http.StatusText(400))
+
+		e := new(jx.Encoder)
+		response.Encode(e)
+		if _, err := e.WriteTo(w); err != nil {
+			return errors.Wrap(err, "write")
+		}
+
+		return nil
+
+	default:
+		return errors.Errorf("unexpected response type: %T", response)
 	}
-
-	return nil
 }
 
 func encodePostInitializeResponse(response *PostInitializeOK, w http.ResponseWriter, span trace.Span) error {

@@ -12,6 +12,7 @@ const (
 	AppPostPaymentMethodsOperation  OperationName = "AppPostPaymentMethods"
 	AppPostRegisterOperation        OperationName = "AppPostRegister"
 	AppPostRequestOperation         OperationName = "AppPostRequest"
+	AppPostRequestEstimateOperation OperationName = "AppPostRequestEstimate"
 	AppPostRequestEvaluateOperation OperationName = "AppPostRequestEvaluate"
 	ChairGetNotificationOperation   OperationName = "ChairGetNotification"
 	ChairGetRequestOperation        OperationName = "ChairGetRequest"

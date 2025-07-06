@@ -67,6 +67,15 @@ func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRe
 	return r, ht.ErrNotImplemented
 }
 
+// AppPostRequestEstimate implements app-post-request-estimate operation.
+//
+// リクエストの料金を見積もる.
+//
+// POST /app/requests/estimate
+func (UnimplementedHandler) AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (r AppPostRequestEstimateRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // AppPostRequestEvaluate implements app-post-request-evaluate operation.
 //
 // ユーザーが椅子を評価する.
@@ -99,7 +108,7 @@ func (UnimplementedHandler) ChairGetRequest(ctx context.Context, params ChairGet
 // 椅子が配車受付を開始する.
 //
 // POST /chair/activate
-func (UnimplementedHandler) ChairPostActivate(ctx context.Context, req *ChairPostActivateReq) error {
+func (UnimplementedHandler) ChairPostActivate(ctx context.Context) error {
 	return ht.ErrNotImplemented
 }
 
@@ -117,7 +126,7 @@ func (UnimplementedHandler) ChairPostCoordinate(ctx context.Context, req OptCoor
 // 椅子が配車受付を停止する.
 //
 // POST /chair/deactivate
-func (UnimplementedHandler) ChairPostDeactivate(ctx context.Context, req *ChairPostDeactivateReq) error {
+func (UnimplementedHandler) ChairPostDeactivate(ctx context.Context) error {
 	return ht.ErrNotImplemented
 }
 
@@ -189,7 +198,7 @@ func (UnimplementedHandler) OwnerGetSales(ctx context.Context, params OwnerGetSa
 // 椅子のオーナー自身が登録を行う.
 //
 // POST /owner/register
-func (UnimplementedHandler) OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (r *OwnerPostRegisterCreated, _ error) {
+func (UnimplementedHandler) OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (r OwnerPostRegisterRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

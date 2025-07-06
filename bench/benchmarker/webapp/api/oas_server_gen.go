@@ -44,6 +44,12 @@ type Handler interface {
 	//
 	// POST /app/requests
 	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (AppPostRequestRes, error)
+	// AppPostRequestEstimate implements app-post-request-estimate operation.
+	//
+	// リクエストの料金を見積もる.
+	//
+	// POST /app/requests/estimate
+	AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error)
 	// AppPostRequestEvaluate implements app-post-request-evaluate operation.
 	//
 	// ユーザーが椅子を評価する.
@@ -67,7 +73,7 @@ type Handler interface {
 	// 椅子が配車受付を開始する.
 	//
 	// POST /chair/activate
-	ChairPostActivate(ctx context.Context, req *ChairPostActivateReq) error
+	ChairPostActivate(ctx context.Context) error
 	// ChairPostCoordinate implements chair-post-coordinate operation.
 	//
 	// 椅子が位置情報を送信する.
@@ -79,7 +85,7 @@ type Handler interface {
 	// 椅子が配車受付を停止する.
 	//
 	// POST /chair/deactivate
-	ChairPostDeactivate(ctx context.Context, req *ChairPostDeactivateReq) error
+	ChairPostDeactivate(ctx context.Context) error
 	// ChairPostRegister implements chair-post-register operation.
 	//
 	// 椅子登録を行う.
@@ -127,7 +133,7 @@ type Handler interface {
 	// 椅子のオーナー自身が登録を行う.
 	//
 	// POST /owner/register
-	OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (*OwnerPostRegisterCreated, error)
+	OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (OwnerPostRegisterRes, error)
 	// PostInitialize implements post-initialize operation.
 	//
 	// サービスを初期化する.
