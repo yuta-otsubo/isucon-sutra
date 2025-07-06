@@ -67,15 +67,6 @@ func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRe
 	return r, ht.ErrNotImplemented
 }
 
-// AppPostRequestEstimate implements app-post-request-estimate operation.
-//
-// リクエストの運賃を見積もる.
-//
-// POST /app/requests/estimate
-func (UnimplementedHandler) AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (r AppPostRequestEstimateRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // AppPostRequestEvaluate implements app-post-request-evaluate operation.
 //
 // ユーザーが椅子を評価する.

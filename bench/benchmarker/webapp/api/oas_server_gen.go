@@ -44,12 +44,6 @@ type Handler interface {
 	//
 	// POST /app/requests
 	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (AppPostRequestRes, error)
-	// AppPostRequestEstimate implements app-post-request-estimate operation.
-	//
-	// リクエストの運賃を見積もる.
-	//
-	// POST /app/requests/estimate
-	AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error)
 	// AppPostRequestEvaluate implements app-post-request-evaluate operation.
 	//
 	// ユーザーが椅子を評価する.

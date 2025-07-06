@@ -493,7 +493,7 @@ func (s *AppGetNearbyChairsOK) encodeFields(e *jx.Encoder) {
 	}
 	{
 		e.FieldStart("retrieved_at")
-		e.Str(s.RetrievedAt)
+		e.Float64(s.RetrievedAt)
 	}
 }
 
@@ -532,8 +532,8 @@ func (s *AppGetNearbyChairsOK) Decode(d *jx.Decoder) error {
 		case "retrieved_at":
 			requiredBitSet[0] |= 1 << 1
 			if err := func() error {
-				v, err := d.Str()
-				s.RetrievedAt = string(v)
+				v, err := d.Float64()
+				s.RetrievedAt = float64(v)
 				if err != nil {
 					return err
 				}
@@ -1158,15 +1158,10 @@ func (s *AppPostRequestAccepted) encodeFields(e *jx.Encoder) {
 		e.FieldStart("request_id")
 		e.Str(s.RequestID)
 	}
-	{
-		e.FieldStart("fare")
-		e.Int(s.Fare)
-	}
 }
 
-var jsonFieldsNameOfAppPostRequestAccepted = [2]string{
+var jsonFieldsNameOfAppPostRequestAccepted = [1]string{
 	0: "request_id",
-	1: "fare",
 }
 
 // Decode decodes AppPostRequestAccepted from json.
@@ -1190,18 +1185,6 @@ func (s *AppPostRequestAccepted) Decode(d *jx.Decoder) error {
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"request_id\"")
 			}
-		case "fare":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.Fare = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"fare\"")
-			}
 		default:
 			return d.Skip()
 		}
@@ -1212,7 +1195,7 @@ func (s *AppPostRequestAccepted) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00000011,
+		0b00000001,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -1330,228 +1313,6 @@ func (s *AppPostRequestConflict) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *AppPostRequestConflict) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *AppPostRequestEstimateOK) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *AppPostRequestEstimateOK) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("fare")
-		e.Int(s.Fare)
-	}
-	{
-		e.FieldStart("discount")
-		e.Int(s.Discount)
-	}
-}
-
-var jsonFieldsNameOfAppPostRequestEstimateOK = [2]string{
-	0: "fare",
-	1: "discount",
-}
-
-// Decode decodes AppPostRequestEstimateOK from json.
-func (s *AppPostRequestEstimateOK) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode AppPostRequestEstimateOK to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "fare":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				v, err := d.Int()
-				s.Fare = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"fare\"")
-			}
-		case "discount":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				v, err := d.Int()
-				s.Discount = int(v)
-				if err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"discount\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode AppPostRequestEstimateOK")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfAppPostRequestEstimateOK) {
-					name = jsonFieldsNameOfAppPostRequestEstimateOK[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *AppPostRequestEstimateOK) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AppPostRequestEstimateOK) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode implements json.Marshaler.
-func (s *AppPostRequestEstimateReq) Encode(e *jx.Encoder) {
-	e.ObjStart()
-	s.encodeFields(e)
-	e.ObjEnd()
-}
-
-// encodeFields encodes fields.
-func (s *AppPostRequestEstimateReq) encodeFields(e *jx.Encoder) {
-	{
-		e.FieldStart("pickup_coordinate")
-		s.PickupCoordinate.Encode(e)
-	}
-	{
-		e.FieldStart("destination_coordinate")
-		s.DestinationCoordinate.Encode(e)
-	}
-}
-
-var jsonFieldsNameOfAppPostRequestEstimateReq = [2]string{
-	0: "pickup_coordinate",
-	1: "destination_coordinate",
-}
-
-// Decode decodes AppPostRequestEstimateReq from json.
-func (s *AppPostRequestEstimateReq) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode AppPostRequestEstimateReq to nil")
-	}
-	var requiredBitSet [1]uint8
-
-	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
-		switch string(k) {
-		case "pickup_coordinate":
-			requiredBitSet[0] |= 1 << 0
-			if err := func() error {
-				if err := s.PickupCoordinate.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"pickup_coordinate\"")
-			}
-		case "destination_coordinate":
-			requiredBitSet[0] |= 1 << 1
-			if err := func() error {
-				if err := s.DestinationCoordinate.Decode(d); err != nil {
-					return err
-				}
-				return nil
-			}(); err != nil {
-				return errors.Wrap(err, "decode field \"destination_coordinate\"")
-			}
-		default:
-			return d.Skip()
-		}
-		return nil
-	}); err != nil {
-		return errors.Wrap(err, "decode AppPostRequestEstimateReq")
-	}
-	// Validate required fields.
-	var failures []validate.FieldError
-	for i, mask := range [1]uint8{
-		0b00000011,
-	} {
-		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
-			// Mask only required fields and check equality to mask using XOR.
-			//
-			// If XOR result is not zero, result is not equal to expected, so some fields are missed.
-			// Bits of fields which would be set are actually bits of missed fields.
-			missed := bits.OnesCount8(result)
-			for bitN := 0; bitN < missed; bitN++ {
-				bitIdx := bits.TrailingZeros8(result)
-				fieldIdx := i*8 + bitIdx
-				var name string
-				if fieldIdx < len(jsonFieldsNameOfAppPostRequestEstimateReq) {
-					name = jsonFieldsNameOfAppPostRequestEstimateReq[fieldIdx]
-				} else {
-					name = strconv.Itoa(fieldIdx)
-				}
-				failures = append(failures, validate.FieldError{
-					Name:  name,
-					Error: validate.ErrFieldRequired,
-				})
-				// Reset bit.
-				result &^= 1 << bitIdx
-			}
-		}
-	}
-	if len(failures) > 0 {
-		return &validate.Error{Fields: failures}
-	}
-
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *AppPostRequestEstimateReq) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *AppPostRequestEstimateReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
@@ -2160,20 +1921,16 @@ func (s *ChairGetNotificationOK) encodeFields(e *jx.Encoder) {
 		s.User.Encode(e)
 	}
 	{
-		if s.PickupCoordinate.Set {
-			e.FieldStart("pickup_coordinate")
-			s.PickupCoordinate.Encode(e)
-		}
+		e.FieldStart("pickup_coordinate")
+		s.PickupCoordinate.Encode(e)
 	}
 	{
 		e.FieldStart("destination_coordinate")
 		s.DestinationCoordinate.Encode(e)
 	}
 	{
-		if s.Status.Set {
-			e.FieldStart("status")
-			s.Status.Encode(e)
-		}
+		e.FieldStart("status")
+		s.Status.Encode(e)
 	}
 	{
 		if s.RetryAfterMs.Set {
@@ -2224,8 +1981,8 @@ func (s *ChairGetNotificationOK) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"user\"")
 			}
 		case "pickup_coordinate":
+			requiredBitSet[0] |= 1 << 2
 			if err := func() error {
-				s.PickupCoordinate.Reset()
 				if err := s.PickupCoordinate.Decode(d); err != nil {
 					return err
 				}
@@ -2244,8 +2001,8 @@ func (s *ChairGetNotificationOK) Decode(d *jx.Decoder) error {
 				return errors.Wrap(err, "decode field \"destination_coordinate\"")
 			}
 		case "status":
+			requiredBitSet[0] |= 1 << 4
 			if err := func() error {
-				s.Status.Reset()
 				if err := s.Status.Decode(d); err != nil {
 					return err
 				}
@@ -2273,7 +2030,7 @@ func (s *ChairGetNotificationOK) Decode(d *jx.Decoder) error {
 	// Validate required fields.
 	var failures []validate.FieldError
 	for i, mask := range [1]uint8{
-		0b00001011,
+		0b00011111,
 	} {
 		if result := (requiredBitSet[i] & mask) ^ mask; result != 0 {
 			// Mask only required fields and check equality to mask using XOR.
@@ -3198,39 +2955,6 @@ func (s OptAppPostRegisterReq) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *OptAppPostRegisterReq) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes AppPostRequestEstimateReq as json.
-func (o OptAppPostRequestEstimateReq) Encode(e *jx.Encoder) {
-	if !o.Set {
-		return
-	}
-	o.Value.Encode(e)
-}
-
-// Decode decodes AppPostRequestEstimateReq from json.
-func (o *OptAppPostRequestEstimateReq) Decode(d *jx.Decoder) error {
-	if o == nil {
-		return errors.New("invalid: unable to decode OptAppPostRequestEstimateReq to nil")
-	}
-	o.Set = true
-	if err := o.Value.Decode(d); err != nil {
-		return err
-	}
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s OptAppPostRequestEstimateReq) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *OptAppPostRequestEstimateReq) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

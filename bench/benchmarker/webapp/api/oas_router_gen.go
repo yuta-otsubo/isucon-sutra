@@ -206,32 +206,6 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 								break
 							}
 
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'e': // Prefix: "estimate"
-								origElem := elem
-								if l := len("estimate"); len(elem) >= l && elem[0:l] == "estimate" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "POST":
-										s.handleAppPostRequestEstimateRequest([0]string{}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "POST")
-									}
-
-									return
-								}
-
-								elem = origElem
-							}
 							// Param: "request_id"
 							// Match until "/"
 							idx := strings.IndexByte(elem, '/')
@@ -923,36 +897,6 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 								break
 							}
 
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'e': // Prefix: "estimate"
-								origElem := elem
-								if l := len("estimate"); len(elem) >= l && elem[0:l] == "estimate" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch method {
-									case "POST":
-										r.name = AppPostRequestEstimateOperation
-										r.summary = "リクエストの運賃を見積もる"
-										r.operationID = "app-post-request-estimate"
-										r.pathPattern = "/app/requests/estimate"
-										r.args = args
-										r.count = 0
-										return r, true
-									default:
-										return
-									}
-								}
-
-								elem = origElem
-							}
 							// Param: "request_id"
 							// Match until "/"
 							idx := strings.IndexByte(elem, '/')
