@@ -43,9 +43,10 @@ type Scenario struct {
 	step             *isucandar.BenchmarkStep
 	reporter         benchrun.Reporter
 	meter            metric.Meter
+	prepareOnly      bool
 }
 
-func NewScenario(target, addr, paymentURL string, logger *slog.Logger, reporter benchrun.Reporter, meter metric.Meter) *Scenario {
+func NewScenario(target, addr, paymentURL string, logger *slog.Logger, reporter benchrun.Reporter, meter metric.Meter, prepareOnly bool) *Scenario {
 	completedRequestChan := make(chan *world.Request, 1000)
 	worldClient := worldclient.NewWorldClient(context.Background(), webapp.ClientConfig{
 		TargetBaseURL:         target,
@@ -144,6 +145,7 @@ func NewScenario(target, addr, paymentURL string, logger *slog.Logger, reporter 
 		paymentServer:    paymentServer,
 		reporter:         reporter,
 		meter:            meter,
+		prepareOnly:      prepareOnly,
 	}
 }
 
@@ -214,6 +216,10 @@ func (s *Scenario) Prepare(ctx context.Context, step *isucandar.BenchmarkStep) e
 
 // Load はシナリオのメイン処理を行う
 func (s *Scenario) Load(ctx context.Context, step *isucandar.BenchmarkStep) error {
+	if s.prepareOnly {
+		return nil
+	}
+
 	s.world.RestTicker()
 LOOP:
 	for {
@@ -240,16 +246,6 @@ LOOP:
 
 func (s *Scenario) Score() int64 {
 	return lo.SumBy(s.world.ProviderDB.ToSlice(), func(p *world.Provider) int64 { return p.TotalSales.Load() })
-}
-
-func (s *Scenario) TotalDiscount() int64 {
-	return lo.SumBy(s.world.RequestDB.ToSlice(), func(r *world.Request) int64 {
-		if r.Evaluated {
-			return int64(r.ActualDiscount())
-		} else {
-			return 0
-		}
-	})
 }
 
 func sendResult(s *Scenario, finished bool, passed bool) error {
