@@ -391,6 +391,8 @@ func (s *AppPostRegisterReq) SetDateOfBirth(val string) {
 type AppPostRequestAccepted struct {
 	// 配車要求ID.
 	RequestID string `json:"request_id"`
+	// 割引後運賃.
+	Fare int `json:"fare"`
 }
 
 // GetRequestID returns the value of RequestID.
@@ -398,9 +400,19 @@ func (s *AppPostRequestAccepted) GetRequestID() string {
 	return s.RequestID
 }
 
+// GetFare returns the value of Fare.
+func (s *AppPostRequestAccepted) GetFare() int {
+	return s.Fare
+}
+
 // SetRequestID sets the value of RequestID.
 func (s *AppPostRequestAccepted) SetRequestID(val string) {
 	s.RequestID = val
+}
+
+// SetFare sets the value of Fare.
+func (s *AppPostRequestAccepted) SetFare(val int) {
+	s.Fare = val
 }
 
 func (*AppPostRequestAccepted) appPostRequestRes() {}
@@ -413,6 +425,62 @@ type AppPostRequestConflict Error
 
 func (*AppPostRequestConflict) appPostRequestRes() {}
 
+type AppPostRequestEstimateOK struct {
+	// 割引後運賃.
+	Fare int `json:"fare"`
+	// 割引額.
+	Discount int `json:"discount"`
+}
+
+// GetFare returns the value of Fare.
+func (s *AppPostRequestEstimateOK) GetFare() int {
+	return s.Fare
+}
+
+// GetDiscount returns the value of Discount.
+func (s *AppPostRequestEstimateOK) GetDiscount() int {
+	return s.Discount
+}
+
+// SetFare sets the value of Fare.
+func (s *AppPostRequestEstimateOK) SetFare(val int) {
+	s.Fare = val
+}
+
+// SetDiscount sets the value of Discount.
+func (s *AppPostRequestEstimateOK) SetDiscount(val int) {
+	s.Discount = val
+}
+
+func (*AppPostRequestEstimateOK) appPostRequestEstimateRes() {}
+
+type AppPostRequestEstimateReq struct {
+	// 配車位置.
+	PickupCoordinate Coordinate `json:"pickup_coordinate"`
+	// 目的地.
+	DestinationCoordinate Coordinate `json:"destination_coordinate"`
+}
+
+// GetPickupCoordinate returns the value of PickupCoordinate.
+func (s *AppPostRequestEstimateReq) GetPickupCoordinate() Coordinate {
+	return s.PickupCoordinate
+}
+
+// GetDestinationCoordinate returns the value of DestinationCoordinate.
+func (s *AppPostRequestEstimateReq) GetDestinationCoordinate() Coordinate {
+	return s.DestinationCoordinate
+}
+
+// SetPickupCoordinate sets the value of PickupCoordinate.
+func (s *AppPostRequestEstimateReq) SetPickupCoordinate(val Coordinate) {
+	s.PickupCoordinate = val
+}
+
+// SetDestinationCoordinate sets the value of DestinationCoordinate.
+func (s *AppPostRequestEstimateReq) SetDestinationCoordinate(val Coordinate) {
+	s.DestinationCoordinate = val
+}
+
 type AppPostRequestEvaluateBadRequest Error
 
 func (*AppPostRequestEvaluateBadRequest) appPostRequestEvaluateRes() {}
@@ -422,7 +490,7 @@ type AppPostRequestEvaluateNotFound Error
 func (*AppPostRequestEvaluateNotFound) appPostRequestEvaluateRes() {}
 
 type AppPostRequestEvaluateOK struct {
-	// 運賃.
+	// 割引後運賃.
 	Fare int `json:"fare"`
 	// 完了日時.
 	CompletedAt string `json:"completed_at"`
@@ -877,6 +945,7 @@ func (s *Error) SetMessage(val string) {
 func (*Error) appGetRequestRes()          {}
 func (*Error) appPostPaymentMethodsRes()  {}
 func (*Error) appPostRegisterRes()        {}
+func (*Error) appPostRequestEstimateRes() {}
 func (*Error) chairGetRequestRes()        {}
 func (*Error) chairPostRequestAcceptRes() {}
 func (*Error) chairPostRequestDenyRes()   {}
@@ -1014,6 +1083,52 @@ func (o OptAppPostRegisterReq) Get() (v AppPostRegisterReq, ok bool) {
 
 // Or returns value if set, or given parameter if does not.
 func (o OptAppPostRegisterReq) Or(d AppPostRegisterReq) AppPostRegisterReq {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
+// NewOptAppPostRequestEstimateReq returns new OptAppPostRequestEstimateReq with value set to v.
+func NewOptAppPostRequestEstimateReq(v AppPostRequestEstimateReq) OptAppPostRequestEstimateReq {
+	return OptAppPostRequestEstimateReq{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptAppPostRequestEstimateReq is optional AppPostRequestEstimateReq.
+type OptAppPostRequestEstimateReq struct {
+	Value AppPostRequestEstimateReq
+	Set   bool
+}
+
+// IsSet returns true if OptAppPostRequestEstimateReq was set.
+func (o OptAppPostRequestEstimateReq) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptAppPostRequestEstimateReq) Reset() {
+	var v AppPostRequestEstimateReq
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptAppPostRequestEstimateReq) SetTo(v AppPostRequestEstimateReq) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptAppPostRequestEstimateReq) Get() (v AppPostRequestEstimateReq, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptAppPostRequestEstimateReq) Or(d AppPostRequestEstimateReq) AppPostRequestEstimateReq {
 	if v, ok := o.Get(); ok {
 		return v
 	}

@@ -17,6 +17,10 @@ type AppPostRegisterRes interface {
 	appPostRegisterRes()
 }
 
+type AppPostRequestEstimateRes interface {
+	appPostRequestEstimateRes()
+}
+
 type AppPostRequestEvaluateRes interface {
 	appPostRequestEvaluateRes()
 }
