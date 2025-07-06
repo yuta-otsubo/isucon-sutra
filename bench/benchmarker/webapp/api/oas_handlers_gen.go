@@ -849,7 +849,7 @@ func (s *Server) handleAppPostRequestRequest(args [0]string, argsEscaped bool, w
 
 // handleAppPostRequestEstimateRequest handles app-post-request-estimate operation.
 //
-// リクエストの料金を見積もる.
+// リクエストの運賃を見積もる.
 //
 // POST /app/requests/estimate
 func (s *Server) handleAppPostRequestEstimateRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -942,7 +942,7 @@ func (s *Server) handleAppPostRequestEstimateRequest(args [0]string, argsEscaped
 		mreq := middleware.Request{
 			Context:          ctx,
 			OperationName:    AppPostRequestEstimateOperation,
-			OperationSummary: "リクエストの料金を見積もる",
+			OperationSummary: "リクエストの運賃を見積もる",
 			OperationID:      "app-post-request-estimate",
 			Body:             request,
 			Params:           middleware.Parameters{},

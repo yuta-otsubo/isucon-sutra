@@ -66,7 +66,7 @@ type Invoker interface {
 	AppPostRequest(ctx context.Context, request OptAppPostRequestReq) (AppPostRequestRes, error)
 	// AppPostRequestEstimate invokes app-post-request-estimate operation.
 	//
-	// リクエストの料金を見積もる.
+	// リクエストの運賃を見積もる.
 	//
 	// POST /app/requests/estimate
 	AppPostRequestEstimate(ctx context.Context, request OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error)
@@ -715,7 +715,7 @@ func (c *Client) sendAppPostRequest(ctx context.Context, request OptAppPostReque
 
 // AppPostRequestEstimate invokes app-post-request-estimate operation.
 //
-// リクエストの料金を見積もる.
+// リクエストの運賃を見積もる.
 //
 // POST /app/requests/estimate
 func (c *Client) AppPostRequestEstimate(ctx context.Context, request OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error) {

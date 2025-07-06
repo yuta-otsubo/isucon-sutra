@@ -69,7 +69,7 @@ func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRe
 
 // AppPostRequestEstimate implements app-post-request-estimate operation.
 //
-// リクエストの料金を見積もる.
+// リクエストの運賃を見積もる.
 //
 // POST /app/requests/estimate
 func (UnimplementedHandler) AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (r AppPostRequestEstimateRes, _ error) {

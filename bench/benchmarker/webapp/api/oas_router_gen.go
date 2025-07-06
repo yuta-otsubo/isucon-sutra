@@ -940,7 +940,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									switch method {
 									case "POST":
 										r.name = AppPostRequestEstimateOperation
-										r.summary = "リクエストの料金を見積もる"
+										r.summary = "リクエストの運賃を見積もる"
 										r.operationID = "app-post-request-estimate"
 										r.pathPattern = "/app/requests/estimate"
 										r.args = args

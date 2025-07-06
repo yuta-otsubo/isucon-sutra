@@ -46,7 +46,7 @@ type Handler interface {
 	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (AppPostRequestRes, error)
 	// AppPostRequestEstimate implements app-post-request-estimate operation.
 	//
-	// リクエストの料金を見積もる.
+	// リクエストの運賃を見積もる.
 	//
 	// POST /app/requests/estimate
 	AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error)
