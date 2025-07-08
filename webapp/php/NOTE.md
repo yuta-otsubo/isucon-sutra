@@ -25,6 +25,16 @@ composer --version
 composer install
 ```
 
+## openapi generator の実行
+openapi-generator を使用できるようにインストールする
+```
+https://github.com/openapitools/openapi-generator
+```
+composer.json があるディレクトリで実施する (webapp/php)
+```
+composer run generate
+```
+
 ## ディレクトリ構造
 
 ```

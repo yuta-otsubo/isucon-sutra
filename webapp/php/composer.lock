@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ac04c475d8f386258b6bce22e47d999",
+    "content-hash": "93daf22530fb032b50135e8a12ec158a",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -325,16 +325,16 @@
         },
         {
             "name": "psr/http-message",
-            "version": "2.0",
+            "version": "1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
-                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
+                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
                 "shasum": ""
             },
             "require": {
@@ -343,7 +343,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0.x-dev"
+                    "dev-master": "1.1.x-dev"
                 }
             },
             "autoload": {
@@ -358,7 +358,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
+                    "homepage": "http://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for HTTP messages",
@@ -372,9 +372,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/2.0"
+                "source": "https://github.com/php-fig/http-message/tree/1.1"
             },
-            "time": "2023-04-04T09:54:51+00:00"
+            "time": "2023-04-04T09:50:52+00:00"
         },
         {
             "name": "psr/http-server-handler",
@@ -1013,6 +1013,173 @@
                 }
             ],
             "time": "2025-06-27T19:55:54+00:00"
+        },
+        {
+            "name": "ybelenko/openapi-data-mocker",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ybelenko/openapi-data-mocker.git",
+                "reference": "cd9a8f5facb2e3fe37719ab1714acfaa9c67de07"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ybelenko/openapi-data-mocker/zipball/cd9a8f5facb2e3fe37719ab1714acfaa9c67de07",
+                "reference": "cd9a8f5facb2e3fe37719ab1714acfaa9c67de07",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0",
+                "ybelenko/openapi-data-mocker-interfaces": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.0 || ^9.0",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenAPIServer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yuriy Belenko",
+                    "email": "yura-bely@mail.ru"
+                }
+            ],
+            "description": "Library that generates fake data from Swagger 2.0|Openapi 3.0 spec",
+            "keywords": [
+                "data",
+                "fake",
+                "faker",
+                "mock",
+                "mocker",
+                "openapi",
+                "swagger"
+            ],
+            "support": {
+                "issues": "https://github.com/ybelenko/openapi-data-mocker/issues",
+                "source": "https://github.com/ybelenko/openapi-data-mocker/tree/1.1.0"
+            },
+            "time": "2021-08-05T11:10:56+00:00"
+        },
+        {
+            "name": "ybelenko/openapi-data-mocker-interfaces",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ybelenko/openapi-data-mocker-interfaces.git",
+                "reference": "d442c7085a9de08af9c4c011e9d4d252bb982d6d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ybelenko/openapi-data-mocker-interfaces/zipball/d442c7085a9de08af9c4c011e9d4d252bb982d6d",
+                "reference": "d442c7085a9de08af9c4c011e9d4d252bb982d6d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0",
+                "psr/http-message": "^1.0.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenAPIServer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yuriy Belenko",
+                    "email": "yura-bely@mail.ru"
+                }
+            ],
+            "description": "Package with OpenApiDataMocker interfaces.",
+            "keywords": [
+                "data",
+                "fake",
+                "faker",
+                "mock",
+                "mocker",
+                "openapi",
+                "swagger"
+            ],
+            "support": {
+                "issues": "https://github.com/ybelenko/openapi-data-mocker-interfaces/issues",
+                "source": "https://github.com/ybelenko/openapi-data-mocker-interfaces/tree/1.1.0"
+            },
+            "time": "2021-08-05T10:46:48+00:00"
+        },
+        {
+            "name": "ybelenko/openapi-data-mocker-server-middleware",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ybelenko/openapi-data-mocker-server-middleware.git",
+                "reference": "55634c8fb1b75a880b74a6c3f45395ac2db4a726"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ybelenko/openapi-data-mocker-server-middleware/zipball/55634c8fb1b75a880b74a6c3f45395ac2db4a726",
+                "reference": "55634c8fb1b75a880b74a6c3f45395ac2db4a726",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-server-middleware": "^1.0",
+                "ybelenko/openapi-data-mocker-interfaces": "^1.0.0"
+            },
+            "require-dev": {
+                "nyholm/psr7": "^1.0",
+                "phpunit/phpunit": "^8.0 || ^9.0",
+                "squizlabs/php_codesniffer": "^3.5",
+                "ybelenko/openapi-data-mocker": "^1.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "OpenAPIServer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Yuriy Belenko",
+                    "email": "yura-bely@mail.ru"
+                }
+            ],
+            "description": "PSR-15 HTTP Server Middleware to create mock responses from OpenAPI Schemas(OAS 3.0).",
+            "keywords": [
+                "data",
+                "fake",
+                "faker",
+                "middleware",
+                "mock",
+                "mocker",
+                "openapi",
+                "psr-15",
+                "swagger"
+            ],
+            "support": {
+                "issues": "https://github.com/ybelenko/openapi-data-mocker-server-middleware/issues",
+                "source": "https://github.com/ybelenko/openapi-data-mocker-server-middleware/tree/1.2.0"
+            },
+            "time": "2022-04-05T02:02:12+00:00"
         }
     ],
     "packages-dev": [
