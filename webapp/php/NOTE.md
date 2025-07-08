@@ -11,6 +11,20 @@ Slim Frameworkを使用したライドシェアアプリケーション（IsuRid
 - **ログ**: Monolog
 - **コード品質**: PHPStan, PHP_CodeSniffer
 
+## 初回 composer の設定
+composer.json があるディレクトリで実施する (webapp/php)
+※ composer.json も自動で作られるような気がするが、手動で作成した
+
+バージョン確認
+```
+composer --version
+```
+
+インストールされていることを確認したら、
+```
+composer install
+```
+
 ## ディレクトリ構造
 
 ```
@@ -104,7 +118,7 @@ webapp/php/
 - API エンドポイントの実装
 
 ---
-
+<!-->
 ## 写経メモ
 
 ### 学習ポイント
@@ -125,3 +139,4 @@ webapp/php/
 - [ ] ルーティングの実装を追加
 - [ ] データベースアクセス層の実装
 - [ ] ミドルウェアの実装内容確認
+-->
