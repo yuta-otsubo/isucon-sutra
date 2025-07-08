@@ -13,7 +13,7 @@ Slim Frameworkを使用したライドシェアアプリケーション（IsuRid
 
 ## 初回 composer の設定
 composer.json があるディレクトリで実施する (webapp/php)
-※ composer.json も自動で作られるような気がするが、手動で作成した
+※ composer.json も自動で作られるような気がするが、手動で作成した (composer init で作成できるようだ)
 
 バージョン確認
 ```
