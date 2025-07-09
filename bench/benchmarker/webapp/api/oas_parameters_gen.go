@@ -635,9 +635,9 @@ func decodeOwnerGetChairDetailParams(args [1]string, argsEscaped bool, r *http.R
 // OwnerGetSalesParams is parameters of owner-get-sales operation.
 type OwnerGetSalesParams struct {
 	// 開始日時（含む）.
-	Since OptString
+	Since OptInt64
 	// 終了日時（含む）.
-	Until OptString
+	Until OptInt64
 }
 
 func unpackOwnerGetSalesParams(packed middleware.Parameters) (params OwnerGetSalesParams) {
@@ -647,7 +647,7 @@ func unpackOwnerGetSalesParams(packed middleware.Parameters) (params OwnerGetSal
 			In:   "query",
 		}
 		if v, ok := packed[key]; ok {
-			params.Since = v.(OptString)
+			params.Since = v.(OptInt64)
 		}
 	}
 	{
@@ -656,7 +656,7 @@ func unpackOwnerGetSalesParams(packed middleware.Parameters) (params OwnerGetSal
 			In:   "query",
 		}
 		if v, ok := packed[key]; ok {
-			params.Until = v.(OptString)
+			params.Until = v.(OptInt64)
 		}
 	}
 	return params
@@ -674,14 +674,14 @@ func decodeOwnerGetSalesParams(args [0]string, argsEscaped bool, r *http.Request
 
 		if err := q.HasParam(cfg); err == nil {
 			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotSinceVal string
+				var paramsDotSinceVal int64
 				if err := func() error {
 					val, err := d.DecodeValue()
 					if err != nil {
 						return err
 					}
 
-					c, err := conv.ToString(val)
+					c, err := conv.ToInt64(val)
 					if err != nil {
 						return err
 					}
@@ -715,14 +715,14 @@ func decodeOwnerGetSalesParams(args [0]string, argsEscaped bool, r *http.Request
 
 		if err := q.HasParam(cfg); err == nil {
 			if err := q.DecodeParam(cfg, func(d uri.Decoder) error {
-				var paramsDotUntilVal string
+				var paramsDotUntilVal int64
 				if err := func() error {
 					val, err := d.DecodeValue()
 					if err != nil {
 						return err
 					}
 
-					c, err := conv.ToString(val)
+					c, err := conv.ToInt64(val)
 					if err != nil {
 						return err
 					}

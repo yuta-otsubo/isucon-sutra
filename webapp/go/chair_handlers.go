@@ -92,7 +92,7 @@ func chairPostDeactivate(w http.ResponseWriter, r *http.Request) {
 }
 
 type chairPostCoordinateResponse struct {
-	Datetime time.Time `json:"datetime"`
+	RecordedAt int64 `json:"recorded_at"`
 }
 
 func chairPostCoordinate(w http.ResponseWriter, r *http.Request) {
@@ -154,7 +154,7 @@ func chairPostCoordinate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, &chairPostCoordinateResponse{
-		Datetime: location.CreatedAt,
+		RecordedAt: location.CreatedAt.UnixMilli(),
 	})
 }
 
@@ -199,7 +199,7 @@ func chairGetNotification(w http.ResponseWriter, r *http.Request) {
 
 	if !found || rideRequest.Status == "COMPLETED" || rideRequest.Status == "CANCELED" {
 		matchRequest := &RideRequest{}
-		// MEMO: 一旦最も待たせているリスエストにマッチさせる実装とする。おそらくもっといい方法があるはず
+		// MEMO: 一旦最も待たせているリクエストにマッチさせる実装とする。おそらくもっといい方法があるはず…
 		if err := tx.Get(matchRequest, `SELECT * FROM ride_requests WHERE status = 'MATCHING' AND chair_id IS NULL ORDER BY requested_at DESC LIMIT 1 FOR UPDATE`); err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				w.WriteHeader(http.StatusNoContent)
