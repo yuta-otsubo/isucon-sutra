@@ -9,6 +9,9 @@ import (
 	"github.com/go-faster/jx"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
+
+	"github.com/ogen-go/ogen/conv"
+	"github.com/ogen-go/ogen/uri"
 )
 
 func encodeAppGetNearbyChairsResponse(response *AppGetNearbyChairsOK, w http.ResponseWriter, span trace.Span) error {
@@ -112,13 +115,32 @@ func encodeAppPostPaymentMethodsResponse(response AppPostPaymentMethodsRes, w ht
 
 func encodeAppPostRegisterResponse(response AppPostRegisterRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *AppPostRegisterOK:
+	case *AppPostRegisterCreatedHeaders:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		w.WriteHeader(200)
-		span.SetStatus(codes.Ok, http.StatusText(200))
+		// Encoding response headers.
+		{
+			h := uri.NewHeaderEncoder(w.Header())
+			// Encode "Set-Cookie" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "Set-Cookie",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					if val, ok := response.SetCookie.Get(); ok {
+						return e.EncodeValue(conv.StringToString(val))
+					}
+					return nil
+				}); err != nil {
+					return errors.Wrap(err, "encode Set-Cookie header")
+				}
+			}
+		}
+		w.WriteHeader(201)
+		span.SetStatus(codes.Ok, http.StatusText(201))
 
 		e := new(jx.Encoder)
-		response.Encode(e)
+		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
 		}
@@ -355,13 +377,32 @@ func encodeChairPostDeactivateResponse(response *ChairPostDeactivateNoContent, w
 	return nil
 }
 
-func encodeChairPostRegisterResponse(response *ChairPostRegisterCreated, w http.ResponseWriter, span trace.Span) error {
+func encodeChairPostRegisterResponse(response *ChairPostRegisterCreatedHeaders, w http.ResponseWriter, span trace.Span) error {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	// Encoding response headers.
+	{
+		h := uri.NewHeaderEncoder(w.Header())
+		// Encode "Set-Cookie" header.
+		{
+			cfg := uri.HeaderParameterEncodingConfig{
+				Name:    "Set-Cookie",
+				Explode: false,
+			}
+			if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+				if val, ok := response.SetCookie.Get(); ok {
+					return e.EncodeValue(conv.StringToString(val))
+				}
+				return nil
+			}); err != nil {
+				return errors.Wrap(err, "encode Set-Cookie header")
+			}
+		}
+	}
 	w.WriteHeader(201)
 	span.SetStatus(codes.Ok, http.StatusText(201))
 
 	e := new(jx.Encoder)
-	response.Encode(e)
+	response.Response.Encode(e)
 	if _, err := e.WriteTo(w); err != nil {
 		return errors.Wrap(err, "write")
 	}
@@ -504,13 +545,32 @@ func encodeOwnerGetSalesResponse(response *OwnerGetSalesOK, w http.ResponseWrite
 
 func encodeOwnerPostRegisterResponse(response OwnerPostRegisterRes, w http.ResponseWriter, span trace.Span) error {
 	switch response := response.(type) {
-	case *OwnerPostRegisterCreated:
+	case *OwnerPostRegisterCreatedHeaders:
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		// Encoding response headers.
+		{
+			h := uri.NewHeaderEncoder(w.Header())
+			// Encode "Set-Cookie" header.
+			{
+				cfg := uri.HeaderParameterEncodingConfig{
+					Name:    "Set-Cookie",
+					Explode: false,
+				}
+				if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+					if val, ok := response.SetCookie.Get(); ok {
+						return e.EncodeValue(conv.StringToString(val))
+					}
+					return nil
+				}); err != nil {
+					return errors.Wrap(err, "encode Set-Cookie header")
+				}
+			}
+		}
 		w.WriteHeader(201)
 		span.SetStatus(codes.Ok, http.StatusText(201))
 
 		e := new(jx.Encoder)
-		response.Encode(e)
+		response.Response.Encode(e)
 		if _, err := e.WriteTo(w); err != nil {
 			return errors.Wrap(err, "write")
 		}

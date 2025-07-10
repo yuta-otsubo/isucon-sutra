@@ -91,7 +91,7 @@ type Handler interface {
 	// 椅子登録を行う.
 	//
 	// POST /chair/register
-	ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (*ChairPostRegisterCreated, error)
+	ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (*ChairPostRegisterCreatedHeaders, error)
 	// ChairPostRequestAccept implements chair-post-request-accept operation.
 	//
 	// 椅子が配車要求を受理する.
