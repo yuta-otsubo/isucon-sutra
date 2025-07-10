@@ -9,6 +9,7 @@ const (
 	AppGetNearbyChairsOperation     OperationName = "AppGetNearbyChairs"
 	AppGetNotificationOperation     OperationName = "AppGetNotification"
 	AppGetRequestOperation          OperationName = "AppGetRequest"
+	AppGetRequestsOperation         OperationName = "AppGetRequests"
 	AppPostPaymentMethodsOperation  OperationName = "AppPostPaymentMethods"
 	AppPostRegisterOperation        OperationName = "AppPostRegister"
 	AppPostRequestOperation         OperationName = "AppPostRequest"

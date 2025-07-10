@@ -26,6 +26,12 @@ type Handler interface {
 	//
 	// GET /app/requests/{request_id}
 	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
+	// AppGetRequests implements app-get-requests operation.
+	//
+	// ユーザーが完了済みの配車要求一覧を取得する.
+	//
+	// GET /app/requests
+	AppGetRequests(ctx context.Context) (*AppGetRequestsOK, error)
 	// AppPostPaymentMethods implements app-post-payment-methods operation.
 	//
 	// 決済トークンの登録.
