@@ -40,6 +40,15 @@ func (UnimplementedHandler) AppGetRequest(ctx context.Context, params AppGetRequ
 	return r, ht.ErrNotImplemented
 }
 
+// AppGetRequests implements app-get-requests operation.
+//
+// ユーザーが完了済みの配車要求一覧を取得する.
+//
+// GET /app/requests
+func (UnimplementedHandler) AppGetRequests(ctx context.Context) (r *AppGetRequestsOK, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
 // AppPostPaymentMethods implements app-post-payment-methods operation.
 //
 // 決済トークンの登録.
