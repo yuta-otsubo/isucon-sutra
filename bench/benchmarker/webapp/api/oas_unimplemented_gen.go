@@ -135,7 +135,7 @@ func (UnimplementedHandler) ChairPostDeactivate(ctx context.Context) error {
 // 椅子登録を行う.
 //
 // POST /chair/register
-func (UnimplementedHandler) ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (r *ChairPostRegisterCreated, _ error) {
+func (UnimplementedHandler) ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (r *ChairPostRegisterCreatedHeaders, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

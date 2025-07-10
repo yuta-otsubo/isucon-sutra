@@ -1861,7 +1861,7 @@ func (s *Server) handleChairPostRegisterRequest(args [0]string, argsEscaped bool
 		}
 	}()
 
-	var response *ChairPostRegisterCreated
+	var response *ChairPostRegisterCreatedHeaders
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -1876,7 +1876,7 @@ func (s *Server) handleChairPostRegisterRequest(args [0]string, argsEscaped bool
 		type (
 			Request  = OptChairPostRegisterReq
 			Params   = struct{}
-			Response = *ChairPostRegisterCreated
+			Response = *ChairPostRegisterCreatedHeaders
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
