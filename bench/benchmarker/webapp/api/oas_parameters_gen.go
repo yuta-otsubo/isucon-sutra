@@ -170,25 +170,25 @@ func decodeAppGetNearbyChairsParams(args [0]string, argsEscaped bool, r *http.Re
 	return params, nil
 }
 
-// AppGetRequestParams is parameters of app-get-request operation.
-type AppGetRequestParams struct {
-	// 配車要求ID.
-	RequestID string
+// AppGetRideParams is parameters of app-get-ride operation.
+type AppGetRideParams struct {
+	// ライドID.
+	RideID string
 }
 
-func unpackAppGetRequestParams(packed middleware.Parameters) (params AppGetRequestParams) {
+func unpackAppGetRideParams(packed middleware.Parameters) (params AppGetRideParams) {
 	{
 		key := middleware.ParameterKey{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 		}
-		params.RequestID = packed[key].(string)
+		params.RideID = packed[key].(string)
 	}
 	return params
 }
 
-func decodeAppGetRequestParams(args [1]string, argsEscaped bool, r *http.Request) (params AppGetRequestParams, _ error) {
-	// Decode path: request_id.
+func decodeAppGetRideParams(args [1]string, argsEscaped bool, r *http.Request) (params AppGetRideParams, _ error) {
+	// Decode path: ride_id.
 	if err := func() error {
 		param := args[0]
 		if argsEscaped {
@@ -200,7 +200,7 @@ func decodeAppGetRequestParams(args [1]string, argsEscaped bool, r *http.Request
 		}
 		if len(param) > 0 {
 			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
+				Param:   "ride_id",
 				Value:   param,
 				Style:   uri.PathStyleSimple,
 				Explode: false,
@@ -217,7 +217,7 @@ func decodeAppGetRequestParams(args [1]string, argsEscaped bool, r *http.Request
 					return err
 				}
 
-				params.RequestID = c
+				params.RideID = c
 				return nil
 			}(); err != nil {
 				return err
@@ -228,7 +228,7 @@ func decodeAppGetRequestParams(args [1]string, argsEscaped bool, r *http.Request
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 			Err:  err,
 		}
@@ -236,25 +236,25 @@ func decodeAppGetRequestParams(args [1]string, argsEscaped bool, r *http.Request
 	return params, nil
 }
 
-// AppPostRequestEvaluateParams is parameters of app-post-request-evaluate operation.
-type AppPostRequestEvaluateParams struct {
-	// 配車要求ID.
-	RequestID string
+// AppPostRideEvaluationParams is parameters of app-post-ride-evaluation operation.
+type AppPostRideEvaluationParams struct {
+	// ライドID.
+	RideID string
 }
 
-func unpackAppPostRequestEvaluateParams(packed middleware.Parameters) (params AppPostRequestEvaluateParams) {
+func unpackAppPostRideEvaluationParams(packed middleware.Parameters) (params AppPostRideEvaluationParams) {
 	{
 		key := middleware.ParameterKey{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 		}
-		params.RequestID = packed[key].(string)
+		params.RideID = packed[key].(string)
 	}
 	return params
 }
 
-func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *http.Request) (params AppPostRequestEvaluateParams, _ error) {
-	// Decode path: request_id.
+func decodeAppPostRideEvaluationParams(args [1]string, argsEscaped bool, r *http.Request) (params AppPostRideEvaluationParams, _ error) {
+	// Decode path: ride_id.
 	if err := func() error {
 		param := args[0]
 		if argsEscaped {
@@ -266,7 +266,7 @@ func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *htt
 		}
 		if len(param) > 0 {
 			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
+				Param:   "ride_id",
 				Value:   param,
 				Style:   uri.PathStyleSimple,
 				Explode: false,
@@ -283,7 +283,7 @@ func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *htt
 					return err
 				}
 
-				params.RequestID = c
+				params.RideID = c
 				return nil
 			}(); err != nil {
 				return err
@@ -294,7 +294,7 @@ func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *htt
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 			Err:  err,
 		}
@@ -302,25 +302,25 @@ func decodeAppPostRequestEvaluateParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
-// ChairGetRequestParams is parameters of chair-get-request operation.
-type ChairGetRequestParams struct {
-	// 配車要求ID.
-	RequestID string
+// ChairGetRideParams is parameters of chair-get-ride operation.
+type ChairGetRideParams struct {
+	// ライドID.
+	RideID string
 }
 
-func unpackChairGetRequestParams(packed middleware.Parameters) (params ChairGetRequestParams) {
+func unpackChairGetRideParams(packed middleware.Parameters) (params ChairGetRideParams) {
 	{
 		key := middleware.ParameterKey{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 		}
-		params.RequestID = packed[key].(string)
+		params.RideID = packed[key].(string)
 	}
 	return params
 }
 
-func decodeChairGetRequestParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairGetRequestParams, _ error) {
-	// Decode path: request_id.
+func decodeChairGetRideParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairGetRideParams, _ error) {
+	// Decode path: ride_id.
 	if err := func() error {
 		param := args[0]
 		if argsEscaped {
@@ -332,7 +332,7 @@ func decodeChairGetRequestParams(args [1]string, argsEscaped bool, r *http.Reque
 		}
 		if len(param) > 0 {
 			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
+				Param:   "ride_id",
 				Value:   param,
 				Style:   uri.PathStyleSimple,
 				Explode: false,
@@ -349,7 +349,7 @@ func decodeChairGetRequestParams(args [1]string, argsEscaped bool, r *http.Reque
 					return err
 				}
 
-				params.RequestID = c
+				params.RideID = c
 				return nil
 			}(); err != nil {
 				return err
@@ -360,7 +360,7 @@ func decodeChairGetRequestParams(args [1]string, argsEscaped bool, r *http.Reque
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 			Err:  err,
 		}
@@ -368,25 +368,25 @@ func decodeChairGetRequestParams(args [1]string, argsEscaped bool, r *http.Reque
 	return params, nil
 }
 
-// ChairPostRequestAcceptParams is parameters of chair-post-request-accept operation.
-type ChairPostRequestAcceptParams struct {
-	// 配車要求ID.
-	RequestID string
+// ChairPostRideStatusParams is parameters of chair-post-ride-status operation.
+type ChairPostRideStatusParams struct {
+	// ライドID.
+	RideID string
 }
 
-func unpackChairPostRequestAcceptParams(packed middleware.Parameters) (params ChairPostRequestAcceptParams) {
+func unpackChairPostRideStatusParams(packed middleware.Parameters) (params ChairPostRideStatusParams) {
 	{
 		key := middleware.ParameterKey{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 		}
-		params.RequestID = packed[key].(string)
+		params.RideID = packed[key].(string)
 	}
 	return params
 }
 
-func decodeChairPostRequestAcceptParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairPostRequestAcceptParams, _ error) {
-	// Decode path: request_id.
+func decodeChairPostRideStatusParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairPostRideStatusParams, _ error) {
+	// Decode path: ride_id.
 	if err := func() error {
 		param := args[0]
 		if argsEscaped {
@@ -398,7 +398,7 @@ func decodeChairPostRequestAcceptParams(args [1]string, argsEscaped bool, r *htt
 		}
 		if len(param) > 0 {
 			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
+				Param:   "ride_id",
 				Value:   param,
 				Style:   uri.PathStyleSimple,
 				Explode: false,
@@ -415,7 +415,7 @@ func decodeChairPostRequestAcceptParams(args [1]string, argsEscaped bool, r *htt
 					return err
 				}
 
-				params.RequestID = c
+				params.RideID = c
 				return nil
 			}(); err != nil {
 				return err
@@ -426,7 +426,7 @@ func decodeChairPostRequestAcceptParams(args [1]string, argsEscaped bool, r *htt
 		return nil
 	}(); err != nil {
 		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
+			Name: "ride_id",
 			In:   "path",
 			Err:  err,
 		}
@@ -434,145 +434,13 @@ func decodeChairPostRequestAcceptParams(args [1]string, argsEscaped bool, r *htt
 	return params, nil
 }
 
-// ChairPostRequestDenyParams is parameters of chair-post-request-deny operation.
-type ChairPostRequestDenyParams struct {
-	// 配車要求ID.
-	RequestID string
-}
-
-func unpackChairPostRequestDenyParams(packed middleware.Parameters) (params ChairPostRequestDenyParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "request_id",
-			In:   "path",
-		}
-		params.RequestID = packed[key].(string)
-	}
-	return params
-}
-
-func decodeChairPostRequestDenyParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairPostRequestDenyParams, _ error) {
-	// Decode path: request_id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.RequestID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// ChairPostRequestDepartParams is parameters of chair-post-request-depart operation.
-type ChairPostRequestDepartParams struct {
-	// 配車要求ID.
-	RequestID string
-}
-
-func unpackChairPostRequestDepartParams(packed middleware.Parameters) (params ChairPostRequestDepartParams) {
-	{
-		key := middleware.ParameterKey{
-			Name: "request_id",
-			In:   "path",
-		}
-		params.RequestID = packed[key].(string)
-	}
-	return params
-}
-
-func decodeChairPostRequestDepartParams(args [1]string, argsEscaped bool, r *http.Request) (params ChairPostRequestDepartParams, _ error) {
-	// Decode path: request_id.
-	if err := func() error {
-		param := args[0]
-		if argsEscaped {
-			unescaped, err := url.PathUnescape(args[0])
-			if err != nil {
-				return errors.Wrap(err, "unescape path")
-			}
-			param = unescaped
-		}
-		if len(param) > 0 {
-			d := uri.NewPathDecoder(uri.PathDecoderConfig{
-				Param:   "request_id",
-				Value:   param,
-				Style:   uri.PathStyleSimple,
-				Explode: false,
-			})
-
-			if err := func() error {
-				val, err := d.DecodeValue()
-				if err != nil {
-					return err
-				}
-
-				c, err := conv.ToString(val)
-				if err != nil {
-					return err
-				}
-
-				params.RequestID = c
-				return nil
-			}(); err != nil {
-				return err
-			}
-		} else {
-			return validate.ErrFieldRequired
-		}
-		return nil
-	}(); err != nil {
-		return params, &ogenerrors.DecodeParamError{
-			Name: "request_id",
-			In:   "path",
-			Err:  err,
-		}
-	}
-	return params, nil
-}
-
-// OwnerGetChairDetailParams is parameters of owner-get-chair-detail operation.
-type OwnerGetChairDetailParams struct {
+// OwnerGetChairParams is parameters of owner-get-chair operation.
+type OwnerGetChairParams struct {
 	// 椅子ID.
 	ChairID string
 }
 
-func unpackOwnerGetChairDetailParams(packed middleware.Parameters) (params OwnerGetChairDetailParams) {
+func unpackOwnerGetChairParams(packed middleware.Parameters) (params OwnerGetChairParams) {
 	{
 		key := middleware.ParameterKey{
 			Name: "chair_id",
@@ -583,7 +451,7 @@ func unpackOwnerGetChairDetailParams(packed middleware.Parameters) (params Owner
 	return params
 }
 
-func decodeOwnerGetChairDetailParams(args [1]string, argsEscaped bool, r *http.Request) (params OwnerGetChairDetailParams, _ error) {
+func decodeOwnerGetChairParams(args [1]string, argsEscaped bool, r *http.Request) (params OwnerGetChairParams, _ error) {
 	// Decode path: chair_id.
 	if err := func() error {
 		param := args[0]
