@@ -147,141 +147,127 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-				case 'r': // Prefix: "re"
+				case 'r': // Prefix: "rides"
 
-					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					if l := len("rides"); len(elem) >= l && elem[0:l] == "rides" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						break
+						switch r.Method {
+						case "GET":
+							s.handleAppGetRidesRequest([0]string{}, elemIsEscaped, w, r)
+						case "POST":
+							s.handleAppPostRidesRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET,POST")
+						}
+
+						return
 					}
 					switch elem[0] {
-					case 'g': // Prefix: "gister"
+					case '/': // Prefix: "/"
 
-						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch r.Method {
-							case "POST":
-								s.handleAppPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "POST")
-							}
-
-							return
-						}
-
-					case 'q': // Prefix: "quests"
-
-						if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
-							elem = elem[l:]
-						} else {
 							break
-						}
-
-						if len(elem) == 0 {
-							switch r.Method {
-							case "GET":
-								s.handleAppGetRequestsRequest([0]string{}, elemIsEscaped, w, r)
-							case "POST":
-								s.handleAppPostRequestRequest([0]string{}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET,POST")
-							}
-
-							return
 						}
 						switch elem[0] {
-						case '/': // Prefix: "/"
-
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						case 'e': // Prefix: "estimated-fare"
+							origElem := elem
+							if l := len("estimated-fare"); len(elem) >= l && elem[0:l] == "estimated-fare" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'e': // Prefix: "estimate"
-								origElem := elem
-								if l := len("estimate"); len(elem) >= l && elem[0:l] == "estimate" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "POST":
-										s.handleAppPostRequestEstimateRequest([0]string{}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "POST")
-									}
-
-									return
-								}
-
-								elem = origElem
-							}
-							// Param: "request_id"
-							// Match until "/"
-							idx := strings.IndexByte(elem, '/')
-							if idx < 0 {
-								idx = len(elem)
-							}
-							args[0] = elem[:idx]
-							elem = elem[idx:]
-
-							if len(elem) == 0 {
+								// Leaf node.
 								switch r.Method {
-								case "GET":
-									s.handleAppGetRequestRequest([1]string{
-										args[0],
-									}, elemIsEscaped, w, r)
+								case "POST":
+									s.handleAppPostRidesEstimatedFareRequest([0]string{}, elemIsEscaped, w, r)
 								default:
-									s.notAllowed(w, r, "GET")
+									s.notAllowed(w, r, "POST")
 								}
 
 								return
 							}
-							switch elem[0] {
-							case '/': // Prefix: "/evaluate"
 
-								if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
-									elem = elem[l:]
-								} else {
-									break
+							elem = origElem
+						}
+						// Param: "ride_id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch r.Method {
+							case "GET":
+								s.handleAppGetRideRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "GET")
+							}
+
+							return
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/evaluation"
+
+							if l := len("/evaluation"); len(elem) >= l && elem[0:l] == "/evaluation" {
+								elem = elem[l:]
+							} else {
+								break
+							}
+
+							if len(elem) == 0 {
+								// Leaf node.
+								switch r.Method {
+								case "POST":
+									s.handleAppPostRideEvaluationRequest([1]string{
+										args[0],
+									}, elemIsEscaped, w, r)
+								default:
+									s.notAllowed(w, r, "POST")
 								}
 
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "POST":
-										s.handleAppPostRequestEvaluateRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "POST")
-									}
-
-									return
-								}
-
+								return
 							}
 
 						}
 
+					}
+
+				case 'u': // Prefix: "users"
+
+					if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handleAppPostUsersRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
 					}
 
 				}
@@ -298,9 +284,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 				switch elem[0] {
-				case 'a': // Prefix: "activate"
+				case 'a': // Prefix: "activity"
 
-					if l := len("activate"); len(elem) >= l && elem[0:l] == "activate" {
+					if l := len("activity"); len(elem) >= l && elem[0:l] == "activity" {
 						elem = elem[l:]
 					} else {
 						break
@@ -310,7 +296,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handleChairPostActivateRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleChairPostActivityRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -318,44 +304,58 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-				case 'c': // Prefix: "coordinate"
+				case 'c': // Prefix: "c"
 
-					if l := len("coordinate"); len(elem) >= l && elem[0:l] == "coordinate" {
+					if l := len("c"); len(elem) >= l && elem[0:l] == "c" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "POST":
-							s.handleChairPostCoordinateRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "POST")
-						}
-
-						return
-					}
-
-				case 'd': // Prefix: "deactivate"
-
-					if l := len("deactivate"); len(elem) >= l && elem[0:l] == "deactivate" {
-						elem = elem[l:]
-					} else {
 						break
 					}
+					switch elem[0] {
+					case 'h': // Prefix: "hairs"
 
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "POST":
-							s.handleChairPostDeactivateRequest([0]string{}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "POST")
+						if l := len("hairs"); len(elem) >= l && elem[0:l] == "hairs" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleChairPostChairsRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
+					case 'o': // Prefix: "oordinate"
+
+						if l := len("oordinate"); len(elem) >= l && elem[0:l] == "oordinate" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleChairPostCoordinateRequest([0]string{}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
 					}
 
 				case 'n': // Prefix: "notification"
@@ -378,21 +378,39 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						return
 					}
 
-				case 'r': // Prefix: "re"
+				case 'r': // Prefix: "rides/"
 
-					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					if l := len("rides/"); len(elem) >= l && elem[0:l] == "rides/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "ride_id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
-						break
+						switch r.Method {
+						case "GET":
+							s.handleChairGetRideRequest([1]string{
+								args[0],
+							}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
 					}
 					switch elem[0] {
-					case 'g': // Prefix: "gister"
+					case '/': // Prefix: "/status"
 
-						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+						if l := len("/status"); len(elem) >= l && elem[0:l] == "/status" {
 							elem = elem[l:]
 						} else {
 							break
@@ -402,138 +420,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "POST":
-								s.handleChairPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
+								s.handleChairPostRideStatusRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
 							default:
 								s.notAllowed(w, r, "POST")
 							}
 
 							return
-						}
-
-					case 'q': // Prefix: "quests/"
-
-						if l := len("quests/"); len(elem) >= l && elem[0:l] == "quests/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						// Param: "request_id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
-						if len(elem) == 0 {
-							switch r.Method {
-							case "GET":
-								s.handleChairGetRequestRequest([1]string{
-									args[0],
-								}, elemIsEscaped, w, r)
-							default:
-								s.notAllowed(w, r, "GET")
-							}
-
-							return
-						}
-						switch elem[0] {
-						case '/': // Prefix: "/"
-
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'a': // Prefix: "accept"
-
-								if l := len("accept"); len(elem) >= l && elem[0:l] == "accept" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch r.Method {
-									case "POST":
-										s.handleChairPostRequestAcceptRequest([1]string{
-											args[0],
-										}, elemIsEscaped, w, r)
-									default:
-										s.notAllowed(w, r, "POST")
-									}
-
-									return
-								}
-
-							case 'd': // Prefix: "de"
-
-								if l := len("de"); len(elem) >= l && elem[0:l] == "de" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									break
-								}
-								switch elem[0] {
-								case 'n': // Prefix: "ny"
-
-									if l := len("ny"); len(elem) >= l && elem[0:l] == "ny" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch r.Method {
-										case "POST":
-											s.handleChairPostRequestDenyRequest([1]string{
-												args[0],
-											}, elemIsEscaped, w, r)
-										default:
-											s.notAllowed(w, r, "POST")
-										}
-
-										return
-									}
-
-								case 'p': // Prefix: "part"
-
-									if l := len("part"); len(elem) >= l && elem[0:l] == "part" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch r.Method {
-										case "POST":
-											s.handleChairPostRequestDepartRequest([1]string{
-												args[0],
-											}, elemIsEscaped, w, r)
-										default:
-											s.notAllowed(w, r, "POST")
-										}
-
-										return
-									}
-
-								}
-
-							}
-
 						}
 
 					}
@@ -612,7 +506,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 							// Leaf node.
 							switch r.Method {
 							case "GET":
-								s.handleOwnerGetChairDetailRequest([1]string{
+								s.handleOwnerGetChairRequest([1]string{
 									args[0],
 								}, elemIsEscaped, w, r)
 							default:
@@ -624,9 +518,9 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 					}
 
-				case 'r': // Prefix: "register"
+				case 'o': // Prefix: "owners"
 
-					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+					if l := len("owners"); len(elem) >= l && elem[0:l] == "owners" {
 						elem = elem[l:]
 					} else {
 						break
@@ -636,7 +530,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 						// Leaf node.
 						switch r.Method {
 						case "POST":
-							s.handleOwnerPostRegisterRequest([0]string{}, elemIsEscaped, w, r)
+							s.handleOwnerPostOwnersRequest([0]string{}, elemIsEscaped, w, r)
 						default:
 							s.notAllowed(w, r, "POST")
 						}
@@ -858,127 +752,115 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 
-				case 'r': // Prefix: "re"
+				case 'r': // Prefix: "rides"
 
-					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					if l := len("rides"); len(elem) >= l && elem[0:l] == "rides" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						break
+						switch method {
+						case "GET":
+							r.name = AppGetRidesOperation
+							r.summary = "ユーザーが完了済みのライド一覧を取得する"
+							r.operationID = "app-get-rides"
+							r.pathPattern = "/app/rides"
+							r.args = args
+							r.count = 0
+							return r, true
+						case "POST":
+							r.name = AppPostRidesOperation
+							r.summary = "ユーザーが配車を要求する"
+							r.operationID = "app-post-rides"
+							r.pathPattern = "/app/rides"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
 					}
 					switch elem[0] {
-					case 'g': // Prefix: "gister"
+					case '/': // Prefix: "/"
 
-						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+						if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 							elem = elem[l:]
 						} else {
 							break
 						}
 
 						if len(elem) == 0 {
-							// Leaf node.
-							switch method {
-							case "POST":
-								r.name = AppPostRegisterOperation
-								r.summary = "ユーザーが会員登録を行う"
-								r.operationID = "app-post-register"
-								r.pathPattern = "/app/register"
-								r.args = args
-								r.count = 0
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'q': // Prefix: "quests"
-
-						if l := len("quests"); len(elem) >= l && elem[0:l] == "quests" {
-							elem = elem[l:]
-						} else {
 							break
-						}
-
-						if len(elem) == 0 {
-							switch method {
-							case "GET":
-								r.name = AppGetRequestsOperation
-								r.summary = "ユーザーが完了済みの配車要求一覧を取得する"
-								r.operationID = "app-get-requests"
-								r.pathPattern = "/app/requests"
-								r.args = args
-								r.count = 0
-								return r, true
-							case "POST":
-								r.name = AppPostRequestOperation
-								r.summary = "ユーザーが配車要求を行う"
-								r.operationID = "app-post-request"
-								r.pathPattern = "/app/requests"
-								r.args = args
-								r.count = 0
-								return r, true
-							default:
-								return
-							}
 						}
 						switch elem[0] {
-						case '/': // Prefix: "/"
-
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
+						case 'e': // Prefix: "estimated-fare"
+							origElem := elem
+							if l := len("estimated-fare"); len(elem) >= l && elem[0:l] == "estimated-fare" {
 								elem = elem[l:]
 							} else {
 								break
 							}
 
 							if len(elem) == 0 {
+								// Leaf node.
+								switch method {
+								case "POST":
+									r.name = AppPostRidesEstimatedFareOperation
+									r.summary = "ライドの運賃を見積もる"
+									r.operationID = "app-post-rides-estimated-fare"
+									r.pathPattern = "/app/rides/estimated-fare"
+									r.args = args
+									r.count = 0
+									return r, true
+								default:
+									return
+								}
+							}
+
+							elem = origElem
+						}
+						// Param: "ride_id"
+						// Match until "/"
+						idx := strings.IndexByte(elem, '/')
+						if idx < 0 {
+							idx = len(elem)
+						}
+						args[0] = elem[:idx]
+						elem = elem[idx:]
+
+						if len(elem) == 0 {
+							switch method {
+							case "GET":
+								r.name = AppGetRideOperation
+								r.summary = "ユーザーがライドの詳細を確認する"
+								r.operationID = "app-get-ride"
+								r.pathPattern = "/app/rides/{ride_id}"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+						switch elem[0] {
+						case '/': // Prefix: "/evaluation"
+
+							if l := len("/evaluation"); len(elem) >= l && elem[0:l] == "/evaluation" {
+								elem = elem[l:]
+							} else {
 								break
 							}
-							switch elem[0] {
-							case 'e': // Prefix: "estimate"
-								origElem := elem
-								if l := len("estimate"); len(elem) >= l && elem[0:l] == "estimate" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch method {
-									case "POST":
-										r.name = AppPostRequestEstimateOperation
-										r.summary = "リクエストの運賃を見積もる"
-										r.operationID = "app-post-request-estimate"
-										r.pathPattern = "/app/requests/estimate"
-										r.args = args
-										r.count = 0
-										return r, true
-									default:
-										return
-									}
-								}
-
-								elem = origElem
-							}
-							// Param: "request_id"
-							// Match until "/"
-							idx := strings.IndexByte(elem, '/')
-							if idx < 0 {
-								idx = len(elem)
-							}
-							args[0] = elem[:idx]
-							elem = elem[idx:]
 
 							if len(elem) == 0 {
+								// Leaf node.
 								switch method {
-								case "GET":
-									r.name = AppGetRequestOperation
-									r.summary = "ユーザーが配車要求の状態を確認する"
-									r.operationID = "app-get-request"
-									r.pathPattern = "/app/requests/{request_id}"
+								case "POST":
+									r.name = AppPostRideEvaluationOperation
+									r.summary = "ユーザーがライドを評価する"
+									r.operationID = "app-post-ride-evaluation"
+									r.pathPattern = "/app/rides/{ride_id}/evaluation"
 									r.args = args
 									r.count = 1
 									return r, true
@@ -986,35 +868,33 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 									return
 								}
 							}
-							switch elem[0] {
-							case '/': // Prefix: "/evaluate"
-
-								if l := len("/evaluate"); len(elem) >= l && elem[0:l] == "/evaluate" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch method {
-									case "POST":
-										r.name = AppPostRequestEvaluateOperation
-										r.summary = "ユーザーが椅子を評価する"
-										r.operationID = "app-post-request-evaluate"
-										r.pathPattern = "/app/requests/{request_id}/evaluate"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-
-							}
 
 						}
 
+					}
+
+				case 'u': // Prefix: "users"
+
+					if l := len("users"); len(elem) >= l && elem[0:l] == "users" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = AppPostUsersOperation
+							r.summary = "ユーザーが会員登録を行う"
+							r.operationID = "app-post-users"
+							r.pathPattern = "/app/users"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
 					}
 
 				}
@@ -1031,9 +911,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 				switch elem[0] {
-				case 'a': // Prefix: "activate"
+				case 'a': // Prefix: "activity"
 
-					if l := len("activate"); len(elem) >= l && elem[0:l] == "activate" {
+					if l := len("activity"); len(elem) >= l && elem[0:l] == "activity" {
 						elem = elem[l:]
 					} else {
 						break
@@ -1043,10 +923,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = ChairPostActivateOperation
-							r.summary = "椅子が配車受付を開始する"
-							r.operationID = "chair-post-activate"
-							r.pathPattern = "/chair/activate"
+							r.name = ChairPostActivityOperation
+							r.summary = "椅子が配車受付を開始・停止する"
+							r.operationID = "chair-post-activity"
+							r.pathPattern = "/chair/activity"
 							r.args = args
 							r.count = 0
 							return r, true
@@ -1055,52 +935,66 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 
-				case 'c': // Prefix: "coordinate"
+				case 'c': // Prefix: "c"
 
-					if l := len("coordinate"); len(elem) >= l && elem[0:l] == "coordinate" {
+					if l := len("c"); len(elem) >= l && elem[0:l] == "c" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "POST":
-							r.name = ChairPostCoordinateOperation
-							r.summary = "椅子が位置情報を送信する"
-							r.operationID = "chair-post-coordinate"
-							r.pathPattern = "/chair/coordinate"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
-						}
-					}
-
-				case 'd': // Prefix: "deactivate"
-
-					if l := len("deactivate"); len(elem) >= l && elem[0:l] == "deactivate" {
-						elem = elem[l:]
-					} else {
 						break
 					}
+					switch elem[0] {
+					case 'h': // Prefix: "hairs"
 
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "POST":
-							r.name = ChairPostDeactivateOperation
-							r.summary = "椅子が配車受付を停止する"
-							r.operationID = "chair-post-deactivate"
-							r.pathPattern = "/chair/deactivate"
-							r.args = args
-							r.count = 0
-							return r, true
-						default:
-							return
+						if l := len("hairs"); len(elem) >= l && elem[0:l] == "hairs" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = ChairPostChairsOperation
+								r.summary = "オーナーが椅子の登録を行う"
+								r.operationID = "chair-post-chairs"
+								r.pathPattern = "/chair/chairs"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
+					case 'o': // Prefix: "oordinate"
+
+						if l := len("oordinate"); len(elem) >= l && elem[0:l] == "oordinate" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = ChairPostCoordinateOperation
+								r.summary = "椅子が自身の位置情報を送信する"
+								r.operationID = "chair-post-coordinate"
+								r.pathPattern = "/chair/coordinate"
+								r.args = args
+								r.count = 0
+								return r, true
+							default:
+								return
+							}
+						}
+
 					}
 
 				case 'n': // Prefix: "notification"
@@ -1127,21 +1021,41 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						}
 					}
 
-				case 'r': // Prefix: "re"
+				case 'r': // Prefix: "rides/"
 
-					if l := len("re"); len(elem) >= l && elem[0:l] == "re" {
+					if l := len("rides/"); len(elem) >= l && elem[0:l] == "rides/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
+					// Param: "ride_id"
+					// Match until "/"
+					idx := strings.IndexByte(elem, '/')
+					if idx < 0 {
+						idx = len(elem)
+					}
+					args[0] = elem[:idx]
+					elem = elem[idx:]
+
 					if len(elem) == 0 {
-						break
+						switch method {
+						case "GET":
+							r.name = ChairGetRideOperation
+							r.summary = "椅子がライド情報を取得する"
+							r.operationID = "chair-get-ride"
+							r.pathPattern = "/chair/rides/{ride_id}"
+							r.args = args
+							r.count = 1
+							return r, true
+						default:
+							return
+						}
 					}
 					switch elem[0] {
-					case 'g': // Prefix: "gister"
+					case '/': // Prefix: "/status"
 
-						if l := len("gister"); len(elem) >= l && elem[0:l] == "gister" {
+						if l := len("/status"); len(elem) >= l && elem[0:l] == "/status" {
 							elem = elem[l:]
 						} else {
 							break
@@ -1151,150 +1065,16 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "POST":
-								r.name = ChairPostRegisterOperation
-								r.summary = "椅子登録を行う"
-								r.operationID = "chair-post-register"
-								r.pathPattern = "/chair/register"
-								r.args = args
-								r.count = 0
-								return r, true
-							default:
-								return
-							}
-						}
-
-					case 'q': // Prefix: "quests/"
-
-						if l := len("quests/"); len(elem) >= l && elem[0:l] == "quests/" {
-							elem = elem[l:]
-						} else {
-							break
-						}
-
-						// Param: "request_id"
-						// Match until "/"
-						idx := strings.IndexByte(elem, '/')
-						if idx < 0 {
-							idx = len(elem)
-						}
-						args[0] = elem[:idx]
-						elem = elem[idx:]
-
-						if len(elem) == 0 {
-							switch method {
-							case "GET":
-								r.name = ChairGetRequestOperation
-								r.summary = "椅子が配車要求情報を取得する"
-								r.operationID = "chair-get-request"
-								r.pathPattern = "/chair/requests/{request_id}"
+								r.name = ChairPostRideStatusOperation
+								r.summary = "椅子がライドのステータスを更新する"
+								r.operationID = "chair-post-ride-status"
+								r.pathPattern = "/chair/rides/{ride_id}/status"
 								r.args = args
 								r.count = 1
 								return r, true
 							default:
 								return
 							}
-						}
-						switch elem[0] {
-						case '/': // Prefix: "/"
-
-							if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
-								elem = elem[l:]
-							} else {
-								break
-							}
-
-							if len(elem) == 0 {
-								break
-							}
-							switch elem[0] {
-							case 'a': // Prefix: "accept"
-
-								if l := len("accept"); len(elem) >= l && elem[0:l] == "accept" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									// Leaf node.
-									switch method {
-									case "POST":
-										r.name = ChairPostRequestAcceptOperation
-										r.summary = "椅子が配車要求を受理する"
-										r.operationID = "chair-post-request-accept"
-										r.pathPattern = "/chair/requests/{request_id}/accept"
-										r.args = args
-										r.count = 1
-										return r, true
-									default:
-										return
-									}
-								}
-
-							case 'd': // Prefix: "de"
-
-								if l := len("de"); len(elem) >= l && elem[0:l] == "de" {
-									elem = elem[l:]
-								} else {
-									break
-								}
-
-								if len(elem) == 0 {
-									break
-								}
-								switch elem[0] {
-								case 'n': // Prefix: "ny"
-
-									if l := len("ny"); len(elem) >= l && elem[0:l] == "ny" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch method {
-										case "POST":
-											r.name = ChairPostRequestDenyOperation
-											r.summary = "椅子が配車要求を拒否する"
-											r.operationID = "chair-post-request-deny"
-											r.pathPattern = "/chair/requests/{request_id}/deny"
-											r.args = args
-											r.count = 1
-											return r, true
-										default:
-											return
-										}
-									}
-
-								case 'p': // Prefix: "part"
-
-									if l := len("part"); len(elem) >= l && elem[0:l] == "part" {
-										elem = elem[l:]
-									} else {
-										break
-									}
-
-									if len(elem) == 0 {
-										// Leaf node.
-										switch method {
-										case "POST":
-											r.name = ChairPostRequestDepartOperation
-											r.summary = "椅子が配車位置から出発する(ユーザーが乗車完了した)"
-											r.operationID = "chair-post-request-depart"
-											r.pathPattern = "/chair/requests/{request_id}/depart"
-											r.args = args
-											r.count = 1
-											return r, true
-										default:
-											return
-										}
-									}
-
-								}
-
-							}
-
 						}
 
 					}
@@ -1381,9 +1161,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 							// Leaf node.
 							switch method {
 							case "GET":
-								r.name = OwnerGetChairDetailOperation
+								r.name = OwnerGetChairOperation
 								r.summary = "管理している椅子の詳細を取得する"
-								r.operationID = "owner-get-chair-detail"
+								r.operationID = "owner-get-chair"
 								r.pathPattern = "/owner/chairs/{chair_id}"
 								r.args = args
 								r.count = 1
@@ -1395,9 +1175,9 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 					}
 
-				case 'r': // Prefix: "register"
+				case 'o': // Prefix: "owners"
 
-					if l := len("register"); len(elem) >= l && elem[0:l] == "register" {
+					if l := len("owners"); len(elem) >= l && elem[0:l] == "owners" {
 						elem = elem[l:]
 					} else {
 						break
@@ -1407,10 +1187,10 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 						// Leaf node.
 						switch method {
 						case "POST":
-							r.name = OwnerPostRegisterOperation
-							r.summary = "椅子のオーナー自身が登録を行う"
-							r.operationID = "owner-post-register"
-							r.pathPattern = "/owner/register"
+							r.name = OwnerPostOwnersOperation
+							r.summary = "椅子のオーナーが会員登録を行う"
+							r.operationID = "owner-post-owners"
+							r.pathPattern = "/owner/owners"
 							r.args = args
 							r.count = 0
 							return r, true

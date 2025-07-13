@@ -16,112 +16,94 @@ type Handler interface {
 	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
 	// AppGetNotification implements app-get-notification operation.
 	//
-	// 最新の自分の配車要求を取得します。.
+	// 最新の自分のライドを取得する.
 	//
 	// GET /app/notification
 	AppGetNotification(ctx context.Context) (AppGetNotificationRes, error)
-	// AppGetRequest implements app-get-request operation.
+	// AppGetRide implements app-get-ride operation.
 	//
-	// ユーザーが配車要求の状態を確認する.
+	// ユーザーがライドの詳細を確認する.
 	//
-	// GET /app/requests/{request_id}
-	AppGetRequest(ctx context.Context, params AppGetRequestParams) (AppGetRequestRes, error)
-	// AppGetRequests implements app-get-requests operation.
+	// GET /app/rides/{ride_id}
+	AppGetRide(ctx context.Context, params AppGetRideParams) (AppGetRideRes, error)
+	// AppGetRides implements app-get-rides operation.
 	//
-	// ユーザーが完了済みの配車要求一覧を取得する.
+	// ユーザーが完了済みのライド一覧を取得する.
 	//
-	// GET /app/requests
-	AppGetRequests(ctx context.Context) (*AppGetRequestsOK, error)
+	// GET /app/rides
+	AppGetRides(ctx context.Context) (*AppGetRidesOK, error)
 	// AppPostPaymentMethods implements app-post-payment-methods operation.
 	//
 	// 決済トークンの登録.
 	//
 	// POST /app/payment-methods
 	AppPostPaymentMethods(ctx context.Context, req OptAppPostPaymentMethodsReq) (AppPostPaymentMethodsRes, error)
-	// AppPostRegister implements app-post-register operation.
+	// AppPostRideEvaluation implements app-post-ride-evaluation operation.
+	//
+	// ユーザーがライドを評価する.
+	//
+	// POST /app/rides/{ride_id}/evaluation
+	AppPostRideEvaluation(ctx context.Context, req OptAppPostRideEvaluationReq, params AppPostRideEvaluationParams) (AppPostRideEvaluationRes, error)
+	// AppPostRides implements app-post-rides operation.
+	//
+	// ユーザーが配車を要求する.
+	//
+	// POST /app/rides
+	AppPostRides(ctx context.Context, req OptAppPostRidesReq) (AppPostRidesRes, error)
+	// AppPostRidesEstimatedFare implements app-post-rides-estimated-fare operation.
+	//
+	// ライドの運賃を見積もる.
+	//
+	// POST /app/rides/estimated-fare
+	AppPostRidesEstimatedFare(ctx context.Context, req OptAppPostRidesEstimatedFareReq) (AppPostRidesEstimatedFareRes, error)
+	// AppPostUsers implements app-post-users operation.
 	//
 	// ユーザーが会員登録を行う.
 	//
-	// POST /app/register
-	AppPostRegister(ctx context.Context, req OptAppPostRegisterReq) (AppPostRegisterRes, error)
-	// AppPostRequest implements app-post-request operation.
-	//
-	// ユーザーが配車要求を行う.
-	//
-	// POST /app/requests
-	AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (AppPostRequestRes, error)
-	// AppPostRequestEstimate implements app-post-request-estimate operation.
-	//
-	// リクエストの運賃を見積もる.
-	//
-	// POST /app/requests/estimate
-	AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (AppPostRequestEstimateRes, error)
-	// AppPostRequestEvaluate implements app-post-request-evaluate operation.
-	//
-	// ユーザーが椅子を評価する.
-	//
-	// POST /app/requests/{request_id}/evaluate
-	AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (AppPostRequestEvaluateRes, error)
+	// POST /app/users
+	AppPostUsers(ctx context.Context, req OptAppPostUsersReq) (AppPostUsersRes, error)
 	// ChairGetNotification implements chair-get-notification operation.
 	//
 	// 椅子に配車要求を通知するなどで使う想定.
 	//
 	// GET /chair/notification
 	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
-	// ChairGetRequest implements chair-get-request operation.
+	// ChairGetRide implements chair-get-ride operation.
 	//
 	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
 	//
-	// GET /chair/requests/{request_id}
-	ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (ChairGetRequestRes, error)
-	// ChairPostActivate implements chair-post-activate operation.
+	// GET /chair/rides/{ride_id}
+	ChairGetRide(ctx context.Context, params ChairGetRideParams) (ChairGetRideRes, error)
+	// ChairPostActivity implements chair-post-activity operation.
 	//
-	// 椅子が配車受付を開始する.
+	// 椅子が配車受付を開始・停止する.
 	//
-	// POST /chair/activate
-	ChairPostActivate(ctx context.Context) error
+	// POST /chair/activity
+	ChairPostActivity(ctx context.Context, req OptChairPostActivityReq) error
+	// ChairPostChairs implements chair-post-chairs operation.
+	//
+	// オーナーが椅子の登録を行う.
+	//
+	// POST /chair/chairs
+	ChairPostChairs(ctx context.Context, req OptChairPostChairsReq) (*ChairPostChairsCreatedHeaders, error)
 	// ChairPostCoordinate implements chair-post-coordinate operation.
 	//
-	// 椅子が位置情報を送信する.
+	// 椅子が自身の位置情報を送信する.
 	//
 	// POST /chair/coordinate
 	ChairPostCoordinate(ctx context.Context, req OptCoordinate) (*ChairPostCoordinateOK, error)
-	// ChairPostDeactivate implements chair-post-deactivate operation.
+	// ChairPostRideStatus implements chair-post-ride-status operation.
 	//
-	// 椅子が配車受付を停止する.
+	// 椅子がライドのステータスを更新する.
 	//
-	// POST /chair/deactivate
-	ChairPostDeactivate(ctx context.Context) error
-	// ChairPostRegister implements chair-post-register operation.
-	//
-	// 椅子登録を行う.
-	//
-	// POST /chair/register
-	ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (*ChairPostRegisterCreatedHeaders, error)
-	// ChairPostRequestAccept implements chair-post-request-accept operation.
-	//
-	// 椅子が配車要求を受理する.
-	//
-	// POST /chair/requests/{request_id}/accept
-	ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (ChairPostRequestAcceptRes, error)
-	// ChairPostRequestDeny implements chair-post-request-deny operation.
-	//
-	// 椅子が配車要求を拒否する.
-	//
-	// POST /chair/requests/{request_id}/deny
-	ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (ChairPostRequestDenyRes, error)
-	// ChairPostRequestDepart implements chair-post-request-depart operation.
-	//
-	// 椅子が配車位置から出発する(ユーザーが乗車完了した).
-	//
-	// POST /chair/requests/{request_id}/depart
-	ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (ChairPostRequestDepartRes, error)
-	// OwnerGetChairDetail implements owner-get-chair-detail operation.
+	// POST /chair/rides/{ride_id}/status
+	ChairPostRideStatus(ctx context.Context, req OptChairPostRideStatusReq, params ChairPostRideStatusParams) (ChairPostRideStatusRes, error)
+	// OwnerGetChair implements owner-get-chair operation.
 	//
 	// 管理している椅子の詳細を取得する.
 	//
 	// GET /owner/chairs/{chair_id}
-	OwnerGetChairDetail(ctx context.Context, params OwnerGetChairDetailParams) (*OwnerGetChairDetailOK, error)
+	OwnerGetChair(ctx context.Context, params OwnerGetChairParams) (*OwnerGetChairOK, error)
 	// OwnerGetChairs implements owner-get-chairs operation.
 	//
 	// 椅子のオーナーが管理している椅子の一覧を取得する.
@@ -134,12 +116,12 @@ type Handler interface {
 	//
 	// GET /owner/sales
 	OwnerGetSales(ctx context.Context, params OwnerGetSalesParams) (*OwnerGetSalesOK, error)
-	// OwnerPostRegister implements owner-post-register operation.
+	// OwnerPostOwners implements owner-post-owners operation.
 	//
-	// 椅子のオーナー自身が登録を行う.
+	// 椅子のオーナーが会員登録を行う.
 	//
-	// POST /owner/register
-	OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (OwnerPostRegisterRes, error)
+	// POST /owner/owners
+	OwnerPostOwners(ctx context.Context, req OptOwnerPostOwnersReq) (OwnerPostOwnersRes, error)
 	// PostInitialize implements post-initialize operation.
 	//
 	// サービスを初期化する.

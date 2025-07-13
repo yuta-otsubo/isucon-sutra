@@ -24,28 +24,28 @@ func (UnimplementedHandler) AppGetNearbyChairs(ctx context.Context, params AppGe
 
 // AppGetNotification implements app-get-notification operation.
 //
-// 最新の自分の配車要求を取得します。.
+// 最新の自分のライドを取得する.
 //
 // GET /app/notification
 func (UnimplementedHandler) AppGetNotification(ctx context.Context) (r AppGetNotificationRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// AppGetRequest implements app-get-request operation.
+// AppGetRide implements app-get-ride operation.
 //
-// ユーザーが配車要求の状態を確認する.
+// ユーザーがライドの詳細を確認する.
 //
-// GET /app/requests/{request_id}
-func (UnimplementedHandler) AppGetRequest(ctx context.Context, params AppGetRequestParams) (r AppGetRequestRes, _ error) {
+// GET /app/rides/{ride_id}
+func (UnimplementedHandler) AppGetRide(ctx context.Context, params AppGetRideParams) (r AppGetRideRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// AppGetRequests implements app-get-requests operation.
+// AppGetRides implements app-get-rides operation.
 //
-// ユーザーが完了済みの配車要求一覧を取得する.
+// ユーザーが完了済みのライド一覧を取得する.
 //
-// GET /app/requests
-func (UnimplementedHandler) AppGetRequests(ctx context.Context) (r *AppGetRequestsOK, _ error) {
+// GET /app/rides
+func (UnimplementedHandler) AppGetRides(ctx context.Context) (r *AppGetRidesOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -58,39 +58,39 @@ func (UnimplementedHandler) AppPostPaymentMethods(ctx context.Context, req OptAp
 	return r, ht.ErrNotImplemented
 }
 
-// AppPostRegister implements app-post-register operation.
+// AppPostRideEvaluation implements app-post-ride-evaluation operation.
+//
+// ユーザーがライドを評価する.
+//
+// POST /app/rides/{ride_id}/evaluation
+func (UnimplementedHandler) AppPostRideEvaluation(ctx context.Context, req OptAppPostRideEvaluationReq, params AppPostRideEvaluationParams) (r AppPostRideEvaluationRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AppPostRides implements app-post-rides operation.
+//
+// ユーザーが配車を要求する.
+//
+// POST /app/rides
+func (UnimplementedHandler) AppPostRides(ctx context.Context, req OptAppPostRidesReq) (r AppPostRidesRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AppPostRidesEstimatedFare implements app-post-rides-estimated-fare operation.
+//
+// ライドの運賃を見積もる.
+//
+// POST /app/rides/estimated-fare
+func (UnimplementedHandler) AppPostRidesEstimatedFare(ctx context.Context, req OptAppPostRidesEstimatedFareReq) (r AppPostRidesEstimatedFareRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// AppPostUsers implements app-post-users operation.
 //
 // ユーザーが会員登録を行う.
 //
-// POST /app/register
-func (UnimplementedHandler) AppPostRegister(ctx context.Context, req OptAppPostRegisterReq) (r AppPostRegisterRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// AppPostRequest implements app-post-request operation.
-//
-// ユーザーが配車要求を行う.
-//
-// POST /app/requests
-func (UnimplementedHandler) AppPostRequest(ctx context.Context, req OptAppPostRequestReq) (r AppPostRequestRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// AppPostRequestEstimate implements app-post-request-estimate operation.
-//
-// リクエストの運賃を見積もる.
-//
-// POST /app/requests/estimate
-func (UnimplementedHandler) AppPostRequestEstimate(ctx context.Context, req OptAppPostRequestEstimateReq) (r AppPostRequestEstimateRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// AppPostRequestEvaluate implements app-post-request-evaluate operation.
-//
-// ユーザーが椅子を評価する.
-//
-// POST /app/requests/{request_id}/evaluate
-func (UnimplementedHandler) AppPostRequestEvaluate(ctx context.Context, req OptAppPostRequestEvaluateReq, params AppPostRequestEvaluateParams) (r AppPostRequestEvaluateRes, _ error) {
+// POST /app/users
+func (UnimplementedHandler) AppPostUsers(ctx context.Context, req OptAppPostUsersReq) (r AppPostUsersRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -103,84 +103,57 @@ func (UnimplementedHandler) ChairGetNotification(ctx context.Context) (r ChairGe
 	return r, ht.ErrNotImplemented
 }
 
-// ChairGetRequest implements chair-get-request operation.
+// ChairGetRide implements chair-get-ride operation.
 //
 // 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
 //
-// GET /chair/requests/{request_id}
-func (UnimplementedHandler) ChairGetRequest(ctx context.Context, params ChairGetRequestParams) (r ChairGetRequestRes, _ error) {
+// GET /chair/rides/{ride_id}
+func (UnimplementedHandler) ChairGetRide(ctx context.Context, params ChairGetRideParams) (r ChairGetRideRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// ChairPostActivate implements chair-post-activate operation.
+// ChairPostActivity implements chair-post-activity operation.
 //
-// 椅子が配車受付を開始する.
+// 椅子が配車受付を開始・停止する.
 //
-// POST /chair/activate
-func (UnimplementedHandler) ChairPostActivate(ctx context.Context) error {
+// POST /chair/activity
+func (UnimplementedHandler) ChairPostActivity(ctx context.Context, req OptChairPostActivityReq) error {
 	return ht.ErrNotImplemented
+}
+
+// ChairPostChairs implements chair-post-chairs operation.
+//
+// オーナーが椅子の登録を行う.
+//
+// POST /chair/chairs
+func (UnimplementedHandler) ChairPostChairs(ctx context.Context, req OptChairPostChairsReq) (r *ChairPostChairsCreatedHeaders, _ error) {
+	return r, ht.ErrNotImplemented
 }
 
 // ChairPostCoordinate implements chair-post-coordinate operation.
 //
-// 椅子が位置情報を送信する.
+// 椅子が自身の位置情報を送信する.
 //
 // POST /chair/coordinate
 func (UnimplementedHandler) ChairPostCoordinate(ctx context.Context, req OptCoordinate) (r *ChairPostCoordinateOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// ChairPostDeactivate implements chair-post-deactivate operation.
+// ChairPostRideStatus implements chair-post-ride-status operation.
 //
-// 椅子が配車受付を停止する.
+// 椅子がライドのステータスを更新する.
 //
-// POST /chair/deactivate
-func (UnimplementedHandler) ChairPostDeactivate(ctx context.Context) error {
-	return ht.ErrNotImplemented
-}
-
-// ChairPostRegister implements chair-post-register operation.
-//
-// 椅子登録を行う.
-//
-// POST /chair/register
-func (UnimplementedHandler) ChairPostRegister(ctx context.Context, req OptChairPostRegisterReq) (r *ChairPostRegisterCreatedHeaders, _ error) {
+// POST /chair/rides/{ride_id}/status
+func (UnimplementedHandler) ChairPostRideStatus(ctx context.Context, req OptChairPostRideStatusReq, params ChairPostRideStatusParams) (r ChairPostRideStatusRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
-// ChairPostRequestAccept implements chair-post-request-accept operation.
-//
-// 椅子が配車要求を受理する.
-//
-// POST /chair/requests/{request_id}/accept
-func (UnimplementedHandler) ChairPostRequestAccept(ctx context.Context, params ChairPostRequestAcceptParams) (r ChairPostRequestAcceptRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ChairPostRequestDeny implements chair-post-request-deny operation.
-//
-// 椅子が配車要求を拒否する.
-//
-// POST /chair/requests/{request_id}/deny
-func (UnimplementedHandler) ChairPostRequestDeny(ctx context.Context, params ChairPostRequestDenyParams) (r ChairPostRequestDenyRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// ChairPostRequestDepart implements chair-post-request-depart operation.
-//
-// 椅子が配車位置から出発する(ユーザーが乗車完了した).
-//
-// POST /chair/requests/{request_id}/depart
-func (UnimplementedHandler) ChairPostRequestDepart(ctx context.Context, params ChairPostRequestDepartParams) (r ChairPostRequestDepartRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
-// OwnerGetChairDetail implements owner-get-chair-detail operation.
+// OwnerGetChair implements owner-get-chair operation.
 //
 // 管理している椅子の詳細を取得する.
 //
 // GET /owner/chairs/{chair_id}
-func (UnimplementedHandler) OwnerGetChairDetail(ctx context.Context, params OwnerGetChairDetailParams) (r *OwnerGetChairDetailOK, _ error) {
+func (UnimplementedHandler) OwnerGetChair(ctx context.Context, params OwnerGetChairParams) (r *OwnerGetChairOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -202,12 +175,12 @@ func (UnimplementedHandler) OwnerGetSales(ctx context.Context, params OwnerGetSa
 	return r, ht.ErrNotImplemented
 }
 
-// OwnerPostRegister implements owner-post-register operation.
+// OwnerPostOwners implements owner-post-owners operation.
 //
-// 椅子のオーナー自身が登録を行う.
+// 椅子のオーナーが会員登録を行う.
 //
-// POST /owner/register
-func (UnimplementedHandler) OwnerPostRegister(ctx context.Context, req OptOwnerPostRegisterReq) (r OwnerPostRegisterRes, _ error) {
+// POST /owner/owners
+func (UnimplementedHandler) OwnerPostOwners(ctx context.Context, req OptOwnerPostOwnersReq) (r OwnerPostOwnersRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
