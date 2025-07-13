@@ -19,6 +19,7 @@ services:
       start_period: 60s
   db:
     image: mysql:8
+    stop_grace_period: 30s
     restart: unless-stopped
     environment:
       ENV: local-dev
