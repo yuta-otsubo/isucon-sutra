@@ -12,6 +12,7 @@ services:
         condition: service_healthy
     environment:
       ISUCON_DB_HOST: db
+      MYSQL_ROOT_PASSWORD: isucon
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -22,8 +23,9 @@ services:
     stop_grace_period: 30s
     restart: unless-stopped
     environment:
+      ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
-      MYSQL_DATABASE: isuride
+      MYSQL_DATABASE: isucon
     ports:
       - 3306:3306
     volumes:
