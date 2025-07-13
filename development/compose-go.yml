@@ -12,6 +12,7 @@ services:
         condition: service_healthy
     environment:
       ISUCON_DB_HOST: db
+      MYSQL_ROOT_PASSWORD: isucon
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
