@@ -12,7 +12,6 @@ services:
         condition: service_healthy
     environment:
       ISUCON_DB_HOST: db
-      MYSQL_ROOT_PASSWORD: isucon
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
@@ -20,12 +19,12 @@ services:
       start_period: 60s
   db:
     image: mysql:8
-    stop_grace_period: 30s
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
-      MYSQL_DATABASE: isuride
+      MYSQL_DATABASE: isucon
     ports:
       - 3306:3306
     volumes:
@@ -33,7 +32,7 @@ services:
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
       test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
+      start_period: 60s
       interval: 5s
       timeout: 10s
       retries: 20
-      start_period: 60s
