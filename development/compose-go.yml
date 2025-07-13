@@ -19,6 +19,7 @@ services:
       start_period: 60s
   db:
     image: mysql:8
+    restart: unless-stopped
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
