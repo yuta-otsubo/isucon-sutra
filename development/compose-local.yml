@@ -4,13 +4,16 @@ services:
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
+      MYSQL_DATABASE: isuride
+      MYSQL_USER: isucon
+      MYSQL_PASSWORD: isucon
     ports:
       - 3306:3306
     volumes:
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
       test:
-        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uisucon", "-pisucon"]
+        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uisucon", "-pisucon", "isuride"]
       interval: 5s
       timeout: 5s
       retries: 10

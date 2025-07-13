@@ -9,7 +9,11 @@ services:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
+      ISUCON_DB_HOST: db
+      ISUCON_DB_PORT: 3306
+      ISUCON_DB_USER: isucon
+      ISUCON_DB_PASSWORD: isucon
+      ISUCON_DB_NAME: isuride
   db:
     image: mysql:8
     # コンテナ停止時の猶予時間（デフォルト10秒）
@@ -19,7 +23,7 @@ services:
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
-      MYSQL_DATABASE: isucon
+      MYSQL_DATABASE: isuride
       MYSQL_USER: isucon
       MYSQL_PASSWORD: isucon
     ports:
@@ -28,7 +32,7 @@ services:
       - ./mysql/db:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uisucon", "-pisucon"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uisucon", "-pisucon", "isuride"]
       interval: 5s
       timeout: 10s
       retries: 20

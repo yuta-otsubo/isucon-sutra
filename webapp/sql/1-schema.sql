@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS isuride;
 USE isuride;
 
 DROP TABLE IF EXISTS chair_models;
