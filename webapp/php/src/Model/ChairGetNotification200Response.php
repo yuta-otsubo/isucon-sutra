@@ -44,12 +44,11 @@ class ChairGetNotification200Response extends BaseModel
      */
     protected const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "destination_coordinate", "pickup_coordinate", "request_id", "status", "user" ],
-  "type" : "object",
+  "required" : [ "destination_coordinate", "pickup_coordinate", "ride_id", "status", "user" ],
   "properties" : {
-    "request_id" : {
+    "ride_id" : {
       "type" : "string",
-      "description" : "配車要求ID"
+      "description" : "ライドID"
     },
     "user" : {
       "$ref" : "#/components/schemas/User"
@@ -61,7 +60,7 @@ class ChairGetNotification200Response extends BaseModel
       "$ref" : "#/components/schemas/Coordinate"
     },
     "status" : {
-      "$ref" : "#/components/schemas/RequestStatus"
+      "$ref" : "#/components/schemas/RideStatus"
     },
     "retry_after_ms" : {
       "type" : "integer",

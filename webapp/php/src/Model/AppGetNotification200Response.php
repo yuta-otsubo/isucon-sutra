@@ -44,12 +44,11 @@ class AppGetNotification200Response extends BaseModel
      */
     protected const MODEL_SCHEMA = <<<'SCHEMA'
 {
-  "required" : [ "created_at", "destination_coordinate", "pickup_coordinate", "request_id", "status", "updated_at" ],
-  "type" : "object",
+  "required" : [ "created_at", "destination_coordinate", "pickup_coordinate", "ride_id", "status", "updated_at" ],
   "properties" : {
-    "request_id" : {
+    "ride_id" : {
       "type" : "string",
-      "description" : "配車要求ID"
+      "description" : "ライドID"
     },
     "pickup_coordinate" : {
       "$ref" : "#/components/schemas/Coordinate"
@@ -58,18 +57,20 @@ class AppGetNotification200Response extends BaseModel
       "$ref" : "#/components/schemas/Coordinate"
     },
     "status" : {
-      "$ref" : "#/components/schemas/RequestStatus"
+      "$ref" : "#/components/schemas/RideStatus"
     },
     "chair" : {
       "$ref" : "#/components/schemas/AppChair"
     },
     "created_at" : {
-      "type" : "number",
-      "description" : "配車要求日時"
+      "type" : "integer",
+      "description" : "配車要求日時",
+      "format" : "int64"
     },
     "updated_at" : {
-      "type" : "number",
-      "description" : "配車要求更新日時"
+      "type" : "integer",
+      "description" : "配車要求更新日時",
+      "format" : "int64"
     },
     "retry_after_ms" : {
       "type" : "integer",
