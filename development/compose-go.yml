@@ -4,32 +4,35 @@ services:
       context: ../webapp/go
     ports:
       - 8080:8080
+    volumes:
+      - ../webapp/sql:/home/isucon/webapp/sql
     working_dir: /home/isucon/webapp/go
     depends_on:
       db:
         condition: service_healthy
     environment:
-      DB_HOST: db
+      ISUCON_DB_HOST: db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: curl -f http://localhost:8080; if [ $? -ne 22 ]; then exit 1; fi
+      start_period: 60s
   db:
     image: mysql:8
-    # コンテナ停止時の猶予時間（デフォルト10秒）
-    stop_grace_period: 30s
-    # 失敗時の再起動ポリシー
     restart: unless-stopped
+    stop_grace_period: 30s
     environment:
       ENV: local-dev
       MYSQL_ROOT_PASSWORD: isucon
       MYSQL_DATABASE: isucon
-      MYSQL_USER: isucon
-      MYSQL_PASSWORD: isucon
     ports:
       - 3306:3306
     volumes:
       - ./mysql/db:/var/lib/mysql
       - ../webapp/sql:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uisucon", "-pisucon"]
+      test: mysqladmin ping -h 127.0.0.1 -uisucon -pisucon
+      start_period: 60s
       interval: 5s
       timeout: 10s
       retries: 20
-      start_period: 60s
