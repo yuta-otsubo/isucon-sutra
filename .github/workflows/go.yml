@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: "bench/go.mod"
+          go-version-file: 'bench/go.mod'
           cache-dependency-path: |
             ./bench/go.sum
       - name: Install Task
