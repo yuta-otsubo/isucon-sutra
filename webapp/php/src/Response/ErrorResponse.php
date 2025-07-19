@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Response;
+namespace IsuRide\Response;
 
 use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Result;
+namespace IsuRide\Result;
 
 use Throwable;
 
 class Ride
 {
     /**
-     * @param \IsuRide\App\Database\Model\Ride[] $rides
+     * @param \IsuRide\Database\Model\Ride[] $rides
      * @param Throwable|null $error
      */
     public function __construct(

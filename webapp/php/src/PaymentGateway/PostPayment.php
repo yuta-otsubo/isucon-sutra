@@ -2,16 +2,19 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\PaymentGateway;
+namespace IsuRide\PaymentGateway;
 
 use Closure;
-use IsuRide\App\Result\Ride;
+use IsuRide\Result\Ride;
 use RuntimeException;
 use Throwable;
 
-class PostPayment
+readonly class PostPayment
 {
-    private string $paymentURL = "http://localhost:12345";
+    public function __construct(
+        private string $paymentURL = "http://localhost:12345"
+    ) {
+    }
 
     /**
      * @param string $token

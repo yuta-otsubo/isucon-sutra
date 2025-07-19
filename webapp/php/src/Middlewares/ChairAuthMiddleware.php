@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Middlewares;
+namespace IsuRide\Middlewares;
 
 use Exception;
 use Fig\Http\Message\StatusCodeInterface;
-use IsuRide\App\Database\Model\Chair;
-use IsuRide\App\Response\ErrorResponse;
+use IsuRide\Database\Model\Chair;
+use IsuRide\Response\ErrorResponse;
 use PDO;
 use PDOException;
 use Psr\Http\Message\ResponseFactoryInterface;

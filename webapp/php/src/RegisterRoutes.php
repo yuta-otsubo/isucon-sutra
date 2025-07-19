@@ -1,4 +1,5 @@
 <?php
+// TODO 削除予定
 
 /**
  * ISURIDE API Specification
@@ -22,7 +23,7 @@ declare(strict_types=1);
  * https://github.com/openapitools/openapi-generator
  * Do not edit the class manually.
  */
-namespace IsuRide\App;
+namespace IsuRide;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

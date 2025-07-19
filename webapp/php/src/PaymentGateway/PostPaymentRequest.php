@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\PaymentGateway;
+namespace IsuRide\PaymentGateway;
 
 use JsonSerializable;
 

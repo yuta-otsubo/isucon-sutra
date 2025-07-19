@@ -2,15 +2,17 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Database\Model;
+namespace IsuRide\Database\Model;
 
-readonly class Owner
+readonly class Chair
 {
     public function __construct(
         public string $id,
+        public string $ownerId,
         public string $name,
         public string $accessToken,
-        public string $chairRegisterToken,
+        public string $model,
+        public bool $isActive,
         public int $createdAt,
         public int $updatedAt
     ) {

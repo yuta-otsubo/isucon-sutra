@@ -152,29 +152,9 @@ webapp/php/
 
 ---
 
-<!-->
+# 181
 
-## 写経メモ
+https://github.com/isucon/isucon14/blob/112fab9cba216969532034d20d2d6e7efe18b618/webapp/php/config.yaml
 
-### 学習ポイント
-
-- [ ] Slim Framework の基本構造理解
-- [ ] Clean Architecture の実装パターン
-- [ ] PHP の型安全性（readonly class, declare(strict_types=1)）
-- [ ] 環境変数を使った設定管理
-- [ ] エラーハンドリングの統一化
-
-### 気づき
-
-- モデルクラスが readonly class で実装されている → イミュータブル設計
-- 名前空間が IsuRide で統一されている
-- 設定が環境変数で外部化されている → 12 Factor App の原則
-- Foundation 層でフレームワーク固有の処理を抽象化
-
-### TODO
-
-- [ ] 各モデルクラスの詳細構造を確認
-- [ ] ルーティングの実装を追加
-- [ ] データベースアクセス層の実装
-- [ ] ミドルウェアの実装内容確認
-      -->
+library: psr-18 に設定が変更されたが、自分の環境では composer run generate に失敗した。
+generate コマンドを　`-g php-slim4` から `-g php` に変更することで対応した。

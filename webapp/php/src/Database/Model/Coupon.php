@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Database\Model;
+namespace IsuRide\Database\Model;
 
 readonly class Coupon
 {

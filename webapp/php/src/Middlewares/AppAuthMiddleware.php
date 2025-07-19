@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace IsuRide\App\Middlewares;
+namespace IsuRide\Middlewares;
 
 use Exception;
 use Fig\Http\Message\StatusCodeInterface;
-use IsuRide\App\Database\Model\Owner;
-use IsuRide\App\Response\ErrorResponse;
+use IsuRide\Response\ErrorResponse;
+use IsuRide\Database\Model\User;
 use PDO;
 use PDOException;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-readonly class OwnerAuthMiddleware implements MiddlewareInterface
+readonly class AppAuthMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private PDO $db,
@@ -24,21 +24,24 @@ readonly class OwnerAuthMiddleware implements MiddlewareInterface
     ) {
     }
 
+    /**
+     * @inheritdoc
+     */
     public function process(
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
         $cookies = $request->getCookieParams();
-        $accessToken = $cookies['owner_session'] ?? '';
+        $accessToken = $cookies['app_session'] ?? '';
         if ($accessToken === '') {
             return (new ErrorResponse())->write(
                 $this->responseFactory->createResponse(),
                 StatusCodeInterface::STATUS_UNAUTHORIZED,
-                new Exception('owner_session cookie is required')
+                new Exception('app_session cookie is required')
             );
         }
         try {
-            $stmt = $this->db->prepare('SELECT * FROM owners WHERE access_token = ?');
+            $stmt = $this->db->prepare('SELECT * FROM users WHERE access_token = ?');
             $stmt->execute([$accessToken]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$result) {
@@ -49,12 +52,14 @@ readonly class OwnerAuthMiddleware implements MiddlewareInterface
                 );
             }
             $request = $request->withAttribute(
-                'owner',
-                new Owner(
+                'user',
+                new User(
                     id: $result['id'],
-                    name: $result['username'],
+                    username: $result['username'],
+                    firstname: $result['firstname'],
+                    lastname: $result['lastname'],
+                    dateOfBirth: $result['date_of_birth'],
                     accessToken: $result['access_token'],
-                    chairRegisterToken: $result['chair_register_token'],
                     createdAt: $result['created_at'],
                     updatedAt: $result['updated_at']
                 )
