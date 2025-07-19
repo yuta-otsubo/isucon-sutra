@@ -42,3 +42,18 @@ carton install
 docker build -t isuride-perl .
 docker run -p 8080:8080 isuride-perl
 ```
+
+## .perltidyrc
+
+プロジェクトルートの `.perltidyrc` は Perl コードフォーマッターの設定ファイル。
+perltidy コマンドでコードを自動整形する際の規則を定義している。
+
+主な設定内容:
+- UTF-8エンコーディング使用
+- else文の抱き合わせスタイル
+- インデント4スペース
+- 最大行長制限なし
+- 括弧の密着度設定
+- コメントのインデント設定
+
+開発時にコードの統一性を保つために使用される。
