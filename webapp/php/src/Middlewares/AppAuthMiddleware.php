@@ -6,8 +6,8 @@ namespace IsuRide\Middlewares;
 
 use Exception;
 use Fig\Http\Message\StatusCodeInterface;
-use IsuRide\Response\ErrorResponse;
 use IsuRide\Database\Model\User;
+use IsuRide\Response\ErrorResponse;
 use PDO;
 use PDOException;
 use Psr\Http\Message\ResponseFactoryInterface;
@@ -42,7 +42,8 @@ readonly class AppAuthMiddleware implements MiddlewareInterface
         }
         try {
             $stmt = $this->db->prepare('SELECT * FROM users WHERE access_token = ?');
-            $stmt->execute([$accessToken]);
+            $stmt->bindValue(1, $accessToken, PDO::PARAM_STR);
+            $stmt->execute();
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$result) {
                 return (new ErrorResponse())->write(
