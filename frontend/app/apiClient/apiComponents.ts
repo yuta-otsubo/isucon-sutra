@@ -4,7 +4,7 @@
  * @version 1.0
  */
 import * as reactQuery from "@tanstack/react-query";
-import { useApiContext, ApiContext } from "./apiContext";
+import { ApiContext, useApiContext } from "./apiContext";
 import type * as Fetcher from "./apiFetcher";
 import { apiFetch } from "./apiFetcher";
 import type * as Schemas from "./apiSchemas";
@@ -81,6 +81,10 @@ export type AppPostRegisterResponse = {
    * ユーザーID
    */
   id: string;
+  /**
+   * 自分の招待コード
+   */
+  invitation_code: string;
 };
 
 export type AppPostRegisterRequestBody = {
@@ -100,6 +104,10 @@ export type AppPostRegisterRequestBody = {
    * 生年月日
    */
   date_of_birth: string;
+  /**
+   * 他の人の招待コード
+   */
+  invitation_code?: string;
 };
 
 export type AppPostRegisterVariables = {

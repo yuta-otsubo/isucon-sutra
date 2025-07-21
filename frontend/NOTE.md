@@ -1,6 +1,7 @@
 # Frontend ディレクトリ構成説明
 
 ## 設定ファイル
+
 - `package.json`: プロジェクトの依存関係と実行スクリプトを定義
 - `package-lock.json`: 依存関係の正確なバージョンを固定するためのファイル
 - `pnpm-lock.yaml`: pnpmパッケージマネージャ用の依存関係ロックファイル
@@ -16,24 +17,25 @@
 - `.DS_Store`: macOSが自動生成するシステムファイル（バージョン管理対象外）
 
 ## その他
+
 - `README.md`: フロントエンドプロジェクトの説明と使用方法を記載したドキュメント
 
 ---
 
 - `vite`とは:
-    - フロントエンドのビルドツール
-    - モダンなフロントエンド開発をサポートするツール
-    - 高速な開発体験を提供
-    - バンドル、圧縮、コード分割などの機能を提供
-    - ホットリローディング、TypeScriptサポート、ESMサポートなどの機能を提供
-    - バンドル、圧縮、コード分割などの機能を提供
+  - フロントエンドのビルドツール
+  - モダンなフロントエンド開発をサポートするツール
+  - 高速な開発体験を提供
+  - バンドル、圧縮、コード分割などの機能を提供
+  - ホットリローディング、TypeScriptサポート、ESMサポートなどの機能を提供
+  - バンドル、圧縮、コード分割などの機能を提供
 - `ホットリローディング`とは:
-    - コードの変更を即座にブラウザに反映する
-    - ファイルの変更を検知して自動的にブラウザを更新する
+  - コードの変更を即座にブラウザに反映する
+  - ファイルの変更を検知して自動的にブラウザを更新する
 
 - `tailwind`とは:
-    - ユーティリティクラスベースのCSSフレームワーク
-    - クラスを追加することでスタイルを適用できる
+  - ユーティリティクラスベースのCSSフレームワーク
+  - クラスを追加することでスタイルを適用できる
 
 ---
 
@@ -149,25 +151,16 @@ JSX構文とは: Reactのコンポーネントを記述するためのXMLライ�
 具体例:
 
 **No JSX**
+
 ```jsx
-import React from 'react';
+import React from "react";
 
 function GreetingNoJSX({ name }) {
   return React.createElement(
-    'div',
-    { className: 'greeting' },
-    React.createElement(
-      'h1',
-      null,
-      'こんにちは、',
-      name,
-      'さん！'
-    ),
-    React.createElement(
-      'p',
-      null,
-      'Reactへようこそ。'
-    )
+    "div",
+    { className: "greeting" },
+    React.createElement("h1", null, "こんにちは、", name, "さん！"),
+    React.createElement("p", null, "Reactへようこそ。"),
   );
 }
 
@@ -175,8 +168,9 @@ export default GreetingNoJSX;
 ```
 
 **JSX**
+
 ```jsx
-import React from 'react';
+import React from "react";
 
 function GreetingJSX({ name }) {
   return (
@@ -194,4 +188,14 @@ export default GreetingJSX;
 
 ```sh
 pnpm run dev
+```
+
+---
+
+### module が見つからない
+
+pnpm で必要な module をインストールする
+
+```sh
+pnpm install
 ```
