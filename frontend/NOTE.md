@@ -199,3 +199,9 @@ pnpm で必要な module をインストールする
 ```sh
 pnpm install
 ```
+
+### openapi-codegen
+
+```
+pnpm run codegen
+```
