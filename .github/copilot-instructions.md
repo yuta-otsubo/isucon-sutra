@@ -1,3 +1,4 @@
 # Instructions
 
-Please respond in Japanese.
+- Please respond in Japanese.
+- Write a detailed description of the file changes.
