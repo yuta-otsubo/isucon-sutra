@@ -1,1 +1,3 @@
-- 日本語で回答してください
+# Instructions
+
+Please respond in Japanese.
