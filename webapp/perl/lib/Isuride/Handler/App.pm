@@ -105,7 +105,7 @@ sub app_post_payment_methods ($app, $c) {
     }
 
     if ($params->{token} eq '') {
-        return $c->halt_json(HTTP_BAD_REQUEST, 'token is required but was empt');
+        return $c->halt_json(HTTP_BAD_REQUEST, 'token is required but was empty');
     }
 
     my $user = $c->stash->{user};
