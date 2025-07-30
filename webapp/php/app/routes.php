@@ -32,6 +32,7 @@ return function (App $app, array $config) {
         $app->post('/rides/estimated-fare', new Handlers\App\PostRidesEstimatedFare($database));
         $app->get('/rides/{ride_id}', new Handlers\App\GetRide($database));
         $app->post('/rides/{ride_id}/evaluation', new Handlers\App\PostRideEvaluatation($database, $paymentGateway));
+        $app->get('/notification', new Handlers\App\GetNotification($database));
     })->addMiddleware(
         new Middlewares\AppAuthMiddleware($database, $app->getResponseFactory())
     );
