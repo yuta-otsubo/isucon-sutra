@@ -22,12 +22,7 @@ return function (App $app, array $config) {
         // CORS Pre-Flight OPTIONS Request Handler
         return $response;
     });
-    $app->post(
-        '/api/initialize',
-        new Handlers\PostInitialize(
-            $config['resource_path'],
-        )
-    );
+    $app->post('/api/initialize', new Handlers\PostInitialize($database));
     $app->post('/api/app/users', new Handlers\App\PostUsers($database));
     // app handlers
     $app->group('/api/app', function ($app) use ($database, $paymentGateway) {
@@ -36,7 +31,7 @@ return function (App $app, array $config) {
         $app->post('/rides', new Handlers\App\PostRides($database));
         $app->post('/rides/estimated-fare', new Handlers\App\PostRidesEstimatedFare($database));
         $app->get('/rides/{ride_id}', new Handlers\App\GetRide($database));
-        $app->post('/rides/{ride_id}/evaluation', new Handlers\App\PostRideEvaluation($database, $paymentGateway));
+        $app->post('/rides/{ride_id}/evaluation', new Handlers\App\PostRideEvaluatation($database, $paymentGateway));
     })->addMiddleware(
         new Middlewares\AppAuthMiddleware($database, $app->getResponseFactory())
     );
@@ -45,7 +40,7 @@ return function (App $app, array $config) {
     $app->group('/api/owner', function ($app) use ($database) {
         $app->get('/sales', new Handlers\Owner\GetSales($database));
         $app->get('/chairs', new Handlers\Owner\GetChairs($database));
-        $app->get('/chairs/{chairId}', new Handlers\Owner\GetChairDetail($database));
+        $app->get('/chairs/{chair_id}', new Handlers\Owner\GetChairDetail($database));
     })->addMiddleware(
         new Middlewares\OwnerAuthMiddleware($database, $app->getResponseFactory())
     );
