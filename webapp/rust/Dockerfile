@@ -1,4 +1,4 @@
-FROM rust:1.83-bookworm
+FROM rust:1.82-bookworm
 
 WORKDIR /home/isucon/webapp/rust
 
