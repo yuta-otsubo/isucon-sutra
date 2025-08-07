@@ -68,6 +68,10 @@ func (c *Chair) SetID(id ChairID) {
 	c.ID = id
 }
 
+func (c *Chair) GetServerID() string {
+	return c.ServerID
+}
+
 func (c *Chair) Tick(ctx *Context) error {
 	if c.tickDone.DoOrSkip() {
 		return nil
@@ -253,7 +257,7 @@ func (c *Chair) Tick(ctx *Context) error {
 		if err != nil {
 			return WrapCodeError(ErrorCodeFailedToSendChairCoordinate, err)
 		}
-		c.Location.SetServerTime(res.RecordedAt) // FIXME: ここの反映(ロック)が遅れて、総移動距離の計算が1つずれる場合がある
+		c.Location.SetServerTime(res.RecordedAt) // FIXME: ここの反映(ロック)が遅れて、総移動距離の計算が１つずれる場合がある
 		c.Location.ResetDirtyFlag()
 	}
 	return nil
