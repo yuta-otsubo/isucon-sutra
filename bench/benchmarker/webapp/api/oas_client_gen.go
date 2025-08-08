@@ -88,12 +88,6 @@ type Invoker interface {
 	//
 	// GET /chair/notification
 	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
-	// ChairGetRide invokes chair-get-ride operation.
-	//
-	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
-	//
-	// GET /chair/rides/{ride_id}
-	ChairGetRide(ctx context.Context, params ChairGetRideParams) (ChairGetRideRes, error)
 	// ChairPostActivity invokes chair-post-activity operation.
 	//
 	// 椅子が配車受付を開始・停止する.
@@ -1007,96 +1001,6 @@ func (c *Client) sendChairGetNotification(ctx context.Context) (res ChairGetNoti
 
 	stage = "DecodeResponse"
 	result, err := decodeChairGetNotificationResponse(resp)
-	if err != nil {
-		return res, errors.Wrap(err, "decode response")
-	}
-
-	return result, nil
-}
-
-// ChairGetRide invokes chair-get-ride operation.
-//
-// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
-//
-// GET /chair/rides/{ride_id}
-func (c *Client) ChairGetRide(ctx context.Context, params ChairGetRideParams) (ChairGetRideRes, error) {
-	res, err := c.sendChairGetRide(ctx, params)
-	return res, err
-}
-
-func (c *Client) sendChairGetRide(ctx context.Context, params ChairGetRideParams) (res ChairGetRideRes, err error) {
-	otelAttrs := []attribute.KeyValue{
-		otelogen.OperationID("chair-get-ride"),
-		semconv.HTTPRequestMethodKey.String("GET"),
-		semconv.HTTPRouteKey.String("/chair/rides/{ride_id}"),
-	}
-
-	// Run stopwatch.
-	startTime := time.Now()
-	defer func() {
-		// Use floating point division here for higher precision (instead of Millisecond method).
-		elapsedDuration := time.Since(startTime)
-		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
-	}()
-
-	// Increment request counter.
-	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-
-	// Start a span for this request.
-	ctx, span := c.cfg.Tracer.Start(ctx, ChairGetRideOperation,
-		trace.WithAttributes(otelAttrs...),
-		clientSpanKind,
-	)
-	// Track stage for error reporting.
-	var stage string
-	defer func() {
-		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, stage)
-			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
-		}
-		span.End()
-	}()
-
-	stage = "BuildURL"
-	u := uri.Clone(c.requestURL(ctx))
-	var pathParts [2]string
-	pathParts[0] = "/chair/rides/"
-	{
-		// Encode "ride_id" parameter.
-		e := uri.NewPathEncoder(uri.PathEncoderConfig{
-			Param:   "ride_id",
-			Style:   uri.PathStyleSimple,
-			Explode: false,
-		})
-		if err := func() error {
-			return e.EncodeValue(conv.StringToString(params.RideID))
-		}(); err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		encoded, err := e.Result()
-		if err != nil {
-			return res, errors.Wrap(err, "encode path")
-		}
-		pathParts[1] = encoded
-	}
-	uri.AddPathParts(u, pathParts[:]...)
-
-	stage = "EncodeRequest"
-	r, err := ht.NewRequest(ctx, "GET", u)
-	if err != nil {
-		return res, errors.Wrap(err, "create request")
-	}
-
-	stage = "SendRequest"
-	resp, err := c.cfg.Client.Do(r)
-	if err != nil {
-		return res, errors.Wrap(err, "do request")
-	}
-	defer resp.Body.Close()
-
-	stage = "DecodeResponse"
-	result, err := decodeChairGetRideResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

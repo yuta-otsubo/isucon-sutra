@@ -16,7 +16,6 @@ const (
 	AppPostRidesEstimatedFareOperation OperationName = "AppPostRidesEstimatedFare"
 	AppPostUsersOperation              OperationName = "AppPostUsers"
 	ChairGetNotificationOperation      OperationName = "ChairGetNotification"
-	ChairGetRideOperation              OperationName = "ChairGetRide"
 	ChairPostActivityOperation         OperationName = "ChairPostActivity"
 	ChairPostChairsOperation           OperationName = "ChairPostChairs"
 	ChairPostCoordinateOperation       OperationName = "ChairPostCoordinate"

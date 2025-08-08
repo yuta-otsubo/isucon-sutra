@@ -396,16 +396,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					elem = elem[idx:]
 
 					if len(elem) == 0 {
-						switch r.Method {
-						case "GET":
-							s.handleChairGetRideRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "GET")
-						}
-
-						return
+						break
 					}
 					switch elem[0] {
 					case '/': // Prefix: "/status"
@@ -1039,18 +1030,7 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					elem = elem[idx:]
 
 					if len(elem) == 0 {
-						switch method {
-						case "GET":
-							r.name = ChairGetRideOperation
-							r.summary = "椅子がライド情報を取得する"
-							r.operationID = "chair-get-ride"
-							r.pathPattern = "/chair/rides/{ride_id}"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
+						break
 					}
 					switch elem[0] {
 					case '/': // Prefix: "/status"
