@@ -103,15 +103,6 @@ func (UnimplementedHandler) ChairGetNotification(ctx context.Context) (r ChairGe
 	return r, ht.ErrNotImplemented
 }
 
-// ChairGetRide implements chair-get-ride operation.
-//
-// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
-//
-// GET /chair/rides/{ride_id}
-func (UnimplementedHandler) ChairGetRide(ctx context.Context, params ChairGetRideParams) (r ChairGetRideRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // ChairPostActivity implements chair-post-activity operation.
 //
 // 椅子が配車受付を開始・停止する.

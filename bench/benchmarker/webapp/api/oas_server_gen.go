@@ -68,12 +68,6 @@ type Handler interface {
 	//
 	// GET /chair/notification
 	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
-	// ChairGetRide implements chair-get-ride operation.
-	//
-	// 椅子向け通知エンドポイントから通知されたidの情報を取得する想定.
-	//
-	// GET /chair/rides/{ride_id}
-	ChairGetRide(ctx context.Context, params ChairGetRideParams) (ChairGetRideRes, error)
 	// ChairPostActivity implements chair-post-activity operation.
 	//
 	// 椅子が配車受付を開始・停止する.
