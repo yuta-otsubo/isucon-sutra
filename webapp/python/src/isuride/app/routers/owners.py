@@ -15,9 +15,6 @@ from ulid import ULID
 from ..sql import engine
 from ..utils import secure_random_str
 
-fare_per_distance: int = 100
-initial_fare: int = 500
-
 router = APIRouter(prefix="/api/owner")
 
 INITIAL_FARE = 500
