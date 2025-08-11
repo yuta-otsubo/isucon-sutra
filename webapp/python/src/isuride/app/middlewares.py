@@ -1,5 +1,4 @@
 from fastapi import Cookie, HTTPException
-
 from sqlalchemy import text
 
 from .models import User
