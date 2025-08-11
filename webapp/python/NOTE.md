@@ -39,6 +39,7 @@ webapp/python/
 
 - **noxfile.py**: nox タスクランナーの設定ファイル
 
+  - uv をバックエンドとして使用
   - コード品質チェック（lint）セッション
   - 型チェック（mypy）セッション
   - Python 3.10 環境での自動実行
@@ -170,18 +171,25 @@ nox --python 3.10
 
 ### 現在のプロジェクトでの nox 設定
 
-**noxfile.py** では以下のセッションが定義されています：
+**noxfile.py** では uv をバックエンドとして使用し、以下のセッションが定義されています：
+
+```python
+nox.options.default_venv_backend = "uv"
+```
 
 1. **lint セッション**:
 
-   - pre-commit を使用したコード品質チェック
+   - uv を使用して pre-commit をインストール
    - 全ファイルに対して linting を実行
    - Python 3.10 環境で実行
+   - `uv run` でコマンド実行
 
 2. **mypy セッション**:
-   - mypy を使用した型チェック
+   - uv sync で依存関係を同期
+   - uv を使用して mypy をインストール
    - isuride パッケージ全体の型安全性を検証
    - Python 3.10 環境で実行
+   - `uv run` でコマンド実行
 
 ### 開発ワークフローでの活用
 
@@ -207,3 +215,24 @@ nox
 | CI/CD 統合            | 優れている | 基本     | 優れている | 困難     |
 
 nox は特に複数の Python バージョンでのテストや、複雑な開発ワークフローの管理に適しています。
+
+### nox と uv の統合
+
+本プロジェクトでは nox と uv を組み合わせて使用しています：
+
+- **`nox.options.default_venv_backend = "uv"`**: nox が uv をバックエンドとして使用
+- **`session.run("uv", ..., external=True)`**: uv コマンドを直接実行
+- **高速化**: uv の高速なパッケージインストールを活用
+- **一貫性**: プロジェクト全体で uv を統一使用
+
+```bash
+# nox セッションでの uv 使用例
+# lint セッション実行時:
+# 1. uv add --dev pre-commit
+# 2. uv run nox
+
+# mypy セッション実行時:
+# 1. uv sync
+# 2. uv add --dev mypy
+# 3. uv run nox --session mypy
+```
