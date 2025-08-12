@@ -19,25 +19,9 @@ const create = async () => {
           name: "chair1",
           model: "model1",
         },
-        {
-          name: "chair2",
-          model: "model2",
-        },
-        {
-          name: "chair3",
-          model: "model3",
-        },
       ],
     },
-    {
-      name: "オーナー2",
-      chairs: [
-        {
-          name: "chair1",
-          model: "model1",
-        },
-      ],
-    },
+    { name: "オーナー2", chairs: [] },
     { name: "オーナー3", chairs: [] },
   ];
 
