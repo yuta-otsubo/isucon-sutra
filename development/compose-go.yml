@@ -37,3 +37,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+  paymentmock:
+    build:
+      context: ../wepapp/payment_mock
+    ports:
+      - 12345:12345
