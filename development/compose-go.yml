@@ -39,6 +39,6 @@ services:
       retries: 20
   paymentmock:
     build:
-      context: ../wepapp/payment_mock
+      context: ../webapp/payment_mock
     ports:
       - 12345:12345
