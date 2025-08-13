@@ -37,3 +37,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+  paymentmock:
+    build:
+      context: ../webapp/payment_mock
+    ports:
+      - 12345:12345
