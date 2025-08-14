@@ -48,7 +48,8 @@ def chair_post_chairs(
         ).fetchone()
         if row is None:
             raise HTTPException(
-                status_code=status.UNAUTHORIZED, detail="invalid chair_register_token"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid chair_register_token",
             )
         owner = Owner(**row)
 
