@@ -130,15 +130,6 @@ func (UnimplementedHandler) ChairPostRideStatus(ctx context.Context, req OptChai
 	return r, ht.ErrNotImplemented
 }
 
-// OwnerGetChair implements owner-get-chair operation.
-//
-// 管理している椅子の詳細を取得する.
-//
-// GET /owner/chairs/{chair_id}
-func (UnimplementedHandler) OwnerGetChair(ctx context.Context, params OwnerGetChairParams) (r *OwnerGetChairOK, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // OwnerGetChairs implements owner-get-chairs operation.
 //
 // 椅子のオーナーが管理している椅子の一覧を取得する.
