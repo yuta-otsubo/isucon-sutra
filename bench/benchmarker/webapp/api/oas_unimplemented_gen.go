@@ -31,15 +31,6 @@ func (UnimplementedHandler) AppGetNotification(ctx context.Context) (r AppGetNot
 	return r, ht.ErrNotImplemented
 }
 
-// AppGetRide implements app-get-ride operation.
-//
-// ユーザーがライドの詳細を確認する.
-//
-// GET /app/rides/{ride_id}
-func (UnimplementedHandler) AppGetRide(ctx context.Context, params AppGetRideParams) (r AppGetRideRes, _ error) {
-	return r, ht.ErrNotImplemented
-}
-
 // AppGetRides implements app-get-rides operation.
 //
 // ユーザーが完了済みのライド一覧を取得する.
