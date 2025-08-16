@@ -20,12 +20,6 @@ type Handler interface {
 	//
 	// GET /app/notification
 	AppGetNotification(ctx context.Context) (AppGetNotificationRes, error)
-	// AppGetRide implements app-get-ride operation.
-	//
-	// ユーザーがライドの詳細を確認する.
-	//
-	// GET /app/rides/{ride_id}
-	AppGetRide(ctx context.Context, params AppGetRideParams) (AppGetRideRes, error)
 	// AppGetRides implements app-get-rides operation.
 	//
 	// ユーザーが完了済みのライド一覧を取得する.

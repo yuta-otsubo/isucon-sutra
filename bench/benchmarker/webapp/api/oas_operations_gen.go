@@ -8,7 +8,6 @@ type OperationName = string
 const (
 	AppGetNearbyChairsOperation        OperationName = "AppGetNearbyChairs"
 	AppGetNotificationOperation        OperationName = "AppGetNotification"
-	AppGetRideOperation                OperationName = "AppGetRide"
 	AppGetRidesOperation               OperationName = "AppGetRides"
 	AppPostPaymentMethodsOperation     OperationName = "AppPostPaymentMethods"
 	AppPostRideEvaluationOperation     OperationName = "AppPostRideEvaluation"
