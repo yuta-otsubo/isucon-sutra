@@ -86,12 +86,6 @@ type Handler interface {
 	//
 	// POST /chair/rides/{ride_id}/status
 	ChairPostRideStatus(ctx context.Context, req OptChairPostRideStatusReq, params ChairPostRideStatusParams) (ChairPostRideStatusRes, error)
-	// OwnerGetChair implements owner-get-chair operation.
-	//
-	// 管理している椅子の詳細を取得する.
-	//
-	// GET /owner/chairs/{chair_id}
-	OwnerGetChair(ctx context.Context, params OwnerGetChairParams) (*OwnerGetChairOK, error)
 	// OwnerGetChairs implements owner-get-chairs operation.
 	//
 	// 椅子のオーナーが管理している椅子の一覧を取得する.
