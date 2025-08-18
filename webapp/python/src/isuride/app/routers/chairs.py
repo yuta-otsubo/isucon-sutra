@@ -49,10 +49,9 @@ def chair_post_chairs(
         ).fetchone()
         if row is None:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="invalid chair_register_token",
+                status_code=status.UNAUTHORIZED, detail="invalid chair_register_token"
             )
-        owner = Owner(**row)
+        owner = Owner(**row._mapping)
 
     chair_id = str(ULID())
     access_token = secure_random_str(32)
@@ -110,7 +109,8 @@ def chair_post_coordinate(
         conn.execute(
             text(
                 "INSERT INTO chair_locations (id, chair_id, latitude, longitude) VALUES (:id, :chair_id, :latitude, :longitude)"
-            )
+            ),
+            {},  # TODO: here
         )
 
         row = conn.execute(
@@ -260,8 +260,7 @@ def chair_post_ride_status(
 
         if ride.chair_id != chair.id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="not assigned to this ride",
+                status_code=status.BAD_REQUEST, detail="not assigned to this ride"
             )
 
         match req.status:
