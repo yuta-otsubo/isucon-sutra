@@ -51,7 +51,7 @@ class PostRides extends AbstractHttpHandler
         }
 
         $user = $request->getAttribute('user');
-        assert($user instanceof User);
+        assert($user instanceof \IsuRide\Database\Model\User);
         $rideId = new Ulid();
         $this->db->beginTransaction();
         try {
