@@ -227,12 +227,6 @@ nox は特に複数の Python バージョンでのテストや、複雑な開�
 
 ```bash
 # nox セッションでの uv 使用例
-# lint セッション実行時:
-# 1. uv add --dev pre-commit
-# 2. uv run nox
-
-# mypy セッション実行時:
-# 1. uv sync
-# 2. uv add --dev mypy
-# 3. uv run nox --session mypy
+# 全件実行
+uv run --link-mode=copy nox
 ```
