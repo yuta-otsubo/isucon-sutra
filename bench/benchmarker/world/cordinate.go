@@ -28,7 +28,7 @@ func (c Coordinate) DistanceTo(c2 Coordinate) int {
 	return abs(c.X-c2.X) + abs(c.Y-c2.Y)
 }
 
-// Within 座標がregion内になるかどうか
+// Within 座標がregion内にあるかどうか
 func (c Coordinate) Within(region *Region) bool {
 	return region.Contains(c)
 }
@@ -67,4 +67,37 @@ func RandomCoordinateAwayFromHereWithRand(here Coordinate, distance int, rand *r
 		break
 	}
 	return C(here.X+x, here.Y+y)
+}
+
+func CalculateRandomDetourPoint(start, dest Coordinate, speed int, rand *rand.Rand) Coordinate {
+	halfT := start.DistanceTo(dest) / speed / 2
+	move := halfT * speed
+	moveX := rand.IntN(move + 1)
+	moveY := move - moveX
+
+	if start.X == dest.X {
+		moveX = 0
+		moveY = move
+	} else if start.Y == dest.Y {
+		moveY = 0
+		moveX = move
+	}
+
+	x := start.X
+	y := start.Y
+	switch {
+	case start.X < dest.X:
+		x += moveX
+	case start.X > dest.X:
+		x -= moveX
+	}
+
+	switch {
+	case start.Y < dest.Y:
+		y += moveY
+	case start.Y > dest.Y:
+		y -= moveY
+	}
+
+	return C(x, y)
 }
