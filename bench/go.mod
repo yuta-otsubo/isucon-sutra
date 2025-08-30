@@ -4,15 +4,14 @@ go 1.23.1
 
 require (
 	github.com/brianvoe/gofakeit/v7 v7.2.1
+	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/gavv/httpexpect/v2 v2.17.0
 	github.com/go-faster/errors v0.7.1
 	github.com/go-faster/jx v1.1.0
 	github.com/guregu/null/v5 v5.0.0
 	github.com/isucon/isucandar v0.0.0-20220322062028-6dd56dc57d72
 	github.com/mattn/go-gimei v0.0.4
-	github.com/neilotoole/slogt v1.1.0
 	github.com/ogen-go/ogen v1.13.0
-	github.com/oklog/ulid/v2 v2.1.0
 	github.com/samber/lo v1.50.0
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
@@ -25,6 +24,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.36.0
 	go.uber.org/mock v0.5.2
 	golang.org/x/exp v0.0.0-20250506013437-ce4c2cf36ca6
+	golang.org/x/sync v0.14.0
 	google.golang.org/protobuf v1.36.6
 )
 
@@ -74,7 +74,6 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
-	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/tools v0.33.0 // indirect
