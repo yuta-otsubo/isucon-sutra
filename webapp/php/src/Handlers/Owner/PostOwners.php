@@ -69,7 +69,8 @@ class PostOwners extends AbstractHttpHandler
                 new OwnerPostOwners201Response([
                     'id' => (string)$ownerId,
                     'chair_register_token' => $chairRegisterToken,
-                ])
+                ]),
+                StatusCodeInterfeace::STATUS_CREATED
             );
         } catch (PDOException $e) {
             return (new ErrorResponse())->write(
