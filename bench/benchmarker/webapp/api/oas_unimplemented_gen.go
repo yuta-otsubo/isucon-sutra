@@ -24,10 +24,10 @@ func (UnimplementedHandler) AppGetNearbyChairs(ctx context.Context, params AppGe
 
 // AppGetNotification implements app-get-notification operation.
 //
-// 最新の自分のライドを取得する.
+// 最新の自分のライドの状態を取得・通知する.
 //
 // GET /app/notification
-func (UnimplementedHandler) AppGetNotification(ctx context.Context) (r AppGetNotificationRes, _ error) {
+func (UnimplementedHandler) AppGetNotification(ctx context.Context) (r *AppGetNotificationOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

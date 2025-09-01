@@ -66,7 +66,7 @@ func decodeAppGetNearbyChairsResponse(resp *http.Response) (res *AppGetNearbyCha
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
 
-func decodeAppGetNotificationResponse(resp *http.Response) (res AppGetNotificationRes, _ error) {
+func decodeAppGetNotificationResponse(resp *http.Response) (res *AppGetNotificationOK, _ error) {
 	switch resp.StatusCode {
 	case 200:
 		// Code 200.
@@ -112,9 +112,6 @@ func decodeAppGetNotificationResponse(resp *http.Response) (res AppGetNotificati
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
-	case 204:
-		// Code 204.
-		return &AppGetNotificationNoContent{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }
