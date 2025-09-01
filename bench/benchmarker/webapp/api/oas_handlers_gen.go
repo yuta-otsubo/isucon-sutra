@@ -178,7 +178,7 @@ func (s *Server) handleAppGetNearbyChairsRequest(args [0]string, argsEscaped boo
 
 // handleAppGetNotificationRequest handles app-get-notification operation.
 //
-// 最新の自分のライドを取得する.
+// 最新の自分のライドの状態を取得・通知する.
 //
 // GET /app/notification
 func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -247,7 +247,7 @@ func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped boo
 		err error
 	)
 
-	var response AppGetNotificationRes
+	var response *AppGetNotificationOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -262,7 +262,7 @@ func (s *Server) handleAppGetNotificationRequest(args [0]string, argsEscaped boo
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = AppGetNotificationRes
+			Response = *AppGetNotificationOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,

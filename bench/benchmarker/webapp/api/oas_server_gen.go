@@ -16,10 +16,10 @@ type Handler interface {
 	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
 	// AppGetNotification implements app-get-notification operation.
 	//
-	// 最新の自分のライドを取得する.
+	// 最新の自分のライドの状態を取得・通知する.
 	//
 	// GET /app/notification
-	AppGetNotification(ctx context.Context) (AppGetNotificationRes, error)
+	AppGetNotification(ctx context.Context) (*AppGetNotificationOK, error)
 	// AppGetRides implements app-get-rides operation.
 	//
 	// ユーザーが完了済みのライド一覧を取得する.

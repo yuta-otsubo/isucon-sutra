@@ -36,10 +36,10 @@ type Invoker interface {
 	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
 	// AppGetNotification invokes app-get-notification operation.
 	//
-	// 最新の自分のライドを取得する.
+	// 最新の自分のライドの状態を取得・通知する.
 	//
 	// GET /app/notification
-	AppGetNotification(ctx context.Context) (AppGetNotificationRes, error)
+	AppGetNotification(ctx context.Context) (*AppGetNotificationOK, error)
 	// AppGetRides invokes app-get-rides operation.
 	//
 	// ユーザーが完了済みのライド一覧を取得する.
@@ -298,15 +298,15 @@ func (c *Client) sendAppGetNearbyChairs(ctx context.Context, params AppGetNearby
 
 // AppGetNotification invokes app-get-notification operation.
 //
-// 最新の自分のライドを取得する.
+// 最新の自分のライドの状態を取得・通知する.
 //
 // GET /app/notification
-func (c *Client) AppGetNotification(ctx context.Context) (AppGetNotificationRes, error) {
+func (c *Client) AppGetNotification(ctx context.Context) (*AppGetNotificationOK, error) {
 	res, err := c.sendAppGetNotification(ctx)
 	return res, err
 }
 
-func (c *Client) sendAppGetNotification(ctx context.Context) (res AppGetNotificationRes, err error) {
+func (c *Client) sendAppGetNotification(ctx context.Context) (res *AppGetNotificationOK, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("app-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),
