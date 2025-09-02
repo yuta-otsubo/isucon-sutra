@@ -1121,7 +1121,7 @@ func (s *Server) handleAppPostUsersRequest(args [0]string, argsEscaped bool, w h
 
 // handleChairGetNotificationRequest handles chair-get-notification operation.
 //
-// 椅子に配車要求を通知するなどで使う想定.
+// 自分に割り当てられた最新のライドの状態を取得・通知する.
 //
 // GET /chair/notification
 func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
@@ -1190,7 +1190,7 @@ func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped b
 		err error
 	)
 
-	var response ChairGetNotificationRes
+	var response *ChairGetNotificationOK
 	if m := s.cfg.Middleware; m != nil {
 		mreq := middleware.Request{
 			Context:          ctx,
@@ -1205,7 +1205,7 @@ func (s *Server) handleChairGetNotificationRequest(args [0]string, argsEscaped b
 		type (
 			Request  = struct{}
 			Params   = struct{}
-			Response = ChairGetNotificationRes
+			Response = *ChairGetNotificationOK
 		)
 		response, err = middleware.HookMiddleware[
 			Request,
