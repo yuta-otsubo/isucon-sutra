@@ -78,10 +78,10 @@ type Invoker interface {
 	AppPostUsers(ctx context.Context, request OptAppPostUsersReq) (AppPostUsersRes, error)
 	// ChairGetNotification invokes chair-get-notification operation.
 	//
-	// 椅子に配車要求を通知するなどで使う想定.
+	// 自分に割り当てられた最新のライドの状態を取得・通知する.
 	//
 	// GET /chair/notification
-	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
+	ChairGetNotification(ctx context.Context) (*ChairGetNotificationOK, error)
 	// ChairPostActivity invokes chair-post-activity operation.
 	//
 	// 椅子が配車受付を開始・停止する.
@@ -836,15 +836,15 @@ func (c *Client) sendAppPostUsers(ctx context.Context, request OptAppPostUsersRe
 
 // ChairGetNotification invokes chair-get-notification operation.
 //
-// 椅子に配車要求を通知するなどで使う想定.
+// 自分に割り当てられた最新のライドの状態を取得・通知する.
 //
 // GET /chair/notification
-func (c *Client) ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error) {
+func (c *Client) ChairGetNotification(ctx context.Context) (*ChairGetNotificationOK, error) {
 	res, err := c.sendChairGetNotification(ctx)
 	return res, err
 }
 
-func (c *Client) sendChairGetNotification(ctx context.Context) (res ChairGetNotificationRes, err error) {
+func (c *Client) sendChairGetNotification(ctx context.Context) (res *ChairGetNotificationOK, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("chair-get-notification"),
 		semconv.HTTPRequestMethodKey.String("GET"),

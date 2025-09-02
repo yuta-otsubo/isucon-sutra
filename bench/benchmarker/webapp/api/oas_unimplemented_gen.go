@@ -87,10 +87,10 @@ func (UnimplementedHandler) AppPostUsers(ctx context.Context, req OptAppPostUser
 
 // ChairGetNotification implements chair-get-notification operation.
 //
-// 椅子に配車要求を通知するなどで使う想定.
+// 自分に割り当てられた最新のライドの状態を取得・通知する.
 //
 // GET /chair/notification
-func (UnimplementedHandler) ChairGetNotification(ctx context.Context) (r ChairGetNotificationRes, _ error) {
+func (UnimplementedHandler) ChairGetNotification(ctx context.Context) (r *ChairGetNotificationOK, _ error) {
 	return r, ht.ErrNotImplemented
 }
 

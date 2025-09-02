@@ -58,10 +58,10 @@ type Handler interface {
 	AppPostUsers(ctx context.Context, req OptAppPostUsersReq) (AppPostUsersRes, error)
 	// ChairGetNotification implements chair-get-notification operation.
 	//
-	// 椅子に配車要求を通知するなどで使う想定.
+	// 自分に割り当てられた最新のライドの状態を取得・通知する.
 	//
 	// GET /chair/notification
-	ChairGetNotification(ctx context.Context) (ChairGetNotificationRes, error)
+	ChairGetNotification(ctx context.Context) (*ChairGetNotificationOK, error)
 	// ChairPostActivity implements chair-post-activity operation.
 	//
 	// 椅子が配車受付を開始・停止する.
