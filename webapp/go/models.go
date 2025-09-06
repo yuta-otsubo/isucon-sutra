@@ -16,6 +16,11 @@ type Chair struct {
 	UpdatedAt   time.Time `db:"updated_at"`
 }
 
+type ChairModel struct {
+	Name  string `db:"name"`
+	Speed int    `db:"speed"`
+}
+
 type ChairLocation struct {
 	ID        string    `db:"id"`
 	ChairID   string    `db:"chair_id"`
@@ -56,10 +61,12 @@ type Ride struct {
 }
 
 type RideStatus struct {
-	ID        string    `db:"id"`
-	RideID    string    `db:"ride_id"`
-	Status    string    `db:"status"`
-	CreatedAt time.Time `db:"created_at"`
+	ID          string     `db:"id"`
+	RideID      string     `db:"ride_id"`
+	Status      string     `db:"status"`
+	CreatedAt   time.Time  `db:"created_at"`
+	AppSentAt   *time.Time `db:"app_sent_at"`
+	ChairSentAt *time.Time `db:"chair_sent_at"`
 }
 
 type Owner struct {
