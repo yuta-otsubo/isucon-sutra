@@ -43,8 +43,8 @@ sub abs ($n) {
 }
 
 sub calculate_fare ($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude) {
-    my $matered_dare = FarePerDistance * calculate_distance($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude);
-    return InitialFare + $matered_dare;
+    my $metered_fare = FarePerDistance * calculate_distance($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude);
+    return InitialFare + $metered_fare;
 }
 
 sub calculate_sale ($ride) {
