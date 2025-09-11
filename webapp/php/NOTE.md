@@ -20,17 +20,17 @@ composer.json があるディレクトリで実施する (webapp/php)
 
 バージョン確認
 
-```
+```sh
 composer --version
 ```
 
 インストールされていることを確認したら、
 
-```
+```sh
 composer install
 ```
 
-```
+```sh
 composer update
 ```
 
@@ -38,19 +38,19 @@ composer update
 
 openapi-generator を使用できるようにインストールする
 
-```
+```sh
 https://github.com/openapitools/openapi-generator
 ```
 
 composer.json があるディレクトリで実施する (webapp/php)
 
-```
+```sh
 composer run generate
 ```
 
 ## ディレクトリ構造
 
-```
+```tree
 webapp/php/
 ├── app/                          # アプリケーション設定
 │   ├── config.php               # データベース設定、ログ設定
