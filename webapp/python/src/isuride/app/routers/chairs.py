@@ -51,7 +51,8 @@ def chair_post_chairs(
         ).fetchone()
         if row is None:
             raise HTTPException(
-                status_code=status.UNAUTHORIZED, detail="invalid chair_register_token"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid chair_register_token",
             )
         owner = Owner(**row._mapping)
 
@@ -273,7 +274,8 @@ def chair_post_ride_status(
 
         if ride.chair_id != chair.id:
             raise HTTPException(
-                status_code=status.BAD_REQUEST, detail="not assigned to this ride"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="not assigned to this ride",
             )
 
         match req.status:
