@@ -5,6 +5,8 @@ https://github.com/isucon/isucon14/blob/main/webapp/go/chair_handlers.go
 TODO: このdocstringを消す
 """
 
+from http import HTTPStatus
+
 from fastapi import APIRouter, Depends, HTTPException, Response, status
 from pydantic import BaseModel
 from sqlalchemy import text
@@ -49,7 +51,8 @@ def chair_post_chairs(
         ).fetchone()
         if row is None:
             raise HTTPException(
-                status_code=status.UNAUTHORIZED, detail="invalid chair_register_token"
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="invalid chair_register_token",
             )
         owner = Owner(**row._mapping)
 
@@ -170,7 +173,7 @@ class SimpleUser(BaseModel):
     name: str
 
 
-class ChairGetNotificationResponse(BaseModel):
+class ChairGetNotificationResponseData(BaseModel):
     ride_id: str
     user: SimpleUser
     pickup_coordinate: Coordinate
@@ -178,8 +181,14 @@ class ChairGetNotificationResponse(BaseModel):
     status: str
 
 
+class ChairGetNotificationResponse(BaseModel):
+    data: ChairGetNotificationResponseData | None = None
+
+
 @router.get("/notification")
-def chair_get_notification(chair: Chair = Depends(chair_auth_middleware)):
+def chair_get_notification(
+    chair: Chair = Depends(chair_auth_middleware),
+) -> ChairGetNotificationResponse:
     with engine.begin() as conn:
         conn.execute(
             text("SELECT * FROM chairs WHERE id = :id FOR UPDATE"), {"id": chair.id}
@@ -209,7 +218,7 @@ def chair_get_notification(chair: Chair = Depends(chair_auth_middleware)):
                 )
             ).fetchone()
             if row is None:
-                raise HTTPException(status_code=status.HTTP_204_NO_CONTENT)
+                raise HTTPException(status_code=HTTPStatus.OK)
             matched = Ride(**row._mapping)
 
             conn.execute(
@@ -229,15 +238,17 @@ def chair_get_notification(chair: Chair = Depends(chair_auth_middleware)):
         user = User(**row._mapping)
 
     return ChairGetNotificationResponse(
-        ride_id=ride.id,
-        user=SimpleUser(id=user.id, name=f"{user.firstname} {user.lastname}"),
-        pickup_coordinate=Coordinate(
-            latitude=ride.pickup_latitude, longitude=ride.pickup_longitude
-        ),
-        destination_coordinate=Coordinate(
-            latitude=ride.destination_latitude, longitude=ride.destination_longitude
-        ),
-        status=ride_status,
+        data=ChairGetNotificationResponseData(
+            ride_id=ride.id,
+            user=SimpleUser(id=user.id, name=f"{user.firstname} {user.lastname}"),
+            pickup_coordinate=Coordinate(
+                latitude=ride.pickup_latitude, longitude=ride.pickup_longitude
+            ),
+            destination_coordinate=Coordinate(
+                latitude=ride.destination_latitude, longitude=ride.destination_longitude
+            ),
+            status=ride_status,
+        )
     )
 
 
@@ -263,7 +274,8 @@ def chair_post_ride_status(
 
         if ride.chair_id != chair.id:
             raise HTTPException(
-                status_code=status.BAD_REQUEST, detail="not assigned to this ride"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="not assigned to this ride",
             )
 
         match req.status:
