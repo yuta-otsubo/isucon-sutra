@@ -13,12 +13,12 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: codebuild-problem-github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: 'bench/go.mod'
+          go-version-file: "bench/go.mod"
           cache-dependency-path: |
             ./bench/go.sum
       - name: Install Task
@@ -29,12 +29,12 @@ jobs:
           task build
   test:
     name: Bench Test
-    runs-on: ubuntu-latest
+    runs-on: codebuild-problem-github-actions-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version-file: 'bench/go.mod'
+          go-version-file: "bench/go.mod"
           cache-dependency-path: |
             ./bench/go.sum
       - name: Install Task
