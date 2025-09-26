@@ -1,5 +1,8 @@
-# Instructions
+# 指示
 
-- Please respond in Japanese.
-- Write a detailed description of the file changes.
-- Summarize the changes to each file.
+- 日本語で回答してください。
+- ファイルの変更について詳細な説明を記述してください。
+- 各ファイルの変更内容を要約してください。
+- 変更により処理が遅くなるものがあれば、その理由を説明してください。
+- 変更により処理が遅くなる場合、高速化するためにどのような工夫ができるかを説明してください。
+- 処理が早くできる箇所があれば、その内容について ISSUE を作成して、なぜ遅いのか、どうすれば早くできるのかを説明してください。
