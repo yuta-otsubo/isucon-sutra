@@ -51,10 +51,9 @@ def chair_post_chairs(
         ).fetchone()
         if row is None:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="invalid chair_register_token",
+                status_code=status.UNAUTHORIZED, detail="invalid chair_register_token"
             )
-        owner = Owner(**row._mapping)
+        owner = Owner.model_validate(row)
 
     chair_id = str(ULID())
     access_token = secure_random_str(32)
@@ -127,7 +126,7 @@ def chair_post_coordinate(
         ).fetchone()
         if row is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        location = ChairLocation(**row._mapping)
+        location = ChairLocation.model_validate(row)
 
         row = conn.execute(
             text(
@@ -136,7 +135,7 @@ def chair_post_coordinate(
             {"chair_id": chair.id},
         ).fetchone()
         if row is not None:
-            ride = Ride(**row._mapping)
+            ride = Ride.model_validate(row)
             ride_status = get_latest_ride_status(conn, ride_id=ride.id)
             if ride_status != "COMPLETED" and ride_status != "CANCELLED":
                 if (
@@ -207,7 +206,7 @@ def chair_get_notification(
 
         if found:
             assert row is not None
-            ride = Ride(**row._mapping)
+            ride = Ride.model_validate(row)
             ride_status = get_latest_ride_status(conn, ride.id)
 
         if (not found) or ride_status == "COMPLETED" or ride_status == "CANCELLED":
@@ -219,7 +218,7 @@ def chair_get_notification(
             ).fetchone()
             if row is None:
                 raise HTTPException(status_code=HTTPStatus.OK)
-            matched = Ride(**row._mapping)
+            matched = Ride.model_validate(row)
 
             conn.execute(
                 text("UPDATE rides SET chair_id = :chair_id WHERE id = :id"),
@@ -235,7 +234,7 @@ def chair_get_notification(
         ).fetchone()
         if row is None:
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        user = User(**row._mapping)
+        user = User.model_validate(row)
 
     return ChairGetNotificationResponse(
         data=ChairGetNotificationResponseData(
@@ -270,12 +269,11 @@ def chair_post_ride_status(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="ride not found"
             )
-        ride = Ride(**row._mapping)
+        ride = Ride.model_validate(row)
 
         if ride.chair_id != chair.id:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="not assigned to this ride",
+                status_code=status.BAD_REQUEST, detail="not assigned to this ride"
             )
 
         match req.status:
