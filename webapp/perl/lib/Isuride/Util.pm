@@ -6,6 +6,9 @@ use Exporter 'import';
 use Carp qw(croak);
 
 our @EXPORT_OK = qw(
+    InitialFare
+    FarePerDistance
+
     secure_random_str
     calculate_distance
     calculate_fare
@@ -43,14 +46,19 @@ sub abs ($n) {
 }
 
 sub calculate_fare ($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude) {
-    my $metered_fare = FarePerDistance * calculate_distance($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude);
-    return InitialFare + $metered_fare;
+    my $matered_dare = FarePerDistance * calculate_distance($pickup_latitude, $pickup_longitude, $dest_latitude, $dest_longitude);
+    return InitialFare + $matered_dare;
 }
 
 sub calculate_sale ($ride) {
     return calculate_fare($ride->{pickup_latitude}, $ride->{pickup_longitude}, $ride->{destination_latitude}, $ride->{destination_longitude});
 }
 
+# XXX: 以下はPerlでの型チェック支援用のユーティリティ
+# 開発環境では、パラメータの型チェックを行う
+use constant ASSERT => ($ENV{PLACK_ENV} || '') ne 'deployment';
+
+# Cpanel::JSON::XS::Typeの型定義からType::Tinyの型定義を生成する
 sub _create_type_tiny_type_from_cpanel_type ($cpanel_structure) {
     if (ref $cpanel_structure eq 'HASH') {
         Dict [ map { $_ => _create_type_tiny_type_from_cpanel_type($cpanel_structure->{$_}) } keys $cpanel_structure->%* ];
@@ -75,8 +83,6 @@ sub _create_type_tiny_type_from_cpanel_type ($cpanel_structure) {
 my $compiled_checks = {};
 my $compiled        = {};
 
-# 開発環境では、パラメータの型チェックを行う
-use constant ASSERT => ($ENV{PLACK_ENV} || '') ne 'deployment';
 sub check_params;
 *check_params = ASSERT ? \&_check_params : sub { 1 };
 

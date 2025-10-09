@@ -5,8 +5,10 @@ requires 'Starlet', '0.31';
 requires 'HTTP::Status', '7.00';
 requires 'Type::Tiny', '2.006000';
 requires 'Cpanel::JSON::XS', '4.38';
-requires 'Crypt::URandom', '0.40';
+requires 'Crypt::URandom','0.40';
 requires 'Time::Moment';
+requires 'Furl';
+requires 'HTTP::Parser::XS';
 
 # DB
 requires 'DBD::mysql', '5.009';
