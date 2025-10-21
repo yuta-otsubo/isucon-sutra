@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { ChairWaitingIndicator } from "~/components/modules/chair-waiting-indicator/chair-waiting-indicator";
 import { LocationButton } from "~/components/modules/location-button/location-button";
-import { ModalHeader } from "~/components/modules/modal-header/moda-header";
+import { ModalHeader } from "~/components/modules/modal-header/modal-header";
 import { Price } from "~/components/modules/price/price";
 import { Text } from "~/components/primitives/text/text";
 import { useClientAppRequestContext } from "~/contexts/user-context";
