@@ -5,17 +5,31 @@
 ```
 webapp/python/
 ├── .venv/                    # 仮想環境ディレクトリ
-├── src/
-│   └── isuride/             # メインアプリケーションパッケージ
-│       ├── __init__.py      # パッケージ初期化ファイル
-│       ├── app.py           # FastAPIアプリケーションのメインファイル
-│       └── py.typed         # 型ヒントサポートファイル
+├── app/                      # メインアプリケーションパッケージ
+│   ├── __init__.py          # パッケージ初期化ファイル
+│   ├── main.py              # FastAPIアプリケーションのメインファイル
+│   ├── models.py            # データモデル定義
+│   ├── app_handlers.py      # アプリユーザー向けAPIハンドラー
+│   ├── chair_handlers.py    # 椅子向けAPIハンドラー
+│   ├── owner_handlers.py    # オーナー向けAPIハンドラー
+│   ├── payment_gateway.py   # 決済ゲートウェイ処理
+│   ├── middlewares.py       # ミドルウェア定義
+│   ├── utils.py             # ユーティリティ関数
+│   └── sql.py               # SQL関連処理
+├── build/                   # ビルド成果物ディレクトリ
+├── isuride.egg-info/        # パッケージ情報ディレクトリ
+├── .mypy_cache/             # mypyキャッシュディレクトリ
+├── .nox/                    # noxキャッシュディレクトリ
+├── .ruff_cache/             # ruffキャッシュディレクトリ
+├── __pycache__/             # Pythonキャッシュディレクトリ
 ├── .gitignore               # Git除外設定ファイル
-├── .python-version          # Pythonバージョン指定ファイル (3.10)
+├── .python-version          # Pythonバージョン指定ファイル (3.13)
+├── .pre-commit-config.yaml  # pre-commit設定ファイル
 ├── NOTE.md                  # このファイル
 ├── README.md                # 開発環境構築手順
 ├── pyproject.toml           # プロジェクト設定と依存関係定義
 ├── noxfile.py               # noxタスク定義ファイル
+├── ruff.toml                # ruff設定ファイル
 └── uv.lock                  # uv依存関係ロックファイル
 ```
 
@@ -46,16 +60,57 @@ webapp/python/
 
 ### アプリケーションコード
 
-- **src/isuride/app.py**: FastAPI アプリケーションのメインファイル
+- **app/main.py**: FastAPI アプリケーションのメインファイル
 
   - データベース接続設定
   - API エンドポイント定義
-  - オーナー、チェア、アプリユーザーの登録・管理機能
-  - 支払い、通知、座標管理などの機能
+  - アプリケーション初期化処理
 
-- **src/isuride/**init**.py**: Python パッケージとして認識させるための空ファイル
+- **app/models.py**: データモデル定義
 
-- **src/isuride/py.typed**: 型ヒントサポートを有効にするための空ファイル
+  - Pydantic モデル定義
+  - データベーステーブル構造に対応したモデル
+
+- **app/app_handlers.py**: アプリユーザー向けAPIハンドラー
+
+  - ユーザー登録・認証
+  - 乗車リクエスト・評価
+  - 決済処理
+  - 通知機能
+
+- **app/chair_handlers.py**: 椅子向けAPIハンドラー
+
+  - 椅子登録・認証
+  - 位置情報更新
+  - 乗車リクエスト受付・完了
+
+- **app/owner_handlers.py**: オーナー向けAPIハンドラー
+
+  - オーナー登録・認証
+  - 椅子管理
+  - 売上確認
+
+- **app/payment_gateway.py**: 決済ゲートウェイ処理
+
+  - 決済API連携
+  - 決済状態管理
+
+- **app/middlewares.py**: ミドルウェア定義
+
+  - 認証ミドルウェア
+  - ログ出力ミドルウェア
+
+- **app/utils.py**: ユーティリティ関数
+
+  - 共通処理関数
+  - ヘルパー関数
+
+- **app/sql.py**: SQL関連処理
+
+  - データベース接続
+  - SQL実行関数
+
+- **app/__init__.py**: Python パッケージとして認識させるための空ファイル
 
 ### 開発環境
 
@@ -137,6 +192,67 @@ uv remove <package-name>
 | pyproject.toml | 完全対応   | 部分対応 | 非対応 | 完全対応 |
 
 uv は特に大規模なプロジェクトや CI/CD 環境で、依存関係のインストール時間を大幅に短縮できる利点があります。
+
+## ruff について
+
+### ruff とは
+
+ruff は、Rust で書かれた高速な Python リンター・フォーマッターです。従来の flake8、isort、black などの複数ツールの機能を統合し、大幅な高速化を実現しています。
+
+### 主な特徴
+
+- **高速性**: Rust で実装されているため、従来の Python ツールより 10-100 倍高速
+- **統合性**: リント、フォーマット、インポート整理を一つのツールで実行
+- **互換性**: flake8、isort、black などの既存ルールと互換性
+- **設定の簡単さ**: pyproject.toml または ruff.toml で設定可能
+
+### 主要な ruff コマンド
+
+```bash
+# コードのリント（問題点の検出）
+ruff check .
+
+# コードのフォーマット
+ruff format .
+
+# リントとフォーマットを同時実行
+ruff check --fix . && ruff format .
+
+# 特定のルールのみチェック
+ruff check --select E,W .
+
+# 特定のルールを無視
+ruff check --ignore E501 .
+```
+
+### 設定ファイル
+
+**ruff.toml** では以下の設定が可能：
+
+```toml
+# 行の最大長
+line-length = 88
+
+# チェックするルール
+select = ["E", "W", "F", "I"]
+
+# 無視するルール
+ignore = ["E501"]
+
+# 除外するファイル・ディレクトリ
+exclude = [".venv", "__pycache__"]
+```
+
+### 従来のツールとの比較
+
+| 機能           | ruff       | flake8 + black + isort |
+| -------------- | ---------- | ---------------------- |
+| 速度           | 非常に高速 | 低速                   |
+| 設定           | 統一       | 個別設定が必要         |
+| インストール   | 単一       | 複数パッケージ         |
+| メンテナンス   | 簡単       | 複雑                   |
+
+ruff は特に大規模なプロジェクトや CI/CD 環境で、コード品質チェックの実行時間を大幅に短縮できる利点があります。
 
 ## nox タスクランナーについて
 
