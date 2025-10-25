@@ -34,3 +34,6 @@ services:
       interval: 5s
       timeout: 10s
       retries: 20
+  matcher:
+    image: curlimages/curl:latest
+    command: /bin/sh -c "while true; do curl http://webapp:8080/api/internal/matching; sleep 0.5; done"
