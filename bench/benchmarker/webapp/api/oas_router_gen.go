@@ -416,24 +416,58 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 				}
 
-			case 'i': // Prefix: "initialize"
+			case 'i': // Prefix: "in"
 
-				if l := len("initialize"); len(elem) >= l && elem[0:l] == "initialize" {
+				if l := len("in"); len(elem) >= l && elem[0:l] == "in" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch r.Method {
-					case "POST":
-						s.handlePostInitializeRequest([0]string{}, elemIsEscaped, w, r)
-					default:
-						s.notAllowed(w, r, "POST")
+					break
+				}
+				switch elem[0] {
+				case 'i': // Prefix: "itialize"
+
+					if l := len("itialize"); len(elem) >= l && elem[0:l] == "itialize" {
+						elem = elem[l:]
+					} else {
+						break
 					}
 
-					return
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "POST":
+							s.handlePostInitializeRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "POST")
+						}
+
+						return
+					}
+
+				case 't': // Prefix: "ternal/matching"
+
+					if l := len("ternal/matching"); len(elem) >= l && elem[0:l] == "ternal/matching" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch r.Method {
+						case "GET":
+							s.handleInternalGetMatchingRequest([0]string{}, elemIsEscaped, w, r)
+						default:
+							s.notAllowed(w, r, "GET")
+						}
+
+						return
+					}
+
 				}
 
 			case 'o': // Prefix: "owner/"
@@ -1009,28 +1043,66 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 
 				}
 
-			case 'i': // Prefix: "initialize"
+			case 'i': // Prefix: "in"
 
-				if l := len("initialize"); len(elem) >= l && elem[0:l] == "initialize" {
+				if l := len("in"); len(elem) >= l && elem[0:l] == "in" {
 					elem = elem[l:]
 				} else {
 					break
 				}
 
 				if len(elem) == 0 {
-					// Leaf node.
-					switch method {
-					case "POST":
-						r.name = PostInitializeOperation
-						r.summary = "サービスを初期化する"
-						r.operationID = "post-initialize"
-						r.pathPattern = "/initialize"
-						r.args = args
-						r.count = 0
-						return r, true
-					default:
-						return
+					break
+				}
+				switch elem[0] {
+				case 'i': // Prefix: "itialize"
+
+					if l := len("itialize"); len(elem) >= l && elem[0:l] == "itialize" {
+						elem = elem[l:]
+					} else {
+						break
 					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "POST":
+							r.name = PostInitializeOperation
+							r.summary = "サービスを初期化する"
+							r.operationID = "post-initialize"
+							r.pathPattern = "/initialize"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
+				case 't': // Prefix: "ternal/matching"
+
+					if l := len("ternal/matching"); len(elem) >= l && elem[0:l] == "ternal/matching" {
+						elem = elem[l:]
+					} else {
+						break
+					}
+
+					if len(elem) == 0 {
+						// Leaf node.
+						switch method {
+						case "GET":
+							r.name = InternalGetMatchingOperation
+							r.summary = "ライドのマッチングを行う"
+							r.operationID = "internal-get-matching"
+							r.pathPattern = "/internal/matching"
+							r.args = args
+							r.count = 0
+							return r, true
+						default:
+							return
+						}
+					}
+
 				}
 
 			case 'o': // Prefix: "owner/"

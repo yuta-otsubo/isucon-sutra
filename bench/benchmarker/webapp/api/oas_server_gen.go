@@ -86,6 +86,12 @@ type Handler interface {
 	//
 	// POST /chair/rides/{ride_id}/status
 	ChairPostRideStatus(ctx context.Context, req OptChairPostRideStatusReq, params ChairPostRideStatusParams) (ChairPostRideStatusRes, error)
+	// InternalGetMatching implements internal-get-matching operation.
+	//
+	// ライドのマッチングを行う.
+	//
+	// GET /internal/matching
+	InternalGetMatching(ctx context.Context) error
 	// OwnerGetChairs implements owner-get-chairs operation.
 	//
 	// 椅子のオーナーが管理している椅子の一覧を取得する.

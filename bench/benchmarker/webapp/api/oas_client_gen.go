@@ -106,6 +106,12 @@ type Invoker interface {
 	//
 	// POST /chair/rides/{ride_id}/status
 	ChairPostRideStatus(ctx context.Context, request OptChairPostRideStatusReq, params ChairPostRideStatusParams) (ChairPostRideStatusRes, error)
+	// InternalGetMatching invokes internal-get-matching operation.
+	//
+	// ライドのマッチングを行う.
+	//
+	// GET /internal/matching
+	InternalGetMatching(ctx context.Context) error
 	// OwnerGetChairs invokes owner-get-chairs operation.
 	//
 	// 椅子のオーナーが管理している椅子の一覧を取得する.
@@ -1218,6 +1224,78 @@ func (c *Client) sendChairPostRideStatus(ctx context.Context, request OptChairPo
 
 	stage = "DecodeResponse"
 	result, err := decodeChairPostRideStatusResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// InternalGetMatching invokes internal-get-matching operation.
+//
+// ライドのマッチングを行う.
+//
+// GET /internal/matching
+func (c *Client) InternalGetMatching(ctx context.Context) error {
+	_, err := c.sendInternalGetMatching(ctx)
+	return err
+}
+
+func (c *Client) sendInternalGetMatching(ctx context.Context) (res *InternalGetMatchingNoContent, err error) {
+	otelAttrs := []attribute.KeyValue{
+		otelogen.OperationID("internal-get-matching"),
+		semconv.HTTPRequestMethodKey.String("GET"),
+		semconv.HTTPRouteKey.String("/internal/matching"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(elapsedDuration)/float64(time.Millisecond), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, InternalGetMatchingOperation,
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/internal/matching"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "GET", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeInternalGetMatchingResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

@@ -130,6 +130,15 @@ func (UnimplementedHandler) ChairPostRideStatus(ctx context.Context, req OptChai
 	return r, ht.ErrNotImplemented
 }
 
+// InternalGetMatching implements internal-get-matching operation.
+//
+// ライドのマッチングを行う.
+//
+// GET /internal/matching
+func (UnimplementedHandler) InternalGetMatching(ctx context.Context) error {
+	return ht.ErrNotImplemented
+}
+
 // OwnerGetChairs implements owner-get-chairs operation.
 //
 // 椅子のオーナーが管理している椅子の一覧を取得する.
