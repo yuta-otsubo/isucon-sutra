@@ -19,6 +19,7 @@ const (
 	ChairPostChairsOperation           OperationName = "ChairPostChairs"
 	ChairPostCoordinateOperation       OperationName = "ChairPostCoordinate"
 	ChairPostRideStatusOperation       OperationName = "ChairPostRideStatus"
+	InternalGetMatchingOperation       OperationName = "InternalGetMatching"
 	OwnerGetChairsOperation            OperationName = "OwnerGetChairs"
 	OwnerGetSalesOperation             OperationName = "OwnerGetSales"
 	OwnerPostOwnersOperation           OperationName = "OwnerPostOwners"

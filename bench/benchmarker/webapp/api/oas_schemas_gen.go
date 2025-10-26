@@ -897,6 +897,9 @@ func (*Error) appPostUsersRes()              {}
 func (*Error) chairPostRideStatusRes()       {}
 func (*Error) ownerPostOwnersRes()           {}
 
+// InternalGetMatchingNoContent is response for InternalGetMatching operation.
+type InternalGetMatchingNoContent struct{}
+
 // NewOptAppPostPaymentMethodsReq returns new OptAppPostPaymentMethodsReq with value set to v.
 func NewOptAppPostPaymentMethodsReq(v AppPostPaymentMethodsReq) OptAppPostPaymentMethodsReq {
 	return OptAppPostPaymentMethodsReq{
