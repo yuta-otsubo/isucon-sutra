@@ -1,7 +1,10 @@
 import type { Context } from "hono";
 import { setCookie } from "hono/cookie";
-import type { ResultSetHeader, RowDataPacket } from "mysql2";
-import type mysql from "mysql2/promise";
+import type {
+  Connection,
+  ResultSetHeader,
+  RowDataPacket,
+} from "mysql2/promise";
 import { ulid } from "ulid";
 import {
   calculateDistance,
@@ -163,8 +166,7 @@ export const appGetRides = async (ctx: Context<Environment>) => {
   );
   const items: GetAppRidesResponseItem[] = [];
   for (const ride of rides) {
-    const [status, err] = await getLatestRideStatus(ctx.var.dbConn, ride.id);
-    if (err) return ctx.text(`${err}`, 500);
+    const status = await getLatestRideStatus(ctx.var.dbConn, ride.id);
     if (status !== "COMPLETED") {
       continue;
     }
@@ -567,7 +569,7 @@ type AppGetNotificationResponseChairStats = {
 };
 
 async function getChairStats(
-  dbConn: mysql.Connection,
+  dbConn: Connection,
   chairId: string,
 ): Promise<AppGetNotificationResponseChairStats> {
   const [rides] = await dbConn.query<Array<Ride & RowDataPacket>>(
@@ -711,7 +713,7 @@ export const appGetNearbyChairs = async (ctx: Context<Environment>) => {
 };
 
 async function calculateDiscountedFare(
-  dbConn: mysql.Connection,
+  dbConn: Connection,
   userId: string,
   ride: Ride | null,
   _pickupLatitude: number,
