@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono, type Context } from "hono";
 import { createMiddleware } from "hono/factory";
-import mysql from "mysql2/promise";
+import { createConnection } from "mysql2/promise";
 import { execSync } from "node:child_process";
 import {
   appGetNearbyChairs,
@@ -33,7 +33,7 @@ import {
 } from "./owner_handlers.js";
 import type { Environment } from "./types/hono.js";
 
-const connection = await mysql.createConnection({
+const connection = await createConnection({
   host: process.env.ISUCON_DB_HOST || "127.0.0.1",
   port: Number(process.env.ISUCON_DB_PORT || "3306"),
   user: process.env.ISUCON_DB_USER || "isucon",
