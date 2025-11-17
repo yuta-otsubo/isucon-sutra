@@ -32,7 +32,7 @@ jobs:
           nox
   build:
     name: Build
-    runs-on: codebuild-problem-github-actions-${{ github.run_id }}-${{ github.run_attempt }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
