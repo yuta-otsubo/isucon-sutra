@@ -2,7 +2,7 @@ services:
   webapp:
     build:
       context: ../webapp/perl
-      dockerfile: ../../development/Dockerfile.perl
+      dockerfile: ../../development/dockerfiles/Dockerfile.perl
     ports:
       - 8080:8080
     volumes:
