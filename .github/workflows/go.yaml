@@ -6,14 +6,14 @@ on:
     paths:
       - bench/**/*
       - webapp/go/**/*
-      - .github/workflows/go.yml
+      - .github/workflows/go.yaml
       - development/compose-go.yml
       - development/dockerfiles/Dockerfile.go
   pull_request:
     paths:
       - bench/**/*
       - webapp/go/**/*
-      - .github/workflows/go.yml
+      - .github/workflows/go.yaml
       - development/compose-go.yml
       - development/dockerfiles/Dockerfile.go
 jobs:
