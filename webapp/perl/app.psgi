@@ -11,5 +11,6 @@ my $app = Isuride::Web->psgi($root_dir);
 
 builder {
 
+    enable 'ReverseProxy';
     $app;
 };
