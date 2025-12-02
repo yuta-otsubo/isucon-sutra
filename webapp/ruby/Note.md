@@ -44,3 +44,18 @@
 - **Rack**: RubyのWebサーバーとWebアプリケーション間の標準インターフェース
 - **config.ru**: Rackアプリケーションのエントリーポイント。URLパスごとに異なるハンドラーをマッピング
 - **Sinatra**: RackベースのWebフレームワーク。各ハンドラーはSinatraアプリケーション
+
+
+## Bundlerコマンド
+
+### Gemfile.lockの更新
+```bash
+# 依存関係をインストールしてGemfile.lockを更新
+bundle install
+
+# 全てのgemを最新バージョンに更新してGemfile.lockを再生成
+bundle update
+```
+
+- `bundle install`: Gemfileに記載された依存関係をインストール。Gemfile.lockが存在する場合はそのバージョンを使用
+- `bundle update`: 全てのgemを最新バージョンに更新し、Gemfile.lockを完全に再生成
