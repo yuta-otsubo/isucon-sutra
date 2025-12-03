@@ -1,7 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono, type Context } from "hono";
 import { createMiddleware } from "hono/factory";
-import { createConnection } from "mysql2/promise";
+import { createPool } from "mysql2/promise";
 import { execSync } from "node:child_process";
 import {
   appGetNearbyChairs,
@@ -33,19 +33,22 @@ import {
 } from "./owner_handlers.js";
 import type { Environment } from "./types/hono.js";
 
-const connection = await createConnection({
+const pool = createPool({
   host: process.env.ISUCON_DB_HOST || "127.0.0.1",
   port: Number(process.env.ISUCON_DB_PORT || "3306"),
   user: process.env.ISUCON_DB_USER || "isucon",
   password: process.env.ISUCON_DB_PASSWORD || "isucon",
   database: process.env.ISUCON_DB_NAME || "isuride",
+  timezone: "+00:00",
 });
 
 const app = new Hono<Environment>();
 app.use(
   createMiddleware<Environment>(async (ctx, next) => {
+    const connection = await pool.getConnection();
     ctx.set("dbConn", connection);
     await next();
+    pool.releaseConnection(connection);
   }),
 );
 
