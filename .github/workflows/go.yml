@@ -6,16 +6,21 @@ on:
     paths:
       - bench/**/*
       - webapp/go/**/*
-      - .github/workflows/go.yaml
+      - .github/workflows/go.yml
       - development/compose-go.yml
       - development/dockerfiles/Dockerfile.go
   pull_request:
     paths:
       - bench/**/*
       - webapp/go/**/*
-      - .github/workflows/go.yaml
+      - .github/workflows/go.yml
       - development/compose-go.yml
       - development/dockerfiles/Dockerfile.go
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build
@@ -29,7 +34,14 @@ jobs:
             ./bench/go.sum
       - name: Install Task
         uses: arduino/setup-task@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: image=mirror.gcr.io/moby/buildkit:buildx-stable-1
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
       - name: Build webapp
         uses: docker/bake-action@v5
         with:
