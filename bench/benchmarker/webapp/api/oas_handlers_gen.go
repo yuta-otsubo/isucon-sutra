@@ -32,7 +32,7 @@ func (c *codeRecorder) WriteHeader(status int) {
 
 // handleAppGetNearbyChairsRequest handles app-get-nearby-chairs operation.
 //
-// ユーザーの近くにいる椅子を取得する.
+// 椅子からサーバーに記録された座標情報は3秒以内に反映されている必要があります。.
 //
 // GET /app/nearby-chairs
 func (s *Server) handleAppGetNearbyChairsRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {

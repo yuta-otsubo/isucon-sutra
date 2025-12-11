@@ -30,7 +30,7 @@ func trimTrailingSlashes(u *url.URL) {
 type Invoker interface {
 	// AppGetNearbyChairs invokes app-get-nearby-chairs operation.
 	//
-	// ユーザーの近くにいる椅子を取得する.
+	// 椅子からサーバーに記録された座標情報は3秒以内に反映されている必要があります。.
 	//
 	// GET /app/nearby-chairs
 	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
@@ -183,7 +183,7 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 
 // AppGetNearbyChairs invokes app-get-nearby-chairs operation.
 //
-// ユーザーの近くにいる椅子を取得する.
+// 椅子からサーバーに記録された座標情報は3秒以内に反映されている必要があります。.
 //
 // GET /app/nearby-chairs
 func (c *Client) AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error) {
