@@ -3,7 +3,7 @@ FROM ruby:3.3.6-bookworm
 WORKDIR /home/isucon/webapp/ruby
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
-  default-mysql-client-core \
+  default-mysql-client-core=1.1.0 \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
