@@ -10,7 +10,7 @@ import (
 type Handler interface {
 	// AppGetNearbyChairs implements app-get-nearby-chairs operation.
 	//
-	// ユーザーの近くにいる椅子を取得する.
+	// 椅子からサーバーに記録された座標情報は3秒以内に反映されている必要があります。.
 	//
 	// GET /app/nearby-chairs
 	AppGetNearbyChairs(ctx context.Context, params AppGetNearbyChairsParams) (*AppGetNearbyChairsOK, error)
