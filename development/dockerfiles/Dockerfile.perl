@@ -3,7 +3,8 @@ FROM perl:5.40.0-bookworm
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install --no-install-recommends -y \
     curl wget libssl-dev ca-certificates lsb-release openssl \
-    default-mysql-client-core libmariadb-dev \
+    default-mysql-client-core default-libmysqlclient-dev \
+    build-essential pkg-config \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
