@@ -33,11 +33,11 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     invitation_code?: string;
   } = {};
 
-  const date_of_birth = String(formData.get("date_of_birth"));
-  const username = String(formData.get("username"));
-  const firstname = String(formData.get("firstname"));
-  const lastname = String(formData.get("lastname"));
-  const invitation_code = String(formData.get("invitation_code"));
+  const date_of_birth = (formData.get("date_of_birth") as string) || "";
+  const username = (formData.get("username") as string) || "";
+  const firstname = (formData.get("firstname") as string) || "";
+  const lastname = (formData.get("lastname") as string) || "";
+  const invitation_code = (formData.get("invitation_code") as string) || "";
 
   if (username.length > 30) {
     errors.username = "30文字以内で入力してください";

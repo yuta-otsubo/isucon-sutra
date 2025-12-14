@@ -29,7 +29,7 @@ function jsonFromSSEResponse<T>(value: string) {
   const data = value.slice("data:".length).trim();
   try {
     return JSON.parse(data) as T;
-  } catch (e) {
+  } catch {
     console.error(`don't parse ${value}`);
   }
 }

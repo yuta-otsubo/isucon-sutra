@@ -16,7 +16,7 @@ const setStorage = (
       JSON.stringify({ ...existing, [fieldId]: itemData }),
     );
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -28,7 +28,7 @@ const getStorage = <T>(fieldId: string, storage: Storage): T | null => {
       unknown
     >;
     return (data[fieldId] ?? null) as T | null;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
