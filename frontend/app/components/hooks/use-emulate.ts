@@ -101,7 +101,7 @@ export const useEmulator = (targetChair?: SimulatorChair) => {
             }
             break;
         }
-      } catch (e) {
+      } catch {
         // statusの更新タイミングの都合で到着状態を期待しているが必ず取れるとは限らない
       }
     }, 1000);

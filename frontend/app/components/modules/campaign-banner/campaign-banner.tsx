@@ -31,7 +31,7 @@ export const CampaignBanner: FC = () => {
       try {
         await navigator.clipboard.writeText(campaign.invitationCode);
         alert("招待コードがコピーされました！");
-      } catch (error) {
+      } catch {
         alert(
           `招待コード: ${campaign.invitationCode}\nコピーしてお使いください`,
         );

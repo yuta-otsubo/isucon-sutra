@@ -16,7 +16,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const formData = await request.formData();
   await fetchAppPostPaymentMethods({
     body: {
-      token: String(formData.get("payment-token")),
+      token: (formData.get("payment-token") as string) || "",
     },
   });
   return redirect(`/client`);
