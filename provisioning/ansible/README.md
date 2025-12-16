@@ -24,7 +24,7 @@ $ ansible-playbook -i inventory/sacloud benchmark.yml
 
 ```bash
 #!/bin/bash
-openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365 -nodes -subj "/CN=isucon.net"
+openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout dummy.key -out dummy.crt -days 365 -nodes -subj "/CN=isucon.net"
 ```
 
 ## make_lastest_files の中身
