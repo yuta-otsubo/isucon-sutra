@@ -5,23 +5,29 @@
 ```
 # ベンチマーカ、webappのアーカイブをアップデート　
 $ ./make_latest_files.sh
+
 # ローカルの場合
 $ ansible-playbook -i inventory/localhost application.yml
 $ ansible-playbook -i inventory/localhost benchmark.yml
+
 # sacloud試し環境へのリモート実行
 $ ansible-playbook -i inventory/sacloud application.yml
 $ ansible-playbook -i inventory/sacloud benchmark.yml
+
 ```
 
-すでに対象サーバに /home/isucon/webapp/sql がある場合、tarをアップロードするだけで展開はしません
+すでに対象サーバに /home/isucon/webapp/sql がある場合、tar をアップロードするだけで展開はしません
 
 ## 証明書について
 
-*.t.isucon.dev の証明書はISUCON12予選のレポジトリにあるものを使っています
-https://github.com/isucon/isucon12-qualify
+`dummy.crt` は下記スクリプトで生成可能
 
+```bash
+#!/bin/bash
+openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout dummy.key -out dummy.crt -days 365 -nodes -subj "/CN=isucon.net"
+```
 
-## make_lastest_filesの中身
+## make_lastest_files の中身
 
 ```
 $ cd bench
