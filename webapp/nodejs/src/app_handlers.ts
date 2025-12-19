@@ -9,9 +9,10 @@ import { ulid } from "ulid";
 import {
   calculateDistance,
   calculateFare,
+  ErroredUpstream,
   FARE_PER_DISTANCE,
   getLatestRideStatus,
-  INITIAL_FARE
+  INITIAL_FARE,
 } from "./common.js";
 import { requestPaymentGatewayPostPayment } from "./payment_gateway.js";
 import type { Environment } from "./types/hono.js";
@@ -237,7 +238,6 @@ export const appPostRides = async (ctx: Context<Environment>) => {
   const user = ctx.var.user;
   const rideId = ulid();
   await ctx.var.dbConn.beginTransaction();
-  let fare: number;
   try {
     const [rides] = await ctx.var.dbConn.query<Array<Ride & RowDataPacket>>(
       "SELECT * FROM rides WHERE user_id = ?",
@@ -271,7 +271,6 @@ export const appPostRides = async (ctx: Context<Environment>) => {
     const [[{ "COUNT(*)": rideCount }]] = await ctx.var.dbConn.query<
       Array<CountResult & RowDataPacket>
     >("SELECT COUNT(*) FROM rides WHERE user_id = ?", [user.id]);
-    let coupon: Coupon & RowDataPacket;
     if (rideCount === 1) {
       // 初回利用で、初回利用クーポンがあれば必ず使う
       const [[coupon]] = await ctx.var.dbConn.query<
@@ -281,18 +280,21 @@ export const appPostRides = async (ctx: Context<Environment>) => {
         [user.id],
       );
 
-      // 無ければ他のクーポンを付与された順番に使う
       if (!coupon) {
+        // 無ければ他のクーポンを付与された順番に使う
         const [[coupon]] = await ctx.var.dbConn.query<
           Array<Coupon & RowDataPacket>
         >(
           "SELECT * FROM coupons WHERE user_id = ? AND used_by IS NULL ORDER BY created_at LIMIT 1 FOR UPDATE",
           [user.id],
         );
-        await ctx.var.dbConn.query(
-          "UPDATE coupons SET used_by = ? WHERE user_id = ? AND code = ?",
-          [rideId, user.id, coupon.code],
-        );
+
+        if (coupon) {
+          await ctx.var.dbConn.query(
+            "UPDATE coupons SET used_by = ? WHERE user_id = ? AND code = ?",
+            [rideId, user.id, coupon.code],
+          );
+        }
       } else {
         await ctx.var.dbConn.query(
           "UPDATE coupons SET used_by = ? WHERE user_id = ? AND code = 'CP_NEW2024'",
@@ -318,7 +320,7 @@ export const appPostRides = async (ctx: Context<Environment>) => {
       "SELECT * FROM rides WHERE id = ?",
       [rideId],
     );
-    fare = await calculateDiscountedFare(
+    const fare = await calculateDiscountedFare(
       ctx.var.dbConn,
       user.id,
       ride,
@@ -445,7 +447,7 @@ export const appPostRideEvaluatation = async (ctx: Context<Environment>) => {
     const [[{ value: paymentGatewayURL }]] = await ctx.var.dbConn.query<
       Array<string & RowDataPacket>
     >("SELECT value FROM settings WHERE name = 'payment_gateway_url'");
-    await requestPaymentGatewayPostPayment(
+    const err = await requestPaymentGatewayPostPayment(
       paymentGatewayURL,
       paymentToken.token,
       paymentGatewayRequest,
@@ -457,6 +459,9 @@ export const appPostRideEvaluatation = async (ctx: Context<Environment>) => {
         return rides;
       },
     );
+    if (err instanceof ErroredUpstream) {
+      return ctx.text(`${err}`, 502);
+    }
     await ctx.var.dbConn.commit();
     return ctx.json(
       {
@@ -607,7 +612,7 @@ async function getChairStats(
       if (status.status === "COMPLETED") {
         isCompleted = true;
       }
-      if (!(arrivedAt && pickupedAt)) {
+      if (!arrivedAt || !pickupedAt) {
         continue;
       }
       if (!isCompleted) {
