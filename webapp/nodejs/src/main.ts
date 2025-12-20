@@ -1,6 +1,7 @@
 import { serve } from "@hono/node-server";
 import { Hono, type Context } from "hono";
 import { createMiddleware } from "hono/factory";
+import { logger } from "hono/logger";
 import { createPool } from "mysql2/promise";
 import { execSync } from "node:child_process";
 import {
@@ -43,6 +44,7 @@ const pool = createPool({
 });
 
 const app = new Hono<Environment>();
+app.use(logger());
 app.use(
   createMiddleware<Environment>(async (ctx, next) => {
     const connection = await pool.getConnection();
