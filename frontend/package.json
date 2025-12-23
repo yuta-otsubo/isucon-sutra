@@ -12,7 +12,7 @@
     "typecheck": "tsc",
     "fmtcheck": "prettier ./*.{cjs,ts,js} ./app --check",
     "fmt": "prettier ./*.{cjs,ts,js} ./app --write",
-    "codegen": "rm -rf ./app/apiClient &&npx openapi-codegen gen isucon"
+    "codegen": "rm -rf ./app/api &&npx openapi-codegen gen isucon"
   },
   "dependencies": {
     "@remix-run/node": "^2.16.8",
@@ -52,5 +52,5 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@10.25.0+sha256.0f3726654b0b5e52e5800904de168afc3c667e2abf84bdb06d9ac1386104bd90"
+  "packageManager": "pnpm@10.26.1+sha256.e8e6e499128f6804f5c92223cd1f2e3f62557102c0c6e254cc99bb2aa229bbf9"
 }
