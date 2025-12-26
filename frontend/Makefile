@@ -1,4 +1,4 @@
-.PHONY: all deps hash
+.PHONY: all deps build
 
 all: deps build
 
