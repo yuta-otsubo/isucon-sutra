@@ -97,3 +97,25 @@ proto配下のファイルは、ISUCONポータルシステムのgRPC API定義�
 - **resources** = データモデル（Entity/Value Object）
 - **services** = アプリケーションサービス（Use Case）
 - 役割ごとに明確に分離されており、保守性と可読性が高い設計になっています
+
+# frontend_hashes.json の生成
+
+`frontend_hashes.json` は、フロントエンドのビルド時にViteプラグインによって自動生成される。
+
+## 生成コマンド
+
+```bash
+cd frontend
+make build
+```
+
+または直接：
+
+```bash
+cd frontend
+pnpm run build
+```
+
+## 用途
+
+ビルドされたフロントエンドファイルのMD5ハッシュ値を記録し、ベンチマーク時にファイルの整合性チェックに使用される。
