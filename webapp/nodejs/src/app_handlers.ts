@@ -28,7 +28,7 @@ import type {
   User,
 } from "./types/models.js";
 import type { CountResult } from "./types/util.js";
-import { atoi } from "./utils/intger.js";
+import { atoi } from "./utils/integer.js";
 import { secureRandomStr } from "./utils/random.js";
 
 type AppPostUserRequest = Readonly<{
