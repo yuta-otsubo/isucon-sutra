@@ -29,7 +29,7 @@ docs/
 ### package.json更新後のロックファイル更新
 
 ```bash
-cd /Users/ootsuboyuuta/Work/isucon-sutra/docs
+cd docs
 pnpm install
 ```
 
