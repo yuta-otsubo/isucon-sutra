@@ -230,7 +230,7 @@ ISURIDEでは、利用者が使用するクライアントアプリケーショ�
 この処理はサーバー起動時以外に、以下のコマンドで選手自ら行うことができます。
 
 ```sh
-$ sudo /opt/isucon-env-checker/envcheck
+sudo /opt/isucon-env-checker/envcheck
 ```
 
 競技環境に主催者の指定と異なる設定がある場合、エラーメッセージが表示されます。
@@ -283,21 +283,21 @@ $ sudo /opt/isucon-env-checker/envcheck
 ### 1. `isuride-go.service` を停止、無効化します
 
 ```sh
-$ sudo systemctl stop isuride-go.service
-$ sudo systemctl disable isuride-go.service
+sudo systemctl stop isuride-go.service
+sudo systemctl disable isuride-go.service
 ```
 
 以下のコマンドでstopとdisableを両方行うことができます。
 
 ```sh
-$ sudo systemctl disable --now isuride-go.service
+sudo systemctl disable --now isuride-go.service
 ```
 
 ### 2. `isuride-{言語名}.service` を起動、有効化します
 
 ```sh
-$ sudo systemctl start isuride-{言語名}.service
-$ sudo systemctl enable isuride-{言語名}.service
+sudo systemctl start isuride-{言語名}.service
+sudo systemctl enable isuride-{言語名}.service
 ```
 
 `{言語名}` には以下の言語名を指定してください。
@@ -315,7 +315,7 @@ $ sudo systemctl enable isuride-{言語名}.service
 以下のコマンドでstartとenableを両方行うことができます。
 
 ```sh
-$ sudo systemctl enable --now isuride-{言語名}.service
+sudo systemctl enable --now isuride-{言語名}.service
 ```
 
 #### PHPへの切り替え
@@ -323,8 +323,8 @@ $ sudo systemctl enable --now isuride-{言語名}.service
 ただし、PHPを使う場合のみ、systemdの設定変更の他に、次のようにnginxの設定ファイルの変更が必要です。
 
 ```sh
-$ sudo ln -s /etc/nginx/sites-available/isuride-php.conf /etc/nginx/sites-enabled/
-$ sudo systemctl restart nginx.service
+sudo ln -s /etc/nginx/sites-available/isuride-php.conf /etc/nginx/sites-enabled/
+sudo systemctl restart nginx.service
 ```
 
 ## データベース(MySQL)について
@@ -336,7 +336,7 @@ $ sudo systemctl restart nginx.service
 リファレンス実装のMySQLに管理者権限で接続するには以下のようにします。
 
 ```sh
-$ sudo mysql isuride
+sudo mysql isuride
 ```
 
 ### データベースのデータの初期化
@@ -345,7 +345,7 @@ $ sudo mysql isuride
 以下のコマンドでもデータベースのデータを初期化できます。
 
 ```sh
-$ ~/webapp/sql/init.sh
+~/webapp/sql/init.sh
 ```
 
 初期化処理は用意された環境内で、ベンチマーカーが要求する範囲の整合性を担保します。
@@ -365,7 +365,7 @@ $ ~/webapp/sql/init.sh
 `isuride`データベースを初期化するにはデータベースを`DROP DATABASE isuride`および`CREATE DATABASE isuride`で再作成し、以下のコマンドでテーブルの作成を行ったのち、データの初期化を行なってください。
 
 ```sh
-$ cat webapp/sql/1-schema.sql | sudo mysql isuride
+cat webapp/sql/1-schema.sql | sudo mysql isuride
 ```
 
 ## TLS証明書について
