@@ -14,7 +14,7 @@ export const CampaignBanner: FC = () => {
     return !!(
       campaign &&
       !campaign.used &&
-      Date.now() - new Date(campaign.registedAt).getTime() < 60 * 60 * 1000
+      Date.now() - new Date(campaign.registeredAt).getTime() < 60 * 60 * 1000
     );
   }, [campaign]);
 

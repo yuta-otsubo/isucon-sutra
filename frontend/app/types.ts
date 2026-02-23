@@ -30,7 +30,7 @@ export type NearByChair = {
 
 export type CampaignData = {
   invitationCode: string;
-  registedAt: string;
+  registeredAt: string;
   used: boolean;
 };
 

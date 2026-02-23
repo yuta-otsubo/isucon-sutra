@@ -1,4 +1,4 @@
-import initalOwnerJson from "./initial-owner-data.json" with { type: "json" };
+import initialOwnerJson from "./initial-owner-data.json" with { type: "json" };
 
 /**
  * Sleep function to pause execution for the specified time.
@@ -10,7 +10,7 @@ export function sleep(ms) {
 }
 
 const main = async () => {
-  const targetOwner = initalOwnerJson.owners[0];
+  const targetOwner = initialOwnerJson.owners[0];
   const targetChair = targetOwner.chairs[0];
   let currentCoordinate = {
     latitude: 300,
