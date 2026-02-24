@@ -1,15 +1,15 @@
-import { Form } from "@remix-run/react";
-import { MouseEventHandler, useCallback, useEffect, useState } from "react";
-import colors from "tailwindcss/colors";
-import { fetchAppPostRideEvaluation } from "~/api/api-components";
-import { PinIcon } from "~/components/icon/pin";
-import { Price } from "~/components/modules/price/price";
-import { Button } from "~/components/primitives/button/button";
-import { ClickableRating } from "~/components/primitives/rating/clickable-rating";
-import { Text } from "~/components/primitives/text/text";
-import { useClientContext } from "~/contexts/client-context";
+import { Form } from '@remix-run/react';
+import { MouseEventHandler, useCallback, useEffect, useState } from 'react';
+import colors from 'tailwindcss/colors';
+import { fetchAppPostRideEvaluation } from '~/api/api-components';
+import { PinIcon } from '~/components/icon/pin';
+import { Price } from '~/components/modules/price/price';
+import { Button } from '~/components/primitives/button/button';
+import { ClickableRating } from '~/components/primitives/rating/clickable-rating';
+import { Text } from '~/components/primitives/text/text';
+import { useClientContext } from '~/contexts/client-context';
 
-import confetti from "canvas-confetti";
+import confetti from 'canvas-confetti';
 
 export const Arrived = ({ onEvaluated }: { onEvaluated: () => void }) => {
   const { data } = useClientContext();
@@ -20,13 +20,13 @@ export const Arrived = ({ onEvaluated }: { onEvaluated: () => void }) => {
     (e) => {
       e.preventDefault();
       if (rating < 1 || rating > 5) {
-        setErrorMessage("評価は1から5の間でなければなりません。");
+        setErrorMessage('評価は1から5の間でなければなりません。');
         return;
       }
       try {
         void fetchAppPostRideEvaluation({
           pathParams: {
-            rideId: data?.ride_id ?? "",
+            rideId: data?.ride_id ?? '',
           },
           body: {
             evaluation: rating,

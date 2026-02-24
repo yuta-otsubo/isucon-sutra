@@ -1,16 +1,16 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
-import { useState } from "react";
-import { fetchOwnerPostOwners } from "~/api/api-components";
-import { Button } from "~/components/primitives/button/button";
-import { TextInput } from "~/components/primitives/form/text-input";
-import { FormFrame } from "~/components/primitives/frame/form-frame";
-import { Text } from "~/components/primitives/text/text";
+import type { MetaFunction } from '@remix-run/node';
+import { Link, useNavigate } from '@remix-run/react';
+import { useState } from 'react';
+import { fetchOwnerPostOwners } from '~/api/api-components';
+import { Button } from '~/components/primitives/button/button';
+import { TextInput } from '~/components/primitives/form/text-input';
+import { FormFrame } from '~/components/primitives/frame/form-frame';
+import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Regiter | Owner | ISURIDE" },
-    { name: "description", content: "オーナー登録" },
+    { title: 'Regiter | Owner | ISURIDE' },
+    { name: 'description', content: 'オーナー登録' },
   ];
 };
 
@@ -22,23 +22,23 @@ export default function OwnerRegister() {
   const handleOnClick = async () => {
     try {
       if (!ownerName) {
-        setErrorMessage("オーナー名を入力してください");
+        setErrorMessage('オーナー名を入力してください');
         return;
       }
       if (ownerName.length > 30) {
-        setErrorMessage("オーナー名は30文字以内で入力してください");
+        setErrorMessage('オーナー名は30文字以内で入力してください');
         return;
       }
       await fetchOwnerPostOwners({
         body: {
-          name: ownerName ?? "",
+          name: ownerName ?? '',
         },
       });
-      navigate("/owner");
+      navigate('/owner');
     } catch (e) {
       console.error(`ERROR: ${JSON.stringify(e)}`);
       setErrorMessage(
-        "オーナーの登録に失敗しました。接続に問題があるか、ユーザー名が登録済みの可能性があります。",
+        'オーナーの登録に失敗しました。接続に問題があるか、ユーザー名が登録済みの可能性があります。',
       );
     }
   };

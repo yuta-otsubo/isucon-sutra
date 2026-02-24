@@ -1,8 +1,8 @@
-import { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
-import { RatingStar } from "~/components/icon/rating-star";
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { RatingStar } from '~/components/icon/rating-star';
 
-type ClickableRatingProps = ComponentProps<"div"> & {
+type ClickableRatingProps = ComponentProps<'div'> & {
   name: string;
   starSize?: number;
   rating: number;
@@ -18,7 +18,7 @@ export const ClickableRating: FC<ClickableRatingProps> = ({
   ...props
 }) => {
   return (
-    <div className={twMerge("flex flex-row gap-1", className)} {...props}>
+    <div className={twMerge('flex flex-row gap-1', className)} {...props}>
       {Array.from({ length: 5 }).map((_, index) => {
         const starValue = index + 1;
         return (

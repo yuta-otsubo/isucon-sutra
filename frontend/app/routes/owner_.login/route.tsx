@@ -1,15 +1,15 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
-import { useState } from "react";
-import { Button } from "~/components/primitives/button/button";
-import { TextInput } from "~/components/primitives/form/text-input";
-import { FormFrame } from "~/components/primitives/frame/form-frame";
-import { getOwners } from "~/utils/get-initial-data";
+import type { MetaFunction } from '@remix-run/node';
+import { Link, useNavigate } from '@remix-run/react';
+import { useState } from 'react';
+import { Button } from '~/components/primitives/button/button';
+import { TextInput } from '~/components/primitives/form/text-input';
+import { FormFrame } from '~/components/primitives/frame/form-frame';
+import { getOwners } from '~/utils/get-initial-data';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Login | Owner | ISURIDE" },
-    { name: "description", content: "オーナーログイン" },
+    { title: 'Login | Owner | ISURIDE' },
+    { name: 'description', content: 'オーナーログイン' },
   ];
 };
 
@@ -20,7 +20,7 @@ export default function OwnerLogin() {
 
   const handleOnClick = () => {
     document.cookie = `owner_session=${sessionToken}; path=/`;
-    navigate("/owner");
+    navigate('/owner');
   };
 
   return (

@@ -1,12 +1,12 @@
-import { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
-import { Text } from "~/components/primitives/text/text";
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { Text } from '~/components/primitives/text/text';
 
 type PriceTextProps = {
   value: number;
-} & ComponentProps<"span">;
+} & ComponentProps<'span'>;
 
-const formatter = new Intl.NumberFormat("ja-JP");
+const formatter = new Intl.NumberFormat('ja-JP');
 
 export const PriceText: FC<PriceTextProps> = ({
   value,
@@ -15,7 +15,7 @@ export const PriceText: FC<PriceTextProps> = ({
 }) => {
   return (
     <span
-      className={twMerge("flex flex-row space-x-1 items-center", className)}
+      className={twMerge('flex flex-row space-x-1 items-center', className)}
       {...props}
     >
       <Text tagName="span" size="xl" bold className="font-mono">

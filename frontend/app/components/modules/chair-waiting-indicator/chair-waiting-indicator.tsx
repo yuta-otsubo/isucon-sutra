@@ -1,10 +1,10 @@
-import type { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
-import { ChairTypeIcon } from "../../icon/chair";
+import type { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { ChairTypeIcon } from '../../icon/chair';
 
 type Props = {
   size?: number;
-} & ComponentProps<"div">;
+} & ComponentProps<'div'>;
 
 export const ChairWaitingIndicator: FC<Props> = function ({
   className,
@@ -14,7 +14,7 @@ export const ChairWaitingIndicator: FC<Props> = function ({
   return (
     <div
       className={twMerge(
-        "flex items-center justify-center relative",
+        'flex items-center justify-center relative',
         className,
       )}
       {...props}

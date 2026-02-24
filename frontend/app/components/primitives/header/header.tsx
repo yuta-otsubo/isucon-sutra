@@ -1,16 +1,16 @@
-import { Link } from "@remix-run/react";
-import type { FC, PropsWithChildren } from "react";
-import { ComponentProps } from "react";
-import { twMerge } from "tailwind-merge";
+import { Link } from '@remix-run/react';
+import type { FC, PropsWithChildren } from 'react';
+import { ComponentProps } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 export const Header: FC<
-  PropsWithChildren<{ backTo?: `/${string}` } & ComponentProps<"header">>
+  PropsWithChildren<{ backTo?: `/${string}` } & ComponentProps<'header'>>
 > = ({ backTo, children, className, ...props }) => {
   return (
     <header
       className={twMerge(
-        "p-4 h-18 flex items-center w-full",
-        backTo ? "justify-between" : "justify-end",
+        'p-4 h-18 flex items-center w-full',
+        backTo ? 'justify-between' : 'justify-end',
         className,
       )}
       {...props}

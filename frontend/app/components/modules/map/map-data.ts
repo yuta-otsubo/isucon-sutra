@@ -1,4 +1,4 @@
-import { Coordinate } from "~/types";
+import { Coordinate } from '~/types';
 
 type Image = {
   src: `/${string}`;
@@ -15,14 +15,14 @@ type Town = {
 };
 
 const CityObjectImages = [
-  { src: "/images/buildings1.svg", width: 170, height: 100 },
-  { src: "/images/buildings2.svg", width: 112, height: 64 },
-  { src: "/images/buildings3.svg", width: 112, height: 64 },
-  { src: "/images/buildings4.svg", width: 101, height: 38 },
-  { src: "/images/buildings5.svg", width: 79, height: 32 },
-  { src: "/images/buildings6.svg", width: 125, height: 60 },
-  { src: "/images/house1.svg", width: 81, height: 46 },
-  { src: "/images/house2.svg", width: 71, height: 53 },
+  { src: '/images/buildings1.svg', width: 170, height: 100 },
+  { src: '/images/buildings2.svg', width: 112, height: 64 },
+  { src: '/images/buildings3.svg', width: 112, height: 64 },
+  { src: '/images/buildings4.svg', width: 101, height: 38 },
+  { src: '/images/buildings5.svg', width: 79, height: 32 },
+  { src: '/images/buildings6.svg', width: 125, height: 60 },
+  { src: '/images/house1.svg', width: 81, height: 46 },
+  { src: '/images/house2.svg', width: 71, height: 53 },
 ] as const;
 
 // prettier-ignore
@@ -54,15 +54,15 @@ export const CityObjects = CityObjectCoordinates.map(
 
 export const TownList = [
   {
-    name: "チェアタウン",
+    name: 'チェアタウン',
     centerCoordinate: { latitude: 0, longitude: 0 },
-    image: { src: "/images/town.svg", width: 500, height: 500 },
-    color: "#FF3600",
+    image: { src: '/images/town.svg', width: 500, height: 500 },
+    color: '#FF3600',
   },
   {
-    name: "コシカケシティ",
+    name: 'コシカケシティ',
     centerCoordinate: { latitude: 300, longitude: 300 },
-    image: { src: "/images/town.svg", width: 500, height: 500 },
-    color: "#0089A2",
+    image: { src: '/images/town.svg', width: 500, height: 500 },
+    color: '#0089A2',
   },
 ] satisfies Town[];

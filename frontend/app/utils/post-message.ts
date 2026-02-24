@@ -1,7 +1,7 @@
 export const MessageTypes = {
-  ClientReady: "isuride.client.ready", // クライアントの画面準備完了
-  ClientRideRequested: "isuride.client.running", // クライアントでISURIDEが実行中
-  SimulatorConfig: "isuride.simulator.config", // シミュレーターからの設定値変更
+  ClientReady: 'isuride.client.ready', // クライアントの画面準備完了
+  ClientRideRequested: 'isuride.client.running', // クライアントでISURIDEが実行中
+  SimulatorConfig: 'isuride.simulator.config', // シミュレーターからの設定値変更
 } as const;
 
 export type Message = {
@@ -23,21 +23,21 @@ export type Message = {
 
 export const sendClientReady = (
   target: Window,
-  payload: NonNullable<Message["ClientReady"]["payload"]>,
+  payload: NonNullable<Message['ClientReady']['payload']>,
 ) => {
-  target.postMessage({ type: MessageTypes.ClientReady, payload }, "*");
+  target.postMessage({ type: MessageTypes.ClientReady, payload }, '*');
 };
 
 export const sendClientRideRequested = (
   target: Window,
-  payload: NonNullable<Message["ClientRideRequested"]["payload"]>,
+  payload: NonNullable<Message['ClientRideRequested']['payload']>,
 ) => {
-  target.postMessage({ type: MessageTypes.ClientRideRequested, payload }, "*");
+  target.postMessage({ type: MessageTypes.ClientRideRequested, payload }, '*');
 };
 
 export const sendSimulatorConfig = (
   target: Window,
-  payload: NonNullable<Message["SimulatorConfig"]["payload"]>,
+  payload: NonNullable<Message['SimulatorConfig']['payload']>,
 ) => {
-  target.postMessage({ type: MessageTypes.SimulatorConfig, payload }, "*");
+  target.postMessage({ type: MessageTypes.SimulatorConfig, payload }, '*');
 };

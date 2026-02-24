@@ -1,7 +1,7 @@
-import type { ComponentProps, FC, PropsWithChildren } from "react";
-import { twMerge } from "tailwind-merge";
+import type { ComponentProps, FC, PropsWithChildren } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-export const MainFrame: FC<PropsWithChildren<ComponentProps<"div">>> = ({
+export const MainFrame: FC<PropsWithChildren<ComponentProps<'div'>>> = ({
   children,
   className,
   ...props
@@ -9,7 +9,7 @@ export const MainFrame: FC<PropsWithChildren<ComponentProps<"div">>> = ({
   return (
     <main
       className={twMerge(
-        "md:max-w-screen-md h-full relative ml-auto mr-auto shadow-xl bg-white flex flex-col",
+        'md:max-w-screen-md h-full relative ml-auto mr-auto shadow-xl bg-white flex flex-col',
         className,
       )}
       {...props}

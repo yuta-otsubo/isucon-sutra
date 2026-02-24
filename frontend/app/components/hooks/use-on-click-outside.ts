@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from "react";
+import { RefObject, useEffect } from 'react';
 
 export const useOnClickOutside = (
   ref: RefObject<HTMLElement>,
@@ -11,10 +11,10 @@ export const useOnClickOutside = (
       }
     };
 
-    document.addEventListener("click", handleOutsideClick);
+    document.addEventListener('click', handleOutsideClick);
 
     return () => {
-      document.removeEventListener("click", handleOutsideClick);
+      document.removeEventListener('click', handleOutsideClick);
     };
   }, [ref, handler]);
 };

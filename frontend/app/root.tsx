@@ -1,4 +1,4 @@
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction } from '@remix-run/node';
 import {
   isRouteErrorResponse,
   Links,
@@ -7,10 +7,10 @@ import {
   Scripts,
   ScrollRestoration,
   useRouteError,
-} from "@remix-run/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ErrorMessage } from "./components/primitives/error-message/error-message";
-import "./tailwind.css";
+} from '@remix-run/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ErrorMessage } from './components/primitives/error-message/error-message';
+import './tailwind.css';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
@@ -46,7 +46,7 @@ export function ErrorBoundary() {
         ? `${error.status} ${error.statusText}`
         : error instanceof Error
           ? error.message
-          : "Unknown Error"}
+          : 'Unknown Error'}
     </ErrorMessage>
   );
 }
@@ -58,26 +58,26 @@ export function HydrateFallback() {
 export const links: LinksFunction = () => {
   return [
     {
-      rel: "icon",
-      href: "/favicon.ico",
-      type: "image/ico",
+      rel: 'icon',
+      href: '/favicon.ico',
+      type: 'image/ico',
     },
     {
-      rel: "icon",
-      href: "/favicon-32x32.png",
-      type: "image/png",
-      sizes: "32x32",
+      rel: 'icon',
+      href: '/favicon-32x32.png',
+      type: 'image/png',
+      sizes: '32x32',
     },
     {
-      rel: "icon",
-      href: "/favicon-128x128.png",
-      type: "image/png",
-      sizes: "128x128",
+      rel: 'icon',
+      href: '/favicon-128x128.png',
+      type: 'image/png',
+      sizes: '128x128',
     },
     {
-      rel: "apple-touch-icon",
-      href: "/apple-touch-icon-180x180.png",
-      sizes: "180x18",
+      rel: 'apple-touch-icon',
+      href: '/apple-touch-icon-180x180.png',
+      sizes: '180x18',
     },
   ];
 };

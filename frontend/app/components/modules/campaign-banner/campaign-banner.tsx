@@ -1,9 +1,9 @@
-import { FC, useCallback, useMemo, useState } from "react";
-import { CopyIcon } from "~/components/icon/copy";
-import { Button } from "~/components/primitives/button/button";
-import { Text } from "~/components/primitives/text/text";
-import { CampaignData } from "~/types";
-import { getCampaignData, saveCampaignData } from "~/utils/storage";
+import { FC, useCallback, useMemo, useState } from 'react';
+import { CopyIcon } from '~/components/icon/copy';
+import { Button } from '~/components/primitives/button/button';
+import { Text } from '~/components/primitives/text/text';
+import { CampaignData } from '~/types';
+import { getCampaignData, saveCampaignData } from '~/utils/storage';
 
 export const CampaignBanner: FC = () => {
   const [campaign, setCampaign] = useState<CampaignData | null>(() =>
@@ -30,7 +30,7 @@ export const CampaignBanner: FC = () => {
     const handleCopyCode = async () => {
       try {
         await navigator.clipboard.writeText(campaign.invitationCode);
-        alert("招待コードがコピーされました！");
+        alert('招待コードがコピーされました！');
       } catch {
         alert(
           `招待コード: ${campaign.invitationCode}\nコピーしてお使いください`,

@@ -10,15 +10,15 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { twMerge } from "tailwind-merge";
-import colors from "tailwindcss/colors";
-import { ChairIcon } from "~/components/icon/chair";
-import { PinIcon } from "~/components/icon/pin";
-import { Button } from "~/components/primitives/button/button";
-import { Text } from "~/components/primitives/text/text";
-import type { Coordinate, DisplayPos, Distance, NearByChair } from "~/types";
-import { CityObjects, TownList } from "./map-data";
+} from 'react';
+import { twMerge } from 'tailwind-merge';
+import colors from 'tailwindcss/colors';
+import { ChairIcon } from '~/components/icon/chair';
+import { PinIcon } from '~/components/icon/pin';
+import { Button } from '~/components/primitives/button/button';
+import { Text } from '~/components/primitives/text/text';
+import type { Coordinate, DisplayPos, Distance, NearByChair } from '~/types';
+import { CityObjects, TownList } from './map-data';
 
 const GridDistance = 20;
 const PinSize = 50;
@@ -70,7 +70,7 @@ const draw = (
 
   ctx.strokeStyle = colors.neutral[200];
   ctx.lineWidth = 2;
-  ctx.lineCap = "round";
+  ctx.lineCap = 'round';
   ctx.setLineDash([]);
   ctx.beginPath();
   for (let v = GridDistance; v < DisplayMapSize; v += GridDistance) {
@@ -90,7 +90,7 @@ const draw = (
   if (from && to) {
     ctx.strokeStyle = colors.neutral[400];
     ctx.lineWidth = 3;
-    ctx.lineCap = "round";
+    ctx.lineCap = 'round';
     ctx.setLineDash([3, 12]);
     ctx.beginPath();
     ctx.moveTo(-from.x, -from.y);
@@ -130,8 +130,8 @@ const SelectorLayer: FC<{
         className="absolute top-0 left-0 w-full h-full opacity-10"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect x="50%" y="0" width={2} height={"100%"} />
-        <rect x="0" y="50%" width={"100%"} height={2} />
+        <rect x="50%" y="0" width={2} height={'100%'} />
+        <rect x="0" y="50%" width={'100%'} height={2} />
       </svg>
       <PinIcon
         className="absolute mt-[-8px] opacity-60"
@@ -259,8 +259,8 @@ const ChairLayer: FC<{
             style={{
               transform: [
                 `translate(${-pos.x - PinSize / 2}px, ${-pos.y - PinSize - 8}px)`,
-                i % 2 === 0 ? "scale(-1, 1)" : "",
-              ].join(" "),
+                i % 2 === 0 ? 'scale(-1, 1)' : '',
+              ].join(' '),
             }}
           />
         );
@@ -330,7 +330,7 @@ const TownLayer = memo(function TownLayer() {
               transform: `translate(${-pos.x - image.width / 2}px, ${-pos.y - image.height / 2}px)`,
             }}
             src={image.src}
-            alt={"city object"}
+            alt={'city object'}
             width={image.width}
             height={image.height}
             loading="lazy"
@@ -341,7 +341,7 @@ const TownLayer = memo(function TownLayer() {
   );
 });
 
-type MapProps = ComponentProps<"div"> & {
+type MapProps = ComponentProps<'div'> & {
   onMove?: (coordinate: Coordinate) => void;
   onUpdateViewSize?: (distance: Distance) => void;
   selectable?: boolean;
@@ -411,7 +411,7 @@ export const Map: FC<MapProps> = ({
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+    const context = canvas?.getContext('2d');
     if (!context) return;
     draw(context, { from, to });
   }, [from, to]);
@@ -454,11 +454,11 @@ export const Map: FC<MapProps> = ({
       setMovingStartPagePos({ x: 0, y: 0 });
       setIsDrag(false);
     };
-    window.addEventListener("mouseup", onEnd);
-    window.addEventListener("touchend", onEnd);
+    window.addEventListener('mouseup', onEnd);
+    window.addEventListener('touchend', onEnd);
     return () => {
-      window.removeEventListener("mouseup", onEnd);
-      window.removeEventListener("touchend", onEnd);
+      window.removeEventListener('mouseup', onEnd);
+      window.removeEventListener('touchend', onEnd);
     };
   }, []);
 
@@ -487,20 +487,20 @@ export const Map: FC<MapProps> = ({
       setFixedPos(e.touches[0].pageX, e.touches[0].pageY);
     };
     if (isDrag) {
-      window.addEventListener("mousemove", onMouseMove, { passive: true });
-      window.addEventListener("touchmove", onTouchMove, { passive: true });
+      window.addEventListener('mousemove', onMouseMove, { passive: true });
+      window.addEventListener('touchmove', onTouchMove, { passive: true });
     }
     return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('touchmove', onTouchMove);
     };
   }, [isDrag, movingStartPagePos, movingStartPos, onMove, outerRect]);
 
   return (
     <div
       className={twMerge(
-        "w-full h-full relative overflow-hidden bg-neutral-200 select-none",
-        isDrag && "cursor-grab",
+        'w-full h-full relative overflow-hidden bg-neutral-200 select-none',
+        isDrag && 'cursor-grab',
         className,
       )}
       ref={outerRef}
@@ -511,8 +511,8 @@ export const Map: FC<MapProps> = ({
     >
       <div
         className={twMerge(
-          "absolute top-0 left-0",
-          !isDrag && "transition-transform duration-200 ease-in-out",
+          'absolute top-0 left-0',
+          !isDrag && 'transition-transform duration-200 ease-in-out',
         )}
         style={{
           transform: `translate(${x}px, ${y}px)`,

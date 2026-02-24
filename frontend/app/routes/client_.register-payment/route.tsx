@@ -1,14 +1,14 @@
-import type { MetaFunction } from "@remix-run/node";
-import { ClientActionFunctionArgs, Form, redirect } from "@remix-run/react";
-import { fetchAppPostPaymentMethods } from "~/api/api-components";
-import { Button } from "~/components/primitives/button/button";
-import { TextInput } from "~/components/primitives/form/text-input";
-import { FormFrame } from "~/components/primitives/frame/form-frame";
+import type { MetaFunction } from '@remix-run/node';
+import { ClientActionFunctionArgs, Form, redirect } from '@remix-run/react';
+import { fetchAppPostPaymentMethods } from '~/api/api-components';
+import { Button } from '~/components/primitives/button/button';
+import { TextInput } from '~/components/primitives/form/text-input';
+import { FormFrame } from '~/components/primitives/frame/form-frame';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Regiter Payment | ISURIDE" },
-    { name: "description", content: "決済トークン登録" },
+    { title: 'Regiter Payment | ISURIDE' },
+    { name: 'description', content: '決済トークン登録' },
   ];
 };
 
@@ -16,7 +16,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   const formData = await request.formData();
   await fetchAppPostPaymentMethods({
     body: {
-      token: (formData.get("payment-token") as string) || "",
+      token: (formData.get('payment-token') as string) || '',
     },
   });
   return redirect(`/client`);

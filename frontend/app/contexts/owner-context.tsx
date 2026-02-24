@@ -1,4 +1,4 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigate } from '@remix-run/react';
 import {
   createContext,
   useCallback,
@@ -6,15 +6,15 @@ import {
   useEffect,
   useState,
   type ReactNode,
-} from "react";
+} from 'react';
 import {
   OwnerGetChairsResponse,
   OwnerGetSalesResponse,
   fetchOwnerGetChairs,
   fetchOwnerGetSales,
-} from "~/api/api-components";
-import { OwnerChairs, OwnerSales } from "~/types";
-import { getCookieValue } from "~/utils/get-cookie-value";
+} from '~/api/api-components';
+import { OwnerChairs, OwnerSales } from '~/types';
+import { getCookieValue } from '~/utils/get-cookie-value';
 
 type DateString = `${number}-${number}-${number}`; // yyyy-mm-dd
 
@@ -48,10 +48,10 @@ const isValidDateString = (value: string): value is DateString => {
 };
 
 export const OwnerProvider = ({ children }: { children: ReactNode }) => {
-  const [chairs, setChairs] = useState<OwnerGetChairsResponse["chairs"]>();
+  const [chairs, setChairs] = useState<OwnerGetChairsResponse['chairs']>();
   const [sales, setSales] = useState<OwnerGetSalesResponse>();
   const navigate = useNavigate();
-  const [since, _setSince] = useState("2024-11-01" as DateString);
+  const [since, _setSince] = useState('2024-11-01' as DateString);
   const [until, _setUntil] = useState(currentDateString);
   const setSince = useCallback((value: string) => {
     if (isValidDateString(value)) {
@@ -93,9 +93,9 @@ export const OwnerProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const isRegistered =
-      typeof getCookieValue(document.cookie, "owner_session") !== "undefined";
+      typeof getCookieValue(document.cookie, 'owner_session') !== 'undefined';
     if (!isRegistered) {
-      navigate("/owner/register");
+      navigate('/owner/register');
     }
   }, [navigate]);
 

@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from 'react';
 
 export const ErrorMessage: FC<PropsWithChildren> = ({ children }) => {
   return (

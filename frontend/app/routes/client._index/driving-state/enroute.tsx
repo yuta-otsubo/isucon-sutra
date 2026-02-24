@@ -1,11 +1,11 @@
-import { FC } from "react";
-import { ChairIcon } from "~/components/icon/chair";
-import { ChairInformation } from "~/components/modules/chair-information/chair-information";
-import { LocationButton } from "~/components/modules/location-button/location-button";
-import { ModalHeader } from "~/components/modules/modal-header/modal-header";
-import { Price } from "~/components/modules/price/price";
-import { Text } from "~/components/primitives/text/text";
-import { useClientContext } from "~/contexts/client-context";
+import { FC } from 'react';
+import { ChairIcon } from '~/components/icon/chair';
+import { ChairInformation } from '~/components/modules/chair-information/chair-information';
+import { LocationButton } from '~/components/modules/location-button/location-button';
+import { ModalHeader } from '~/components/modules/modal-header/modal-header';
+import { Price } from '~/components/modules/price/price';
+import { Text } from '~/components/primitives/text/text';
+import { useClientContext } from '~/contexts/client-context';
 
 export const Enroute: FC = () => {
   const { data } = useClientContext();
@@ -16,7 +16,7 @@ export const Enroute: FC = () => {
         subTitle="あなたのもとに向かっています"
       >
         <ChairIcon
-          model={data?.chair?.model ?? ""}
+          model={data?.chair?.model ?? ''}
           width={100}
           className="animate-shake"
         />

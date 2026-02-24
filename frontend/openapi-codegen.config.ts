@@ -1,23 +1,23 @@
-import { defineConfig } from "@openapi-codegen/cli";
+import { defineConfig } from '@openapi-codegen/cli';
 import {
   generateReactQueryComponents,
   generateSchemaTypes,
-} from "@openapi-codegen/typescript";
-import { ConfigBase } from "@openapi-codegen/typescript/lib/generators/types";
-import { readFile, readdir, writeFile } from "fs/promises";
-import { join as pathJoin } from "path";
+} from '@openapi-codegen/typescript';
+import { ConfigBase } from '@openapi-codegen/typescript/lib/generators/types';
+import { readFile, readdir, writeFile } from 'fs/promises';
+import { join as pathJoin } from 'path';
 import {
   alternativeAPIURLString,
   alternativeURLExpression,
-} from "./api-url.mjs";
+} from './api-url.mjs';
 
-const outputDir = "./app/api";
+const outputDir = './app/api';
 
 export default defineConfig({
   isucon: {
     from: {
-      relativePath: "../webapp/openapi.yaml",
-      source: "file",
+      relativePath: '../webapp/openapi.yaml',
+      source: 'file',
     },
     outputDir,
     to: async (context) => {
@@ -31,10 +31,10 @@ export default defineConfig({
         targetBaseCandidateURLs === undefined ||
         targetBaseCandidateURLs.length === 0
       ) {
-        throw Error("must define servers.url");
+        throw Error('must define servers.url');
       }
       if (targetBaseCandidateURLs.length > 1) {
-        throw Error("he servers.url must have only one entry.");
+        throw Error('he servers.url must have only one entry.');
       }
 
       const contextServers = context.openAPIDocument.servers;
@@ -46,8 +46,8 @@ export default defineConfig({
       });
 
       const configBase: ConfigBase = {
-        filenamePrefix: "api",
-        filenameCase: "kebab",
+        filenamePrefix: 'api',
+        filenameCase: 'kebab',
       };
       const { schemasFiles } = await generateSchemaTypes(context, configBase);
       await generateReactQueryComponents(context, {
@@ -97,14 +97,14 @@ async function rewriteFileInTargetDir(
       }
     }
   } catch (err) {
-    if (typeof err === "string") {
+    if (typeof err === 'string') {
       console.error(`CONSOLE ERROR: ${err}`);
     }
   }
 }
 
 async function rewriteFile(filePath: string, rewriteFn: RewriteFn) {
-  const data = await readFile(filePath, "utf8");
+  const data = await readFile(filePath, 'utf8');
   const rewrittenContent = rewriteFn(data);
   await writeFile(filePath, rewrittenContent);
 }

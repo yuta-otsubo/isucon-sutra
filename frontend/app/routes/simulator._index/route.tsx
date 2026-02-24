@@ -1,16 +1,16 @@
-import type { MetaFunction } from "@remix-run/react";
-import { useEffect, useRef } from "react";
-import { fetchChairPostActivity } from "~/api/api-components";
-import { useEmulator } from "~/components/hooks/use-emulator";
-import { SimulatorChairActiveToggle } from "~/components/modules/simulator-configs/simulator-chair-active-toggle";
-import { SimulatorChairConfig } from "~/components/modules/simulator-configs/simulator-chair-config";
-import { SimulatorGhostChairToggle } from "~/components/modules/simulator-configs/simulator-ghost-chair-toggle";
-import { SmartPhone } from "~/components/primitives/smartphone/smartphone";
+import type { MetaFunction } from '@remix-run/react';
+import { useEffect, useRef } from 'react';
+import { fetchChairPostActivity } from '~/api/api-components';
+import { useEmulator } from '~/components/hooks/use-emulator';
+import { SimulatorChairActiveToggle } from '~/components/modules/simulator-configs/simulator-chair-active-toggle';
+import { SimulatorChairConfig } from '~/components/modules/simulator-configs/simulator-chair-config';
+import { SimulatorGhostChairToggle } from '~/components/modules/simulator-configs/simulator-ghost-chair-toggle';
+import { SmartPhone } from '~/components/primitives/smartphone/smartphone';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Simulator | ISURIDE" },
-    { name: "description", content: "isucon14" },
+    { title: 'Simulator | ISURIDE' },
+    { name: 'description', content: 'isucon14' },
   ];
 };
 

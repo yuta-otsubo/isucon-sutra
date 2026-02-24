@@ -1,6 +1,6 @@
-import type { ComponentProps, FC } from "react";
+import type { ComponentProps, FC } from 'react';
 
-export const IsurideIcon: FC<ComponentProps<"svg">> = (props) => {
+export const IsurideIcon: FC<ComponentProps<'svg'>> = (props) => {
   return (
     <svg
       viewBox="0 0 163.15 219.74"

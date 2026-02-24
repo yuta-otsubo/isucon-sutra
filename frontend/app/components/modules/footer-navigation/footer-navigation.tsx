@@ -1,30 +1,30 @@
-import { NavLink } from "@remix-run/react";
-import type { ComponentProps, FC } from "react";
-import { AccountIcon } from "~/components/icon/account";
-import { HistoryIcon } from "~/components/icon/history";
-import { IsurideIcon } from "~/components/icon/isuride";
+import { NavLink } from '@remix-run/react';
+import type { ComponentProps, FC } from 'react';
+import { AccountIcon } from '~/components/icon/account';
+import { HistoryIcon } from '~/components/icon/history';
+import { IsurideIcon } from '~/components/icon/isuride';
 
 type NavigationMenu = {
   link: `/${string}`;
   label: string;
-  icon: FC<ComponentProps<"svg">>;
+  icon: FC<ComponentProps<'svg'>>;
 };
 
 const MenuList = [
   {
     icon: IsurideIcon,
-    link: "/client",
-    label: "RIDE",
+    link: '/client',
+    label: 'RIDE',
   },
   {
     icon: HistoryIcon,
-    link: "/client/history",
-    label: "HISTORY",
+    link: '/client/history',
+    label: 'HISTORY',
   },
   {
     icon: AccountIcon,
-    link: "/client/user",
-    label: "USER",
+    link: '/client/user',
+    label: 'USER',
   },
 ] as const satisfies NavigationMenu[];
 
@@ -41,7 +41,7 @@ export const FooterNavigation: FC = () => {
               to={menu.link}
               end
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center gap-1 px-4 py-1.5 text-xs hover:bg-secondary-hover ${isActive ? "pointer-events-none active" : ""}`
+                `flex flex-col items-center justify-center gap-1 px-4 py-1.5 text-xs hover:bg-secondary-hover ${isActive ? 'pointer-events-none active' : ''}`
               }
             >
               <menu.icon className="fill-neutral-950" width={30} height={30} />

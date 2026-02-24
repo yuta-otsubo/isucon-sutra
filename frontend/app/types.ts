@@ -1,7 +1,7 @@
 import type {
   OwnerGetChairsResponse,
   OwnerGetSalesResponse,
-} from "./api/api-components";
+} from './api/api-components';
 
 export type AccessToken = string;
 
@@ -34,7 +34,7 @@ export type CampaignData = {
   used: boolean;
 };
 
-export type OwnerChairs = OwnerGetChairsResponse["chairs"];
+export type OwnerChairs = OwnerGetChairsResponse['chairs'];
 export type OwnerSales = OwnerGetSalesResponse;
 
 export type SimulatorChair = {

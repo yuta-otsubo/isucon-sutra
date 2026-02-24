@@ -1,14 +1,14 @@
-import { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
-import { MoneyIcon } from "~/components/icon/money";
-import { Text } from "~/components/primitives/text/text";
-import { PriceText } from "../price-text/price-text";
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { MoneyIcon } from '~/components/icon/money';
+import { Text } from '~/components/primitives/text/text';
+import { PriceText } from '../price-text/price-text';
 
 type PriceTextProps = {
   value: number;
   discount?: number;
   pre?: string;
-} & ComponentProps<"div">;
+} & ComponentProps<'div'>;
 
 export const Price: FC<PriceTextProps> = ({
   value,
@@ -20,7 +20,7 @@ export const Price: FC<PriceTextProps> = ({
   return (
     <div
       className={twMerge(
-        "flex flex-col min-[440px]:flex-row space-x-1 items-center",
+        'flex flex-col min-[440px]:flex-row space-x-1 items-center',
         className,
       )}
       {...props}

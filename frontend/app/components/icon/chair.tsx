@@ -1,38 +1,38 @@
-import { ComponentProps, FC, useMemo } from "react";
-import colors from "tailwindcss/colors";
+import { ComponentProps, FC, useMemo } from 'react';
+import colors from 'tailwindcss/colors';
 
 const ChairTypes = [
   {
-    type: "green",
-    bodyColor: "#87c9a1",
-    windowColor: "#00a0e9",
-    wheelColor: "#e0803a",
+    type: 'green',
+    bodyColor: '#87c9a1',
+    windowColor: '#00a0e9',
+    wheelColor: '#e0803a',
   },
   {
-    type: "yellow",
-    bodyColor: "#ffa455",
-    windowColor: "#ffc155",
-    wheelColor: "#226b9f",
+    type: 'yellow',
+    bodyColor: '#ffa455',
+    windowColor: '#ffc155',
+    wheelColor: '#226b9f',
   },
-  { type: "red", bodyColor: "#f63", windowColor: "#f93", wheelColor: "#099" },
+  { type: 'red', bodyColor: '#f63', windowColor: '#f93', wheelColor: '#099' },
   {
-    type: "gray",
+    type: 'gray',
     bodyColor: colors.neutral[300],
     windowColor: colors.neutral[400],
     wheelColor: colors.neutral[600],
   },
   {
-    type: "sky",
+    type: 'sky',
     bodyColor: colors.sky[300],
     windowColor: colors.sky[500],
-    wheelColor: "#00a0e9",
+    wheelColor: '#00a0e9',
   },
 ] as const;
 
 const Chair: FC<
   {
     chairType: (typeof ChairTypes)[number];
-  } & ComponentProps<"svg">
+  } & ComponentProps<'svg'>
 > = ({ chairType, ...props }) => {
   const { bodyColor, windowColor, wheelColor } = chairType;
   return (
@@ -73,7 +73,7 @@ const Chair: FC<
   );
 };
 
-export const ChairIcon: FC<{ model: string } & ComponentProps<"svg">> = ({
+export const ChairIcon: FC<{ model: string } & ComponentProps<'svg'>> = ({
   model,
   ...props
 }) => {
@@ -86,7 +86,7 @@ export const ChairIcon: FC<{ model: string } & ComponentProps<"svg">> = ({
 };
 
 export const ChairTypeIcon: FC<
-  { type: (typeof ChairTypes)[number]["type"] } & ComponentProps<"svg">
+  { type: (typeof ChairTypes)[number]['type'] } & ComponentProps<'svg'>
 > = ({ type, ...props }) => {
   const chairType = useMemo(
     () => ChairTypes.find((c) => c.type === type) ?? ChairTypes[0],

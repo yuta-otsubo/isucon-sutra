@@ -1,37 +1,37 @@
-import type { MetaFunction } from "@remix-run/node";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import colors from "tailwindcss/colors";
+import type { MetaFunction } from '@remix-run/node';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import colors from 'tailwindcss/colors';
 import {
   fetchAppGetNearbyChairs,
   fetchAppPostRides,
   fetchAppPostRidesEstimatedFare,
-} from "~/api/api-components";
-import { Coordinate, RideStatus } from "~/api/api-schemas";
-import { useGhostChairs } from "~/components/hooks/use-ghost-chairs";
-import { CampaignBanner } from "~/components/modules/campaign-banner/campaign-banner";
-import { LocationButton } from "~/components/modules/location-button/location-button";
-import { Map } from "~/components/modules/map/map";
-import { Price } from "~/components/modules/price/price";
-import { Button } from "~/components/primitives/button/button";
-import { Modal } from "~/components/primitives/modal/modal";
-import { Text } from "~/components/primitives/text/text";
-import { useClientContext } from "~/contexts/client-context";
-import type { Distance, NearByChair } from "~/types";
-import { sendClientReady, sendClientRideRequested } from "~/utils/post-message";
-import { Arrived } from "./driving-state/arrived";
-import { Carrying } from "./driving-state/carrying";
-import { Enroute } from "./driving-state/enroute";
-import { Matching } from "./driving-state/matching";
-import { Pickup } from "./driving-state/pickup";
+} from '~/api/api-components';
+import { Coordinate, RideStatus } from '~/api/api-schemas';
+import { useGhostChairs } from '~/components/hooks/use-ghost-chairs';
+import { CampaignBanner } from '~/components/modules/campaign-banner/campaign-banner';
+import { LocationButton } from '~/components/modules/location-button/location-button';
+import { Map } from '~/components/modules/map/map';
+import { Price } from '~/components/modules/price/price';
+import { Button } from '~/components/primitives/button/button';
+import { Modal } from '~/components/primitives/modal/modal';
+import { Text } from '~/components/primitives/text/text';
+import { useClientContext } from '~/contexts/client-context';
+import type { Distance, NearByChair } from '~/types';
+import { sendClientReady, sendClientRideRequested } from '~/utils/post-message';
+import { Arrived } from './driving-state/arrived';
+import { Carrying } from './driving-state/carrying';
+import { Enroute } from './driving-state/enroute';
+import { Matching } from './driving-state/matching';
+import { Pickup } from './driving-state/pickup';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "ISURIDE" },
-    { name: "description", content: "目的地まで椅子で快適に移動しましょう" },
+    { title: 'ISURIDE' },
+    { name: 'description', content: '目的地まで椅子で快適に移動しましょう' },
   ];
 };
 
-type Direction = "from" | "to";
+type Direction = 'from' | 'to';
 type EstimatePrice = { fare: number; discount: number };
 
 export default function Index() {
@@ -65,9 +65,9 @@ export default function Index() {
   const statusModalRef = useRef<HTMLElement & { close: () => void }>(null);
   const [estimatePrice, setEstimatePrice] = useState<EstimatePrice>();
   const handleConfirmLocation = useCallback(() => {
-    if (direction === "from") {
+    if (direction === 'from') {
       setCurrentLocation(selectedLocation);
-    } else if (direction === "to") {
+    } else if (direction === 'to') {
       setDestLocation(selectedLocation);
     }
     locationSelectorModalRef.current?.close();
@@ -76,7 +76,7 @@ export default function Index() {
   const isStatusModalOpen = useMemo(() => {
     return (
       internalRideStatus &&
-      ["MATCHING", "ENROUTE", "PICKUP", "CARRYING", "ARRIVED"].includes(
+      ['MATCHING', 'ENROUTE', 'PICKUP', 'CARRYING', 'ARRIVED'].includes(
         internalRideStatus,
       )
     );
@@ -109,7 +109,7 @@ export default function Index() {
     if (!currentLocation || !destLocation) {
       return;
     }
-    setInternalRideStatus("MATCHING");
+    setInternalRideStatus('MATCHING');
     try {
       const { ride_id } = await fetchAppPostRides({
         body: {
@@ -147,7 +147,7 @@ export default function Index() {
         });
         setDisplayedChairs(chairs);
       } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
+        if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }
         console.error(error);
@@ -191,7 +191,7 @@ export default function Index() {
           className="w-full"
           location={currentLocation}
           onClick={() => {
-            setDirection("from");
+            setDirection('from');
             setLocationSelectorModalOpen(true);
           }}
           placeholder="現在地を選択する"
@@ -202,7 +202,7 @@ export default function Index() {
           location={destLocation}
           className="w-full"
           onClick={() => {
-            setDirection("to");
+            setDirection('to');
             setLocationSelectorModalOpen(true);
           }}
           placeholder="目的地を選択する"
@@ -239,23 +239,23 @@ export default function Index() {
                 from={currentLocation}
                 to={destLocation}
                 selectorPinColor={
-                  direction === "from" ? colors.black : colors.red[500]
+                  direction === 'from' ? colors.black : colors.red[500]
                 }
                 initialCoordinate={
-                  direction === "from" ? currentLocation : destLocation
+                  direction === 'from' ? currentLocation : destLocation
                 }
                 selectable
                 className="rounded-2xl"
               />
             </div>
             <p className="font-bold mb-4 text-base">
-              {direction === "from" ? "現在地" : "目的地"}
+              {direction === 'from' ? '現在地' : '目的地'}
               を選択してください
             </p>
             <Button onClick={handleConfirmLocation}>
-              {direction === "from"
-                ? "この場所から移動する"
-                : "この場所に移動する"}
+              {direction === 'from'
+                ? 'この場所から移動する'
+                : 'この場所に移動する'}
             </Button>
           </div>
         </Modal>
@@ -263,9 +263,9 @@ export default function Index() {
       {isStatusModalOpen && (
         <Modal
           ref={statusModalRef}
-          onClose={() => setInternalRideStatus("COMPLETED")}
+          onClose={() => setInternalRideStatus('COMPLETED')}
         >
-          {internalRideStatus === "MATCHING" && (
+          {internalRideStatus === 'MATCHING' && (
             <Matching
               optimistic={{
                 destLocation,
@@ -274,10 +274,10 @@ export default function Index() {
               }}
             />
           )}
-          {internalRideStatus === "ENROUTE" && <Enroute />}
-          {internalRideStatus === "PICKUP" && <Pickup />}
-          {internalRideStatus === "CARRYING" && <Carrying />}
-          {internalRideStatus === "ARRIVED" && (
+          {internalRideStatus === 'ENROUTE' && <Enroute />}
+          {internalRideStatus === 'PICKUP' && <Pickup />}
+          {internalRideStatus === 'CARRYING' && <Carrying />}
+          {internalRideStatus === 'ARRIVED' && (
             <Arrived
               onEvaluated={() => {
                 statusModalRef.current?.close();
