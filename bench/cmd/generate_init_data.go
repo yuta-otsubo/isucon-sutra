@@ -52,7 +52,7 @@ $ mysqldump --skip-create-options --skip-add-drop-table --disable-keys --no-crea
 		dbConfig.DBName = dbName
 		dbConfig.ParseTime = true
 
-		baseTime := time.Date(2024, 11, 25, 0, 0, 0, 0, time.FixedZone("Asia/Tokyo", 8*60*60))
+		baseTime := time.Date(2024, 11, 25, 0, 0, 0, 0, time.FixedZone("Asia/Tokyo", 9*60*60))
 		region := world.NewRegion("チェアタウン", 0, 0, 100, 100)
 
 		db, err := sqlx.Connect("mysql", dbConfig.FormatDSN())
