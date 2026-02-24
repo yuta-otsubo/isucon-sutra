@@ -48,9 +48,9 @@ export const useGhostChairs = (): NearByChair[] => {
     const onMessage = ({
       origin,
       data,
-    }: MessageEvent<Message["SimulatorConfing"]>) => {
+    }: MessageEvent<Message["SimulatorConfig"]>) => {
       const isSameOrigin = origin == location.origin;
-      if (isSameOrigin && MessageTypes.SimulatorConfing === data.type) {
+      if (isSameOrigin && MessageTypes.SimulatorConfig === data.type) {
         setEnabled(data?.payload?.ghostChairEnabled ?? false);
       }
     };

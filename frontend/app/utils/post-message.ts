@@ -1,7 +1,7 @@
 export const MessageTypes = {
   ClientReady: "isuride.client.ready", // クライアントの画面準備完了
   ClientRideRequested: "isuride.client.running", // クライアントでISURIDEが実行中
-  SimulatorConfing: "isuride.simulator.config", // シミュレーターからの設定値変更
+  SimulatorConfig: "isuride.simulator.config", // シミュレーターからの設定値変更
 } as const;
 
 export type Message = {
@@ -13,8 +13,8 @@ export type Message = {
     type: typeof MessageTypes.ClientRideRequested;
     payload: { rideId?: string };
   };
-  SimulatorConfing: {
-    type: typeof MessageTypes.SimulatorConfing;
+  SimulatorConfig: {
+    type: typeof MessageTypes.SimulatorConfig;
     payload: {
       ghostChairEnabled?: boolean;
     };
@@ -37,7 +37,7 @@ export const sendClientRideRequested = (
 
 export const sendSimulatorConfig = (
   target: Window,
-  payload: NonNullable<Message["SimulatorConfing"]["payload"]>,
+  payload: NonNullable<Message["SimulatorConfig"]["payload"]>,
 ) => {
-  target.postMessage({ type: MessageTypes.SimulatorConfing, payload }, "*");
+  target.postMessage({ type: MessageTypes.SimulatorConfig, payload }, "*");
 };

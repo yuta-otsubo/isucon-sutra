@@ -380,11 +380,11 @@ export const Map: FC<MapProps> = ({
     const rect = outerRef.current.getBoundingClientRect();
     if (loc) {
       const pos = coordinateToPos(loc);
-      const initalPos = {
+      const initialPos = {
         x: pos.x + rect.width / 2,
         y: pos.y + rect.height / 2,
       };
-      setPos(initalPos);
+      setPos(initialPos);
       onMoveRef?.current?.(loc);
       return;
     }

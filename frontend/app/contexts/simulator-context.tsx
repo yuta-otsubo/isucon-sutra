@@ -30,7 +30,7 @@ type SimulatorContextProps = {
 };
 
 const SimulatorContext = createContext<SimulatorContextProps>({});
-const initilalChair = getSimulateChair();
+const initialChair = getSimulateChair();
 
 function jsonFromSseResult<T>(value: string) {
   const data = value.slice("data:".length).trim();
@@ -172,8 +172,8 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
 
 export const SimulatorProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
-    if (initilalChair?.token) {
-      document.cookie = `chair_session=${initilalChair.token}; path=/`;
+    if (initialChair?.token) {
+      document.cookie = `chair_session=${initialChair.token}; path=/`;
     }
   }, []);
 
@@ -216,7 +216,7 @@ export const SimulatorProvider = ({ children }: { children: ReactNode }) => {
     <SimulatorContext.Provider
       value={{
         data,
-        chair: initilalChair ? { ...initilalChair, coordinate } : undefined,
+        chair: initialChair ? { ...initialChair, coordinate } : undefined,
         setCoordinate,
         isAnotherSimulatorBeingUsed,
       }}

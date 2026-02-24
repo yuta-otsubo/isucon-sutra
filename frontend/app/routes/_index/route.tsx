@@ -21,7 +21,7 @@ export const meta: MetaFunction = () => {
 const Links = [
   {
     to: "/simulator",
-    title: "Simulator Aplication",
+    title: "Simulator Application",
     description: "ISUCON競技者用 アプリ動作シミュレーター",
     Icon: () => <IsurideIcon fill="#fff" width={30} height={30}></IsurideIcon>,
     style: "bg-sky-600 text-white hover:bg-sky-700",
@@ -29,7 +29,7 @@ const Links = [
   {
     to: "/client",
     title: "Client Application",
-    description: "ISURIDE利用者用 モバイルクラインアント",
+    description: "ISURIDE利用者用 モバイルクライアント",
     Icon: () => (
       <MobileIcon width={40} height={40} fill={colors.neutral[800]} />
     ),

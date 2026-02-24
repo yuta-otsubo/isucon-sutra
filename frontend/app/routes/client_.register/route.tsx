@@ -67,7 +67,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
       "campaign",
       JSON.stringify({
         invitationCode: res.invitation_code,
-        registedAt: new Date(),
+        registeredAt: new Date(),
         used: false,
       }),
     );
