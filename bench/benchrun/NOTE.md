@@ -1,4 +1,4 @@
-# code genarate
+# code generate
 
 Bufツールを使用してGoのコードを自動生成するようだ
 
