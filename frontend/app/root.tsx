@@ -77,7 +77,7 @@ export const links: LinksFunction = () => {
     {
       rel: 'apple-touch-icon',
       href: '/apple-touch-icon-180x180.png',
-      sizes: '180x18',
+      sizes: '180x180',
     },
   ];
 };
