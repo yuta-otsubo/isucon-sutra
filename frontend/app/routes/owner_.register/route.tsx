@@ -9,7 +9,7 @@ import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Regiter | Owner | ISURIDE' },
+    { title: 'Register | Owner | ISURIDE' },
     { name: 'description', content: 'オーナー登録' },
   ];
 };

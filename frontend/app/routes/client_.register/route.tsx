@@ -16,7 +16,7 @@ import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: 'Regiter | ISURIDE' },
+    { title: 'Register | ISURIDE' },
     { name: 'description', content: 'ユーザー登録' },
   ];
 };

@@ -72,7 +72,7 @@ const getLoggedInURLForDriver = async () => {
 
   // POST /provider/register => POST /chair/register
   const providerResponse = await fetch(
-    'http://localhost:8080/api/owner/ownsers',
+    'http://localhost:8080/api/owner/owners',
     {
       body: JSON.stringify({
         name: 'isuconProvider',
