@@ -1,6 +1,6 @@
-import { CampaignData, Coordinate } from "~/types";
+import { CampaignData, Coordinate } from '~/types';
 
-const GroupId = "isuride";
+const GroupId = 'isuride';
 
 const setStorage = (
   fieldId: string,
@@ -8,7 +8,7 @@ const setStorage = (
   storage: Storage,
 ): boolean => {
   try {
-    const existing = JSON.parse(storage.getItem(GroupId) || "{}") as Record<
+    const existing = JSON.parse(storage.getItem(GroupId) || '{}') as Record<
       string,
       string
     >;
@@ -24,7 +24,7 @@ const setStorage = (
 
 const getStorage = <T>(fieldId: string, storage: Storage): T | null => {
   try {
-    const data = JSON.parse(storage.getItem(GroupId) || "{}") as Record<
+    const data = JSON.parse(storage.getItem(GroupId) || '{}') as Record<
       string,
       unknown
     >;
@@ -35,41 +35,41 @@ const getStorage = <T>(fieldId: string, storage: Storage): T | null => {
 };
 
 export const saveCampaignData = (campaign: CampaignData) => {
-  return setStorage("campaign", campaign, localStorage);
+  return setStorage('campaign', campaign, localStorage);
 };
 
 export const getCampaignData = (): CampaignData | null => {
-  return getStorage("campaign", localStorage);
+  return getStorage('campaign', localStorage);
 };
 
 export const setSimulatorCurrentCoordinate = (coordinate: Coordinate) => {
-  return setStorage("simulator.currentCoordinate", coordinate, sessionStorage);
+  return setStorage('simulator.currentCoordinate', coordinate, sessionStorage);
 };
 
 export const getSimulatorCurrentCoordinate = (): Coordinate | null => {
-  return getStorage("simulator.currentCoordinate", sessionStorage);
+  return getStorage('simulator.currentCoordinate', sessionStorage);
 };
 
 export const setSimulatorStartCoordinate = (coordinate: Coordinate) => {
-  return setStorage("simulator.startCoordinate", coordinate, sessionStorage);
+  return setStorage('simulator.startCoordinate', coordinate, sessionStorage);
 };
 
 export const getSimulatorStartCoordinate = (): Coordinate | null => {
-  return getStorage("simulator.startCoordinate", sessionStorage);
+  return getStorage('simulator.startCoordinate', sessionStorage);
 };
 
 export const setUserId = (id: string) => {
-  return setStorage("user.id", id, sessionStorage);
+  return setStorage('user.id', id, sessionStorage);
 };
 
 export const getUserId = (): string | null => {
-  return getStorage("user.id", sessionStorage);
+  return getStorage('user.id', sessionStorage);
 };
 
 export const setSimulatorCurrentRideId = (rideId: string) => {
-  return setStorage("simulator.currentRideId", rideId, sessionStorage);
+  return setStorage('simulator.currentRideId', rideId, sessionStorage);
 };
 
 export const getSimulatorCurrentRideId = (): string | null => {
-  return getStorage("simulator.currentRideId", sessionStorage);
+  return getStorage('simulator.currentRideId', sessionStorage);
 };

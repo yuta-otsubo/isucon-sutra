@@ -1,19 +1,19 @@
-import { Link, Outlet, useMatches, useNavigate } from "@remix-run/react";
-import { twMerge } from "tailwind-merge";
-import colors from "tailwindcss/colors";
-import { AccountSwitchIcon } from "~/components/icon/account-switch";
-import { IsurideIcon } from "~/components/icon/isuride";
-import { Button } from "~/components/primitives/button/button";
-import { OwnerProvider } from "~/contexts/owner-context";
+import { Link, Outlet, useMatches, useNavigate } from '@remix-run/react';
+import { twMerge } from 'tailwind-merge';
+import colors from 'tailwindcss/colors';
+import { AccountSwitchIcon } from '~/components/icon/account-switch';
+import { IsurideIcon } from '~/components/icon/isuride';
+import { Button } from '~/components/primitives/button/button';
+import { OwnerProvider } from '~/contexts/owner-context';
 
 const tabs = [
-  { key: "index", label: "椅子", to: "/owner" },
-  { key: "sales", label: "売上", to: "/owner/sales" },
+  { key: 'index', label: '椅子', to: '/owner' },
+  { key: 'sales', label: '売上', to: '/owner/sales' },
 ] as const;
 
 const Content = () => {
   const matches = useMatches();
-  const activeTab = matches[2]?.pathname.split("/").at(-1) || "index";
+  const activeTab = matches[2]?.pathname.split('/').at(-1) || 'index';
 
   return (
     <nav className="flex after:w-full after:border-b after:border-gray-300">
@@ -22,10 +22,10 @@ const Content = () => {
           <li
             key={tab.key}
             className={twMerge([
-              "rounded-tl-md rounded-tr-md",
+              'rounded-tl-md rounded-tr-md',
               tab.key === activeTab
-                ? "border border-b-transparent"
-                : "border-l-transparent border-t-transparent border-r-transparent border",
+                ? 'border border-b-transparent'
+                : 'border-l-transparent border-t-transparent border-r-transparent border',
             ])}
           >
             <Link to={tab.to} className="block px-8 py-3">
@@ -57,7 +57,7 @@ export default function OwnerLayout() {
             <Button
               size="sm"
               className="flex items-center justify-center "
-              onClick={() => navigate("/owner/login")}
+              onClick={() => navigate('/owner/login')}
             >
               <AccountSwitchIcon className="me-1" fill={colors.neutral[600]} />
               アカウント切替え

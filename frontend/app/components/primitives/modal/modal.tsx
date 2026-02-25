@@ -5,11 +5,11 @@ import {
   useEffect,
   useImperativeHandle,
   useRef,
-} from "react";
-import { twMerge } from "tailwind-merge";
+} from 'react';
+import { twMerge } from 'tailwind-merge';
 
 type ModalProps = PropsWithChildren<
-  ComponentProps<"div"> & {
+  ComponentProps<'div'> & {
     center?: boolean;
     onClose?: () => void;
   }
@@ -25,10 +25,10 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
 
         const handleTransitionEnd = () => {
           onClose?.();
-          modal.removeEventListener("transitionend", handleTransitionEnd);
+          modal.removeEventListener('transitionend', handleTransitionEnd);
         };
 
-        modal.addEventListener("transitionend", handleTransitionEnd);
+        modal.addEventListener('transitionend', handleTransitionEnd);
         modal.style.transform = `translateY(100%)`;
       }
     };
@@ -36,8 +36,8 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
     useEffect(() => {
       const timer = setTimeout(() => {
         if (sheetRef.current) {
-          sheetRef.current.style.transform = "";
-          sheetRef.current.style.opacity = "";
+          sheetRef.current.style.transform = '';
+          sheetRef.current.style.opacity = '';
         }
       }, 50);
       return () => clearTimeout(timer);
@@ -52,24 +52,24 @@ export const Modal = forwardRef<{ close: () => void }, ModalProps>(
         <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
         <div
           className={twMerge(
-            "fixed bottom-0 left-0 right-0 h-[90vh] bg-white rounded-t-3xl shadow-lg transition-transform duration-300 ease-in-out z-50 md:max-w-screen-md mx-auto",
+            'fixed bottom-0 left-0 right-0 h-[90vh] bg-white rounded-t-3xl shadow-lg transition-transform duration-300 ease-in-out z-50 md:max-w-screen-md mx-auto',
             center &&
-              "top-1/2 -translate-y-1/2 max-h-[50vh] rounded-3xl p-3 transition duration-300 ease-out",
+              'top-1/2 -translate-y-1/2 max-h-[50vh] rounded-3xl p-3 transition duration-300 ease-out',
             className,
           )}
           ref={sheetRef}
           style={{
-            willChange: "transform",
-            transform: center ? "translateY(-40%)" : "translateY(100%)",
-            opacity: center ? "0" : "",
+            willChange: 'transform',
+            transform: center ? 'translateY(-40%)' : 'translateY(100%)',
+            opacity: center ? '0' : '',
           }}
           {...props}
         >
-          <div className={"p-6 md:p-10 h-full"}>{children}</div>
+          <div className={'p-6 md:p-10 h-full'}>{children}</div>
         </div>
       </>
     );
   },
 );
 
-Modal.displayName = "Modal";
+Modal.displayName = 'Modal';

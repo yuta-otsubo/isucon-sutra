@@ -1,22 +1,22 @@
-import type { MetaFunction } from "@remix-run/node";
-import { memo, useMemo, useState, type FC } from "react";
-import { ChairIcon } from "~/components/icon/chair";
-import { PriceText } from "~/components/modules/price-text/price-text";
-import { Price } from "~/components/modules/price/price";
-import { DateInput } from "~/components/primitives/form/date-input";
-import { Text } from "~/components/primitives/text/text";
-import { useOwnerContext } from "~/contexts/owner-context";
-import { OwnerChairs, OwnerSales } from "~/types";
+import type { MetaFunction } from '@remix-run/node';
+import { memo, useMemo, useState, type FC } from 'react';
+import { ChairIcon } from '~/components/icon/chair';
+import { PriceText } from '~/components/modules/price-text/price-text';
+import { Price } from '~/components/modules/price/price';
+import { DateInput } from '~/components/primitives/form/date-input';
+import { Text } from '~/components/primitives/text/text';
+import { useOwnerContext } from '~/contexts/owner-context';
+import { OwnerChairs, OwnerSales } from '~/types';
 export const meta: MetaFunction = () => {
   return [
-    { title: "売上一覧 | Owner | ISURIDE" },
-    { name: "description", content: "椅子の売上一覧" },
+    { title: '売上一覧 | Owner | ISURIDE' },
+    { name: 'description', content: '椅子の売上一覧' },
   ];
 };
 
 const viewTypes = [
-  { key: "chair", label: "椅子別" },
-  { key: "model", label: "モデル別" },
+  { key: 'chair', label: '椅子別' },
+  { key: 'model', label: 'モデル別' },
 ] as const;
 
 const DatePicker = () => {
@@ -48,7 +48,7 @@ const _SalesTable: FC<{ chairs: OwnerChairs; sales: OwnerSales }> = ({
   sales,
 }) => {
   const [viewType, setViewType] =
-    useState<(typeof viewTypes)[number]["key"]>("chair");
+    useState<(typeof viewTypes)[number]['key']>('chair');
 
   const chairModelMap = useMemo(
     () => new Map(chairs?.map((c) => [c.id, c.model])),
@@ -59,11 +59,11 @@ const _SalesTable: FC<{ chairs: OwnerChairs; sales: OwnerSales }> = ({
     if (!sales) {
       return [];
     }
-    return viewType === "chair"
+    return viewType === 'chair'
       ? sales.chairs.map((item) => ({
           key: item.id,
           name: item.name,
-          model: chairModelMap.get(item.id) ?? "",
+          model: chairModelMap.get(item.id) ?? '',
           sales: item.sales,
         }))
       : sales.models.map((item) => ({
@@ -96,7 +96,7 @@ const _SalesTable: FC<{ chairs: OwnerChairs; sales: OwnerSales }> = ({
         <thead className="bg-gray-50 border-b">
           <tr className="text-gray-500">
             <th className="px-4 py-3 text-left">
-              {viewType === "chair" ? "椅子" : "モデル"}
+              {viewType === 'chair' ? '椅子' : 'モデル'}
             </th>
             <th className="px-4 py-3 text-left">売上</th>
           </tr>

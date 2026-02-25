@@ -5,26 +5,26 @@ import {
   useEffect,
   useMemo,
   useState,
-} from "react";
-import type { Coordinate, RideStatus } from "~/api/api-schemas";
-import { getSimulateChair } from "~/utils/get-initial-data";
+} from 'react';
+import type { Coordinate, RideStatus } from '~/api/api-schemas';
+import { getSimulateChair } from '~/utils/get-initial-data';
 
-import { apiBaseURL } from "~/api/api-base-url";
+import { apiBaseURL } from '~/api/api-base-url';
 import {
   ChairGetNotificationResponse,
   fetchChairGetNotification,
-} from "~/api/api-components";
-import { SimulatorChair } from "~/types";
-import { Message, MessageTypes } from "~/utils/post-message";
+} from '~/api/api-components';
+import { SimulatorChair } from '~/types';
+import { Message, MessageTypes } from '~/utils/post-message';
 import {
   getSimulatorCurrentCoordinate,
   getSimulatorCurrentRideId,
   setSimulatorCurrentRideId,
-} from "~/utils/storage";
+} from '~/utils/storage';
 
 type SimulatorContextProps = {
   chair?: SimulatorChair;
-  data?: ChairGetNotificationResponse["data"];
+  data?: ChairGetNotificationResponse['data'];
   setCoordinate?: (coordinate: Coordinate) => void;
   isAnotherSimulatorBeingUsed?: boolean;
 };
@@ -33,20 +33,20 @@ const SimulatorContext = createContext<SimulatorContextProps>({});
 const initialChair = getSimulateChair();
 
 function jsonFromSseResult<T>(value: string) {
-  const data = value.slice("data:".length).trim();
+  const data = value.slice('data:'.length).trim();
   return JSON.parse(data) as T;
 }
 
 function isRiding(status: RideStatus | undefined) {
   return (
-    status === "ARRIVED" ||
-    status === "CARRYING" ||
-    status === "ENROUTE" ||
-    status === "PICKUP"
+    status === 'ARRIVED' ||
+    status === 'CARRYING' ||
+    status === 'ENROUTE' ||
+    status === 'PICKUP'
   );
 }
 
-const useNotification = (): ChairGetNotificationResponse["data"] => {
+const useNotification = (): ChairGetNotificationResponse['data'] => {
   const [isSse, setIsSse] = useState(false);
   const [notification, setNotification] =
     useState<ChairGetNotificationResponse>();
@@ -56,9 +56,9 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
       try {
         const notification = await fetch(`${apiBaseURL}/chair/notification`);
         const isEventStream = !!notification?.headers
-          .get("Content-type")
-          ?.split(";")?.[0]
-          .includes("text/event-stream");
+          .get('Content-type')
+          ?.split(';')?.[0]
+          .includes('text/event-stream');
         setIsSse(isEventStream);
 
         if (isEventStream) {
@@ -67,7 +67,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
           const readed = (await reader?.read())?.value;
           const decoded = decoder.decode(readed);
           const json =
-            jsonFromSseResult<ChairGetNotificationResponse["data"]>(decoded);
+            jsonFromSseResult<ChairGetNotificationResponse['data']>(decoded);
           setNotification(json ? { data: json } : undefined);
           return;
         }
@@ -76,7 +76,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
           | undefined;
         setNotification(json);
       } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
+        if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }
         console.error(error);
@@ -91,11 +91,11 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
     if (!isSse) return;
     const eventSource = new EventSource(`${apiBaseURL}/chair/notification`);
     const onMessage = ({ data }: MessageEvent<{ data?: unknown }>) => {
-      if (typeof data !== "string") return;
+      if (typeof data !== 'string') return;
       try {
         const eventData = JSON.parse(
           data,
-        ) as ChairGetNotificationResponse["data"];
+        ) as ChairGetNotificationResponse['data'];
         setNotification((preRequest) => {
           if (
             preRequest === undefined ||
@@ -104,7 +104,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
           ) {
             return {
               data: eventData,
-              contentType: "event-stream",
+              contentType: 'event-stream',
             };
           } else {
             return preRequest;
@@ -117,7 +117,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
         eventSource.close();
       };
     };
-    eventSource.addEventListener("message", onMessage);
+    eventSource.addEventListener('message', onMessage);
     return () => {
       eventSource.close();
     };
@@ -144,7 +144,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
             return {
               data: currentNotification.data,
               retry_after_ms: currentNotification.retry_after_ms,
-              contentType: "json",
+              contentType: 'json',
             };
           } else {
             return preRequest;
@@ -152,7 +152,7 @@ const useNotification = (): ChairGetNotificationResponse["data"] => {
         });
         timeoutId = setTimeout(() => void polling(), retryAfterMs);
       } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
+        if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }
         console.error(error);
@@ -196,7 +196,7 @@ export const SimulatorProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const onMessage = ({
       data,
-    }: MessageEvent<Message["ClientRideRequested"]>) => {
+    }: MessageEvent<Message['ClientRideRequested']>) => {
       const isSameOrigin = origin == location.origin;
       if (isSameOrigin && data.type === MessageTypes.ClientRideRequested) {
         const rideId = data?.payload?.rideId;
@@ -206,9 +206,9 @@ export const SimulatorProvider = ({ children }: { children: ReactNode }) => {
         }
       }
     };
-    window.addEventListener("message", onMessage);
+    window.addEventListener('message', onMessage);
     return () => {
-      window.removeEventListener("message", onMessage);
+      window.removeEventListener('message', onMessage);
     };
   }, []);
 

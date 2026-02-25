@@ -1,4 +1,4 @@
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from 'react';
 
 export const FormFrame: FC<PropsWithChildren> = ({ children }) => {
   return (

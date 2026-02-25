@@ -1,9 +1,9 @@
-import { FC, useCallback, useState } from "react";
-import { fetchChairPostActivity } from "~/api/api-components";
-import { Toggle } from "~/components/primitives/form/toggle";
-import { ConfigFrame } from "~/components/primitives/frame/config-frame";
-import { Text } from "~/components/primitives/text/text";
-import { useSimulatorContext } from "~/contexts/simulator-context";
+import { FC, useCallback, useState } from 'react';
+import { fetchChairPostActivity } from '~/api/api-components';
+import { Toggle } from '~/components/primitives/form/toggle';
+import { ConfigFrame } from '~/components/primitives/frame/config-frame';
+import { Text } from '~/components/primitives/text/text';
+import { useSimulatorContext } from '~/contexts/simulator-context';
 
 export const SimulatorChairActiveToggle: FC = () => {
   const { chair, isAnotherSimulatorBeingUsed } = useSimulatorContext();

@@ -1,21 +1,21 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigate } from '@remix-run/react';
 import {
   createContext,
   useContext,
   useEffect,
   useState,
   type ReactNode,
-} from "react";
-import { apiBaseURL } from "~/api/api-base-url";
+} from 'react';
+import { apiBaseURL } from '~/api/api-base-url';
 import {
   AppGetNotificationResponse,
   fetchAppGetNotification,
-} from "~/api/api-components";
-import { getCookieValue } from "~/utils/get-cookie-value";
-import { getUserId } from "~/utils/storage";
+} from '~/api/api-components';
+import { getCookieValue } from '~/utils/get-cookie-value';
+import { getUserId } from '~/utils/storage';
 
 function jsonFromSSEResponse<T>(value: string) {
-  const data = value.slice("data:".length).trim();
+  const data = value.slice('data:'.length).trim();
   try {
     return JSON.parse(data) as T;
   } catch {
@@ -24,7 +24,7 @@ function jsonFromSSEResponse<T>(value: string) {
 }
 
 export const useNotification = ():
-  | AppGetNotificationResponse["data"]
+  | AppGetNotificationResponse['data']
   | undefined => {
   const navigate = useNavigate();
   const [isSse, setIsSse] = useState(false);
@@ -37,13 +37,13 @@ export const useNotification = ():
       try {
         const notification = await fetch(`${apiBaseURL}/app/notification`);
         if (notification.status === 401) {
-          navigate("/client/register");
+          navigate('/client/register');
           return;
         }
         const isEventStream = notification?.headers
-          .get("Content-type")
-          ?.split(";")[0]
-          .includes("text/event-stream");
+          .get('Content-type')
+          ?.split(';')[0]
+          .includes('text/event-stream');
         setIsSse(!!isEventStream);
         if (isEventStream) {
           const reader = notification.body?.getReader();
@@ -51,7 +51,7 @@ export const useNotification = ():
           const readed = (await reader?.read())?.value;
           const decoded = decoder.decode(readed);
           const json =
-            jsonFromSSEResponse<AppGetNotificationResponse["data"]>(decoded);
+            jsonFromSSEResponse<AppGetNotificationResponse['data']>(decoded);
           setNotification(json ? { data: json } : undefined);
           return;
         }
@@ -69,11 +69,11 @@ export const useNotification = ():
   useEffect(() => {
     if (!isSse) return;
     const eventSource = new EventSource(`${apiBaseURL}/app/notification`);
-    eventSource.addEventListener("message", (event) => {
-      if (typeof event.data === "string") {
+    eventSource.addEventListener('message', (event) => {
+      if (typeof event.data === 'string') {
         const eventData = JSON.parse(
           event.data,
-        ) as AppGetNotificationResponse["data"];
+        ) as AppGetNotificationResponse['data'];
         setNotification((prev) => {
           if (
             prev === undefined ||
@@ -118,7 +118,7 @@ export const useNotification = ():
         });
         timeoutId = setTimeout(() => void polling(), retryAfterMs);
       } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") {
+        if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }
         console.error(error);
@@ -135,7 +135,7 @@ export const useNotification = ():
 };
 
 type ClientContextProps = {
-  data?: AppGetNotificationResponse["data"];
+  data?: AppGetNotificationResponse['data'];
   userId?: string | null;
 };
 
@@ -148,9 +148,9 @@ export const ClientProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const isRegistered =
-      typeof getCookieValue(document.cookie, "app_session") !== "undefined";
+      typeof getCookieValue(document.cookie, 'app_session') !== 'undefined';
     if (!isRegistered) {
-      navigate("/client/register");
+      navigate('/client/register');
     }
   }, [navigate]);
 

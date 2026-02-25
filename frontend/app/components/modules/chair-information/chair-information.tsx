@@ -1,16 +1,16 @@
-import { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
-import { ChairIcon } from "~/components/icon/chair";
-import { Text } from "~/components/primitives/text/text";
-import { ClientAppChair } from "~/types";
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
+import { ChairIcon } from '~/components/icon/chair';
+import { Text } from '~/components/primitives/text/text';
+import { ClientAppChair } from '~/types';
 
 export const ChairInformation: FC<
-  { chair: ClientAppChair } & ComponentProps<"div">
+  { chair: ClientAppChair } & ComponentProps<'div'>
 > = ({ chair, className, ...props }) => {
   return (
     <div
       className={twMerge(
-        "flex flex-row items-center space-x-4 px-6 py-4 bg-neutral-100 rounded-md w-full",
+        'flex flex-row items-center space-x-4 px-6 py-4 bg-neutral-100 rounded-md w-full',
         className,
       )}
       {...props}

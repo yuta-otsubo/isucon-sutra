@@ -1,15 +1,15 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
-import { useState } from "react";
-import { Button } from "~/components/primitives/button/button";
-import { TextInput } from "~/components/primitives/form/text-input";
-import { FormFrame } from "~/components/primitives/frame/form-frame";
-import { getUsers } from "~/utils/get-initial-data";
+import type { MetaFunction } from '@remix-run/node';
+import { Link, useNavigate } from '@remix-run/react';
+import { useState } from 'react';
+import { Button } from '~/components/primitives/button/button';
+import { TextInput } from '~/components/primitives/form/text-input';
+import { FormFrame } from '~/components/primitives/frame/form-frame';
+import { getUsers } from '~/utils/get-initial-data';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Login | ISURIDE" },
-    { name: "description", content: "ユーザーログイン" },
+    { title: 'Login | ISURIDE' },
+    { name: 'description', content: 'ユーザーログイン' },
   ];
 };
 
@@ -20,7 +20,7 @@ export default function ClientLogin() {
 
   const handleOnClick = () => {
     document.cookie = `app_session=${sessionToken}; path=/`;
-    navigate("/client");
+    navigate('/client');
   };
 
   return (

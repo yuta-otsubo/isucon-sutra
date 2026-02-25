@@ -1,48 +1,48 @@
-import type { MetaFunction } from "@remix-run/node";
-import { Link } from "@remix-run/react";
-import { twMerge } from "tailwind-merge";
-import colors from "tailwindcss/colors";
-import { DesktopIcon } from "~/components/icon/desktop";
-import { IsurideIcon } from "~/components/icon/isuride";
-import { MobileIcon } from "~/components/icon/mobile";
-import { MainFrame } from "~/components/primitives/frame/frame";
-import { Text } from "~/components/primitives/text/text";
+import type { MetaFunction } from '@remix-run/node';
+import { Link } from '@remix-run/react';
+import { twMerge } from 'tailwind-merge';
+import colors from 'tailwindcss/colors';
+import { DesktopIcon } from '~/components/icon/desktop';
+import { IsurideIcon } from '~/components/icon/isuride';
+import { MobileIcon } from '~/components/icon/mobile';
+import { MainFrame } from '~/components/primitives/frame/frame';
+import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Top | ISURIDE" },
+    { title: 'Top | ISURIDE' },
     {
-      name: "description",
-      content: "ISURIDEは椅子でユーザーを運ぶ新感覚のサービスです",
+      name: 'description',
+      content: 'ISURIDEは椅子でユーザーを運ぶ新感覚のサービスです',
     },
   ];
 };
 
 const Links = [
   {
-    to: "/simulator",
-    title: "Simulator Application",
-    description: "ISUCON競技者用 アプリ動作シミュレーター",
+    to: '/simulator',
+    title: 'Simulator Application',
+    description: 'ISUCON競技者用 アプリ動作シミュレーター',
     Icon: () => <IsurideIcon fill="#fff" width={30} height={30}></IsurideIcon>,
-    style: "bg-sky-600 text-white hover:bg-sky-700",
+    style: 'bg-sky-600 text-white hover:bg-sky-700',
   },
   {
-    to: "/client",
-    title: "Client Application",
-    description: "ISURIDE利用者用 モバイルクライアント",
+    to: '/client',
+    title: 'Client Application',
+    description: 'ISURIDE利用者用 モバイルクライアント',
     Icon: () => (
       <MobileIcon width={40} height={40} fill={colors.neutral[800]} />
     ),
-    style: "",
+    style: '',
   },
   {
-    to: "/owner/login",
-    title: "Owner Application",
-    description: "ISURIDEオーナー向け 管理アプリケーション",
+    to: '/owner/login',
+    title: 'Owner Application',
+    description: 'ISURIDEオーナー向け 管理アプリケーション',
     Icon: () => (
       <DesktopIcon width={40} height={40} fill={colors.neutral[800]} />
     ),
-    style: "",
+    style: '',
   },
 ] as const;
 
@@ -73,9 +73,9 @@ export default function Index() {
                 <Link
                   to={to}
                   className={twMerge(
-                    "flex justify-center items-center flex-row space-x-4",
-                    "px-10 py-4 bg-neutral-100 rounded-full mx-auto w-[300px] h-[100px] space-y-1 shadow-md hover:bg-neutral-200 transition-colors",
-                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900",
+                    'flex justify-center items-center flex-row space-x-4',
+                    'px-10 py-4 bg-neutral-100 rounded-full mx-auto w-[300px] h-[100px] space-y-1 shadow-md hover:bg-neutral-200 transition-colors',
+                    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900',
                     style,
                   )}
                 >

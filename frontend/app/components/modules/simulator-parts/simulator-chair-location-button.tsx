@@ -1,9 +1,9 @@
-import { FC, useCallback, useRef, useState } from "react";
-import { Button } from "~/components/primitives/button/button";
-import { Modal } from "~/components/primitives/modal/modal";
-import type { Coordinate } from "~/types";
-import { LocationButton } from "../location-button/location-button";
-import { Map } from "../map/map";
+import { FC, useCallback, useRef, useState } from 'react';
+import { Button } from '~/components/primitives/button/button';
+import { Modal } from '~/components/primitives/modal/modal';
+import type { Coordinate } from '~/types';
+import { LocationButton } from '../location-button/location-button';
+import { Map } from '../map/map';
 
 export const SimulatorChairLocationButton: FC<{
   coordinate?: Coordinate;

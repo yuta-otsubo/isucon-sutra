@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { NearByChair } from "~/types";
-import { Message, MessageTypes } from "~/utils/post-message";
-import { TownList } from "../modules/map/map-data";
+import { useEffect, useState } from 'react';
+import { NearByChair } from '~/types';
+import { Message, MessageTypes } from '~/utils/post-message';
+import { TownList } from '../modules/map/map-data';
 
 const randomInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -9,7 +9,7 @@ const randomInt = (min: number, max: number) =>
 // 街には椅子が集まりやすい
 const townGhostChairs = TownList.flatMap(({ centerCoordinate, name }) => {
   return [...Array(7).keys()].map((i) => ({
-    id: name + "-ghost-" + i,
+    id: name + '-ghost-' + i,
     current_coordinate: {
       latitude: randomInt(
         centerCoordinate.latitude - 50,
@@ -21,19 +21,19 @@ const townGhostChairs = TownList.flatMap(({ centerCoordinate, name }) => {
       ),
     },
     model: String(i),
-    name: "ghost",
+    name: 'ghost',
   }));
 });
 
 const ghostChairs = [...Array(70).keys()].map((i) => {
   return {
-    id: "ghost" + i,
+    id: 'ghost' + i,
     current_coordinate: {
       latitude: randomInt(-500, 500),
       longitude: randomInt(-500, 500),
     },
     model: String(i),
-    name: "ghost",
+    name: 'ghost',
   };
 }) satisfies NearByChair[];
 
@@ -48,15 +48,15 @@ export const useGhostChairs = (): NearByChair[] => {
     const onMessage = ({
       origin,
       data,
-    }: MessageEvent<Message["SimulatorConfig"]>) => {
+    }: MessageEvent<Message['SimulatorConfig']>) => {
       const isSameOrigin = origin == location.origin;
       if (isSameOrigin && MessageTypes.SimulatorConfig === data.type) {
         setEnabled(data?.payload?.ghostChairEnabled ?? false);
       }
     };
-    window.addEventListener("message", onMessage, false);
+    window.addEventListener('message', onMessage, false);
     return () => {
-      window.removeEventListener("message", onMessage, false);
+      window.removeEventListener('message', onMessage, false);
     };
   }, []);
 

@@ -1,18 +1,18 @@
-import type { MetaFunction } from "@remix-run/node";
-import { ChairIcon } from "~/components/icon/chair";
-import { Text } from "~/components/primitives/text/text";
-import { useOwnerContext } from "~/contexts/owner-context";
+import type { MetaFunction } from '@remix-run/node';
+import { ChairIcon } from '~/components/icon/chair';
+import { Text } from '~/components/primitives/text/text';
+import { useOwnerContext } from '~/contexts/owner-context';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "椅子一覧 | Owner | ISURIDE" },
-    { name: "description", content: "isucon14" },
+    { title: '椅子一覧 | Owner | ISURIDE' },
+    { name: 'description', content: 'isucon14' },
   ];
 };
 
 const formatDateTime = (timestamp: number) => {
   const d = new Date(timestamp);
-  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, "0")}:${d.getMinutes().toString().padStart(2, "0")}`;
+  return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 };
 
 export default function Index() {
@@ -54,9 +54,9 @@ export default function Index() {
                 <td className="p-4">
                   <div className="">
                     <span
-                      className={`before:content-['●'] before:mr-2 ${chair.active ? "before:text-emerald-600" : "before:text-red-600"}`}
+                      className={`before:content-['●'] before:mr-2 ${chair.active ? 'before:text-emerald-600' : 'before:text-red-600'}`}
                     >
-                      {chair.active ? "稼働中" : "停止中"}
+                      {chair.active ? '稼働中' : '停止中'}
                     </span>
                   </div>
                 </td>

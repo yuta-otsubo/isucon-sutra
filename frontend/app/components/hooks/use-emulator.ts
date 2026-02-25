@@ -1,17 +1,17 @@
-import { useEffect } from "react";
-import { apiBaseURL } from "~/api/api-base-url";
+import { useEffect } from 'react';
+import { apiBaseURL } from '~/api/api-base-url';
 import {
   ChairGetNotificationResponse,
   fetchChairPostCoordinate,
   fetchChairPostRideStatus,
-} from "~/api/api-components";
-import { RideId } from "~/api/api-parameters";
-import { Coordinate } from "~/api/api-schemas";
-import { useSimulatorContext } from "~/contexts/simulator-context";
+} from '~/api/api-components';
+import { RideId } from '~/api/api-parameters';
+import { Coordinate } from '~/api/api-schemas';
+import { useSimulatorContext } from '~/contexts/simulator-context';
 import {
   setSimulatorCurrentCoordinate,
   setSimulatorStartCoordinate,
-} from "~/utils/storage";
+} from '~/utils/storage';
 
 const move = (
   currentCoordinate: Coordinate,
@@ -40,7 +40,7 @@ const move = (
 };
 
 function jsonFromSseResult<T>(value: string) {
-  const data = value.slice("data:".length).trim();
+  const data = value.slice('data:'.length).trim();
   return JSON.parse(data) as T;
 }
 
@@ -48,9 +48,9 @@ const notificationFetch = async () => {
   try {
     const notification = await fetch(`${apiBaseURL}/chair/notification`);
     const isEventStream = !!notification?.headers
-      .get("Content-type")
-      ?.split(";")?.[0]
-      .includes("text/event-stream");
+      .get('Content-type')
+      ?.split(';')?.[0]
+      .includes('text/event-stream');
 
     if (isEventStream) {
       const reader = notification.body?.getReader();
@@ -58,7 +58,7 @@ const notificationFetch = async () => {
       const readed = (await reader?.read())?.value;
       const decoded = decoder.decode(readed);
       const json =
-        jsonFromSseResult<ChairGetNotificationResponse["data"]>(decoded);
+        jsonFromSseResult<ChairGetNotificationResponse['data']>(decoded);
       return { data: json };
     }
     const json = (await notification.json()) as
@@ -83,12 +83,12 @@ const currentCoodinatePost = (coordinate: Coordinate) => {
 };
 
 const postEnroute = async (rideId: string, coordinate: Coordinate) => {
-  if ((await getStatus()) !== "MATCHING") {
+  if ((await getStatus()) !== 'MATCHING') {
     return;
   }
   setSimulatorStartCoordinate(coordinate);
   return fetchChairPostRideStatus({
-    body: { status: "ENROUTE" },
+    body: { status: 'ENROUTE' },
     pathParams: {
       rideId,
     },
@@ -96,11 +96,11 @@ const postEnroute = async (rideId: string, coordinate: Coordinate) => {
 };
 
 const postCarring = async (rideId: string) => {
-  if ((await getStatus()) !== "PICKUP") {
+  if ((await getStatus()) !== 'PICKUP') {
     return;
   }
   return fetchChairPostRideStatus({
-    body: { status: "CARRYING" },
+    body: { status: 'CARRYING' },
     pathParams: {
       rideId,
     },
@@ -138,13 +138,13 @@ export const useEmulator = () => {
     if (!(pickup_coordinate && destination_coordinate && ride_id)) return;
     let timeoutId: ReturnType<typeof setTimeout>;
     switch (status) {
-      case "ENROUTE":
+      case 'ENROUTE':
         timeoutId = forcePickup(pickup_coordinate);
         break;
-      case "PICKUP":
+      case 'PICKUP':
         timeoutId = forceCarry(pickup_coordinate, ride_id);
         break;
-      case "CARRYING":
+      case 'CARRYING':
         timeoutId = forceArrive(destination_coordinate);
         break;
     }
@@ -160,12 +160,12 @@ export const useEmulator = () => {
   ]);
 
   useEffect(() => {
-    if (!pickup_coordinate || status !== "PICKUP") return;
+    if (!pickup_coordinate || status !== 'PICKUP') return;
     setCoordinate?.(pickup_coordinate);
   }, [status, pickup_coordinate, setCoordinate]);
 
   useEffect(() => {
-    if (!destination_coordinate || status !== "ARRIVED") return;
+    if (!destination_coordinate || status !== 'ARRIVED') return;
     setCoordinate?.(destination_coordinate);
   }, [status, destination_coordinate, setCoordinate]);
 
@@ -179,21 +179,21 @@ export const useEmulator = () => {
       void currentCoodinatePost(chair.coordinate);
       try {
         switch (data.status) {
-          case "MATCHING":
+          case 'MATCHING':
             void postEnroute(data.ride_id, chair.coordinate);
             break;
-          case "PICKUP":
+          case 'PICKUP':
             void postCarring(data.ride_id);
             break;
-          case "ENROUTE":
+          case 'ENROUTE':
             setCoordinate?.(move(chair.coordinate, data.pickup_coordinate));
             break;
-          case "CARRYING":
+          case 'CARRYING':
             setCoordinate?.(
               move(chair.coordinate, data.destination_coordinate),
             );
             break;
-          case "ARRIVED":
+          case 'ARRIVED':
             setCoordinate?.(data.destination_coordinate);
         }
       } catch {

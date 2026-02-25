@@ -1,16 +1,16 @@
-import { FC, memo, useMemo } from "react";
-import { twMerge } from "tailwind-merge";
-import colors from "tailwindcss/colors";
-import { RideStatus } from "~/api/api-schemas";
-import { ChairIcon } from "~/components/icon/chair";
-import { PinIcon } from "~/components/icon/pin";
-import { ConfigFrame } from "~/components/primitives/frame/config-frame";
-import { Text } from "~/components/primitives/text/text";
-import { useSimulatorContext } from "~/contexts/simulator-context";
-import type { Coordinate } from "~/types";
-import { getSimulatorStartCoordinate } from "~/utils/storage";
-import { SimulatorChairLocationButton } from "../simulator-parts/simulator-chair-location-button";
-import { SimulatorChairRideStatus } from "../simulator-parts/simulator-chair-status-label";
+import { FC, memo, useMemo } from 'react';
+import { twMerge } from 'tailwind-merge';
+import colors from 'tailwindcss/colors';
+import { RideStatus } from '~/api/api-schemas';
+import { ChairIcon } from '~/components/icon/chair';
+import { PinIcon } from '~/components/icon/pin';
+import { ConfigFrame } from '~/components/primitives/frame/config-frame';
+import { Text } from '~/components/primitives/text/text';
+import { useSimulatorContext } from '~/contexts/simulator-context';
+import type { Coordinate } from '~/types';
+import { getSimulatorStartCoordinate } from '~/utils/storage';
+import { SimulatorChairLocationButton } from '../simulator-parts/simulator-chair-location-button';
+import { SimulatorChairRideStatus } from '../simulator-parts/simulator-chair-status-label';
 
 const progress = (
   start: Coordinate,
@@ -34,7 +34,7 @@ const ChairProgress: FC<{
   destLoc?: Coordinate;
 }> = ({ model, rideStatus, pickupLoc, destLoc, currentLoc }) => {
   const startLoc = useMemo(() => {
-    return typeof rideStatus !== "undefined"
+    return typeof rideStatus !== 'undefined'
       ? getSimulatorStartCoordinate()
       : null;
   }, [rideStatus]);
@@ -44,12 +44,12 @@ const ChairProgress: FC<{
       return 0;
     }
     switch (rideStatus) {
-      case "MATCHING":
-      case "COMPLETED":
+      case 'MATCHING':
+      case 'COMPLETED':
         return 0;
-      case "PICKUP":
-      case "ARRIVED":
-      case "CARRYING":
+      case 'PICKUP':
+      case 'ARRIVED':
+      case 'CARRYING':
         return 100;
       default:
         return progress(startLoc, currentLoc, pickupLoc);
@@ -61,12 +61,12 @@ const ChairProgress: FC<{
       return 0;
     }
     switch (rideStatus) {
-      case "MATCHING":
-      case "COMPLETED":
-      case "PICKUP":
-      case "ENROUTE":
+      case 'MATCHING':
+      case 'COMPLETED':
+      case 'PICKUP':
+      case 'ENROUTE':
         return 0;
-      case "ARRIVED":
+      case 'ARRIVED':
         return 100;
       default:
         return progress(pickupLoc, currentLoc, destLoc);
@@ -78,17 +78,17 @@ const ChairProgress: FC<{
       <div className="flex w-1/2">
         <div className="w-full me-6">
           {rideStatus &&
-            ["MATCHING", "COMPLETED", "ENROUTE"].includes(rideStatus) && (
+            ['MATCHING', 'COMPLETED', 'ENROUTE'].includes(rideStatus) && (
               <div
                 className="transition-transform duration-300"
                 style={{ transform: `translateX(${progressToPickup}%)` }}
               >
                 <div
                   className={twMerge(
-                    rideStatus === "ENROUTE" && "animate-shake",
+                    rideStatus === 'ENROUTE' && 'animate-shake',
                   )}
                 >
-                  <ChairIcon model={model} className={"scale-x-[-1] size-6"} />
+                  <ChairIcon model={model} className={'scale-x-[-1] size-6'} />
                 </div>
               </div>
             )}
@@ -98,17 +98,17 @@ const ChairProgress: FC<{
       <div className="flex w-1/2">
         <div className="w-full me-6">
           {rideStatus &&
-            ["PICKUP", "CARRYING", "ARRIVED"].includes(rideStatus) && (
+            ['PICKUP', 'CARRYING', 'ARRIVED'].includes(rideStatus) && (
               <div
                 className="transition-transform duration-300"
                 style={{ transform: `translateX(${progressToDestination}%)` }}
               >
                 <div
                   className={twMerge(
-                    rideStatus === "CARRYING" && "animate-shake",
+                    rideStatus === 'CARRYING' && 'animate-shake',
                   )}
                 >
-                  <ChairIcon model={model} className={"scale-x-[-1] size-6"} />
+                  <ChairIcon model={model} className={'scale-x-[-1] size-6'} />
                 </div>
               </div>
             )}
@@ -149,7 +149,7 @@ const ChairDetailInfo = memo(
 export const SimulatorChairConfig: FC = () => {
   const { data, chair, setCoordinate, isAnotherSimulatorBeingUsed } =
     useSimulatorContext();
-  const rideStatus = useMemo(() => data?.status ?? "MATCHING", [data]);
+  const rideStatus = useMemo(() => data?.status ?? 'MATCHING', [data]);
   return (
     <ConfigFrame aria-disabled={isAnotherSimulatorBeingUsed}>
       {!chair && (

@@ -1,12 +1,12 @@
-import { FC } from "react";
-import { ChairIcon } from "~/components/icon/chair";
-import { HumanIcon } from "~/components/icon/human";
-import { ChairInformation } from "~/components/modules/chair-information/chair-information";
-import { LocationButton } from "~/components/modules/location-button/location-button";
-import { ModalHeader } from "~/components/modules/modal-header/modal-header";
-import { Price } from "~/components/modules/price/price";
-import { Text } from "~/components/primitives/text/text";
-import { useClientContext } from "~/contexts/client-context";
+import { FC } from 'react';
+import { ChairIcon } from '~/components/icon/chair';
+import { HumanIcon } from '~/components/icon/human';
+import { ChairInformation } from '~/components/modules/chair-information/chair-information';
+import { LocationButton } from '~/components/modules/location-button/location-button';
+import { ModalHeader } from '~/components/modules/modal-header/modal-header';
+import { Price } from '~/components/modules/price/price';
+import { Text } from '~/components/primitives/text/text';
+import { useClientContext } from '~/contexts/client-context';
 
 export const Pickup: FC = () => {
   const { data } = useClientContext();
@@ -20,7 +20,7 @@ export const Pickup: FC = () => {
             className="absolute left-0 bottom-[-5px]"
           />
           <ChairIcon
-            model={data?.chair?.model ?? ""}
+            model={data?.chair?.model ?? ''}
             width={60}
             height={60}
             className="absolute bottom-0 right-0"

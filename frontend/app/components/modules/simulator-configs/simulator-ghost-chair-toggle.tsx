@@ -1,12 +1,12 @@
-import { FC, RefObject, useEffect, useState } from "react";
-import { Toggle } from "~/components/primitives/form/toggle";
-import { ConfigFrame } from "~/components/primitives/frame/config-frame";
-import { Text } from "~/components/primitives/text/text";
+import { FC, RefObject, useEffect, useState } from 'react';
+import { Toggle } from '~/components/primitives/form/toggle';
+import { ConfigFrame } from '~/components/primitives/frame/config-frame';
+import { Text } from '~/components/primitives/text/text';
 import {
   Message,
   MessageTypes,
   sendSimulatorConfig,
-} from "~/utils/post-message";
+} from '~/utils/post-message';
 
 type SimulatorConfigType = {
   ghostChairEnabled: boolean;
@@ -29,15 +29,15 @@ export const SimulatorGhostChairToggle: FC<{
   }, [config, ready, simulatorRef]);
 
   useEffect(() => {
-    const onMessage = ({ data }: MessageEvent<Message["ClientReady"]>) => {
+    const onMessage = ({ data }: MessageEvent<Message['ClientReady']>) => {
       const isSameOrigin = origin == location.origin;
       if (isSameOrigin && data.type === MessageTypes.ClientReady) {
         setReady(Boolean(data?.payload?.ready));
       }
     };
-    window.addEventListener("message", onMessage);
+    window.addEventListener('message', onMessage);
     return () => {
-      window.removeEventListener("message", onMessage);
+      window.removeEventListener('message', onMessage);
     };
   }, []);
 

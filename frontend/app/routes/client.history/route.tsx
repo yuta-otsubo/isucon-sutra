@@ -1,22 +1,22 @@
-import type { MetaFunction } from "@remix-run/node";
-import { useEffect, useState } from "react";
-import { AppGetRidesResponse, fetchAppGetRides } from "~/api/api-components";
-import { ChairIcon } from "~/components/icon/chair";
-import { DateText } from "~/components/modules/date-text/date-text";
-import { Price } from "~/components/modules/price/price";
-import { List } from "~/components/primitives/list/list";
-import { ListItem } from "~/components/primitives/list/list-item";
-import { Rating } from "~/components/primitives/rating/rating";
-import { Text } from "~/components/primitives/text/text";
+import type { MetaFunction } from '@remix-run/node';
+import { useEffect, useState } from 'react';
+import { AppGetRidesResponse, fetchAppGetRides } from '~/api/api-components';
+import { ChairIcon } from '~/components/icon/chair';
+import { DateText } from '~/components/modules/date-text/date-text';
+import { Price } from '~/components/modules/price/price';
+import { List } from '~/components/primitives/list/list';
+import { ListItem } from '~/components/primitives/list/list-item';
+import { Rating } from '~/components/primitives/rating/rating';
+import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "History | ISURIDE" },
-    { name: "description", content: "椅子の配車履歴" },
+    { title: 'History | ISURIDE' },
+    { name: 'description', content: '椅子の配車履歴' },
   ];
 };
 
-type Ride = AppGetRidesResponse["rides"][number];
+type Ride = AppGetRidesResponse['rides'][number];
 
 export default function Index() {
   const [rides, setRides] = useState<Ride[]>([]);
@@ -81,7 +81,7 @@ export default function Index() {
                     <Text
                       size="xs"
                       tagName="span"
-                      className={"text-neutral-500"}
+                      className={'text-neutral-500'}
                     >
                       {chair.model}
                     </Text>

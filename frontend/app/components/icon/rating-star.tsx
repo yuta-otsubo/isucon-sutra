@@ -1,7 +1,7 @@
-import { ComponentProps, FC } from "react";
-import { twMerge } from "tailwind-merge";
+import { ComponentProps, FC } from 'react';
+import { twMerge } from 'tailwind-merge';
 
-export const RatingStar: FC<ComponentProps<"svg"> & { rated: boolean }> = ({
+export const RatingStar: FC<ComponentProps<'svg'> & { rated: boolean }> = ({
   rated,
   className,
   ...props
@@ -10,10 +10,10 @@ export const RatingStar: FC<ComponentProps<"svg"> & { rated: boolean }> = ({
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
-      fill={rated ? "currentColor" : "#d9d9d9"}
-      stroke={rated ? "currentColor" : "#d9d9d9"}
+      fill={rated ? 'currentColor' : '#d9d9d9'}
+      stroke={rated ? 'currentColor' : '#d9d9d9'}
       className={twMerge(
-        rated ? "text-yellow-400" : "text-neutral-300",
+        rated ? 'text-yellow-400' : 'text-neutral-300',
         className,
       )}
       {...props}

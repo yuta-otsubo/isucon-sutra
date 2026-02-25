@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from '@remix-run/node';
 import {
   ClientActionFunctionArgs,
   Form,
@@ -6,18 +6,18 @@ import {
   Link,
   redirect,
   useActionData,
-} from "@remix-run/react";
-import { fetchAppPostUsers } from "~/api/api-components";
-import { Button } from "~/components/primitives/button/button";
-import { DateInput } from "~/components/primitives/form/date-input";
-import { TextInput } from "~/components/primitives/form/text-input";
-import { FormFrame } from "~/components/primitives/frame/form-frame";
-import { Text } from "~/components/primitives/text/text";
+} from '@remix-run/react';
+import { fetchAppPostUsers } from '~/api/api-components';
+import { Button } from '~/components/primitives/button/button';
+import { DateInput } from '~/components/primitives/form/date-input';
+import { TextInput } from '~/components/primitives/form/text-input';
+import { FormFrame } from '~/components/primitives/frame/form-frame';
+import { Text } from '~/components/primitives/text/text';
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Regiter | ISURIDE" },
-    { name: "description", content: "ユーザー登録" },
+    { title: 'Regiter | ISURIDE' },
+    { name: 'description', content: 'ユーザー登録' },
   ];
 };
 
@@ -33,20 +33,20 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     invitation_code?: string;
   } = {};
 
-  const date_of_birth = (formData.get("date_of_birth") as string) || "";
-  const username = (formData.get("username") as string) || "";
-  const firstname = (formData.get("firstname") as string) || "";
-  const lastname = (formData.get("lastname") as string) || "";
-  const invitation_code = (formData.get("invitation_code") as string) || "";
+  const date_of_birth = (formData.get('date_of_birth') as string) || '';
+  const username = (formData.get('username') as string) || '';
+  const firstname = (formData.get('firstname') as string) || '';
+  const lastname = (formData.get('lastname') as string) || '';
+  const invitation_code = (formData.get('invitation_code') as string) || '';
 
   if (username.length > 30) {
-    errors.username = "30文字以内で入力してください";
+    errors.username = '30文字以内で入力してください';
   }
   if (firstname.length > 30) {
-    errors.firstname = "30文字以内で入力してください";
+    errors.firstname = '30文字以内で入力してください';
   }
   if (lastname.length > 30) {
-    errors.lastname = "30文字以内で入力してください";
+    errors.lastname = '30文字以内で入力してください';
   }
   if (Object.keys(errors).length > 0) {
     return json({ errors });
@@ -64,7 +64,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
     });
 
     localStorage.setItem(
-      "campaign",
+      'campaign',
       JSON.stringify({
         invitationCode: res.invitation_code,
         registeredAt: new Date(),
@@ -76,7 +76,7 @@ export const clientAction = async ({ request }: ClientActionFunctionArgs) => {
   } catch (e) {
     console.error(`ERROR: ${JSON.stringify(e)}`);
     errors.register =
-      "ユーザーの登録に失敗しました。接続に問題があるか、ユーザー名が登録済みの可能性があります。";
+      'ユーザーの登録に失敗しました。接続に問題があるか、ユーザー名が登録済みの可能性があります。';
     return json({ errors });
   }
 };
