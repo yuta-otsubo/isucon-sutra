@@ -14,7 +14,7 @@ func WaitChan(wg *sync.WaitGroup) <-chan struct{} {
 	return c
 }
 
-// WatiGroupWithCount カウンタ付き sync.WaitGroup
+// WaitGroupWithCount カウンタ付き sync.WaitGroup
 type WaitGroupWithCount struct {
 	sync.WaitGroup
 	count int64

@@ -33,7 +33,7 @@
 - **region.go / region_test.go**  
   地域（region）に関するデータやロジック、そのテスト。
 
-- **cordinate.go / cordinate_test.go**  
+- **coordinate.go / coordinate_test.go**  
   座標（coordinate）に関するデータやロジック、そのテスト。
 
 - **client.go**  
