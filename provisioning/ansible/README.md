@@ -27,7 +27,7 @@ $ ansible-playbook -i inventory/sacloud benchmark.yml
 openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout dummy.key -out dummy.crt -days 365 -nodes -subj "/CN=isucon.net"
 ```
 
-## make_lastest_files の中身
+## make_latest_files の中身
 
 ```
 $ cd bench

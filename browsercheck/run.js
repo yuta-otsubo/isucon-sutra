@@ -3,8 +3,8 @@ import { chromium } from "playwright-chromium";
 import { baseUrl, pages, randomString, teams } from "./config.js";
 import { saveScreenshot } from "./utils.js";
 
-if (await fs.stat("screeenshots").catch(() => null)) {
-  await fs.rm("screeenshots", { recursive: true });
+if (await fs.stat("screenshots").catch(() => null)) {
+  await fs.rm("screenshots", { recursive: true });
 }
 
 for (const { teamId, ip } of teams) {

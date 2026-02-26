@@ -9,7 +9,7 @@ export const saveScreenshot = async (teamId, page, selector) => {
 
   await page.locator(selector).waitFor({ state: "visible" });
   await page.screenshot({
-    path: `screeenshots/${teamId}/${filenameBase}.png`,
+    path: `screenshots/${teamId}/${filenameBase}.png`,
     fullPage: true,
   });
 };
