@@ -38,7 +38,7 @@ func handlePostPayments(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if req.Amount <= 0 && req.Amount > 1_000_000 {
+	if req.Amount <= 0 || req.Amount > 1_000_000 {
 		writeJSON(w, http.StatusBadRequest, map[string]string{"message": "決済額が不正です"})
 		return
 	}
