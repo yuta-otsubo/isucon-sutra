@@ -20,7 +20,7 @@ export const calculateFare = (
   destLatitude: number,
   destLongitude: number,
 ): number => {
-  const meterdFare =
+  const meteredFare =
     FARE_PER_DISTANCE *
     calculateDistance(
       pickupLatitude,
@@ -28,7 +28,7 @@ export const calculateFare = (
       destLatitude,
       destLongitude,
     );
-  return INITIAL_FARE + meterdFare;
+  return INITIAL_FARE + meteredFare;
 };
 
 export const calculateSale = (ride: Ride): number => {
