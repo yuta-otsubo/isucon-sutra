@@ -285,7 +285,7 @@ sudo mysql isuride
 | `webapp/sql/2-master-data.sql` | マスターデータの作成 |
 | `webapp/sql/3-initial-data.sql.gz` | 初期データ |
 
-`isuride`データベースを初期化するにはデータベースを`DROP DATABASE isuride`および`CREATE DATABASE isuride`で再作成し、以下のコマンドでテーブルの作成を行ったのち、データの初期化を行なってください。
+`isuride`データベースを初期化するにはデータベースを`DROP DATABASE isuride`および`CREATE DATABASE isuride`で再作成し、以下のコマンドでテーブルの作成を行ったのち、データの初期化を行ってください。
 
 ```sh
 cat webapp/sql/1-schema.sql | sudo mysql isuride
