@@ -153,7 +153,7 @@ ${サーバー IP アドレス} isuride.xiv.isucon.net
 この処理はサーバー起動時以外に、以下のコマンドで選手自ら行うことができます。
 
 ```sh
-$ sudo /opt/isucon-env-checker/envcheck
+sudo /opt/isucon-env-checker/envcheck
 ```
 
 競技環境に主催者の指定と異なる設定がある場合、エラーメッセージが表示されます（競技環境の確認の失敗）。
