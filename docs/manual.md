@@ -93,7 +93,7 @@ ISUCON14のDiscordサーバーは競技中ならびにその前後の時間は�
 また、AWSマネジメントコンソールから[EC2 Instance Connectを使用して接続する](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html)こともできます。
 EC2 Instance Connectを使用する場合、ユーザー名は `isucon` としてください。
 
-サーバー起動後に[ポータルのサーバーリスト](https://portal.isucon.net/contestant/contestant_instances)に表示されない場合は、EC2 Instance Connectでログインして[競技環境の確認](#競技環境の確認)を実行し、問題が無いか確認してください。
+サーバー起動後に[ポータルのサーバーリスト](https://portal.isucon.net/contestant/contestant_instances)に表示されない場合は、EC2 Instance Connectでログインして[競技環境の確認](#競技環境の確認)を実行し、問題がないか確認してください。
 
 ## アプリケーションの動作確認
 
