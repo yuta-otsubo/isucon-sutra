@@ -12,7 +12,7 @@
 
 ### Client Application
 - **/client**
-  - ISURIDE利用者用 モバイルクラインアント
+  - ISURIDE利用者用 モバイルクライアント
 - **/client/history**
   - 履歴画面
 - **/client/user**
